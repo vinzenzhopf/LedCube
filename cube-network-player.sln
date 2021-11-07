@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LedCube.Core", "LedCube.Core\LedCube.Core.csproj", "{D43EEA5D-C813-4DE9-90A0-6AAB85BF3206}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LedCube.Streamer", "LedCube.Streamer\LedCube.Streamer.csproj", "{113DE12C-F40F-4758-BF19-5A1F6E932871}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LedCube.Animator", "LedCube.Animator\LedCube.Animator.csproj", "{4FF4C360-7E13-4B5F-807D-D3C4CEA5082D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D43EEA5D-C813-4DE9-90A0-6AAB85BF3206}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D43EEA5D-C813-4DE9-90A0-6AAB85BF3206}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D43EEA5D-C813-4DE9-90A0-6AAB85BF3206}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D43EEA5D-C813-4DE9-90A0-6AAB85BF3206}.Release|Any CPU.Build.0 = Release|Any CPU
+		{113DE12C-F40F-4758-BF19-5A1F6E932871}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{113DE12C-F40F-4758-BF19-5A1F6E932871}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{113DE12C-F40F-4758-BF19-5A1F6E932871}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{113DE12C-F40F-4758-BF19-5A1F6E932871}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4FF4C360-7E13-4B5F-807D-D3C4CEA5082D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4FF4C360-7E13-4B5F-807D-D3C4CEA5082D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4FF4C360-7E13-4B5F-807D-D3C4CEA5082D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4FF4C360-7E13-4B5F-807D-D3C4CEA5082D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
