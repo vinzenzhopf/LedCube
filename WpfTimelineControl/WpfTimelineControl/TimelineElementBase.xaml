@@ -1,0 +1,69 @@
+﻿<UserControl x:Class="WpfTimelineControl.TimelineElementBase"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             DataContext="{Binding RelativeSource={RelativeSource Self}}">
+    <Grid x:Name="ElementGrid" Width="20" ToolTip="{Binding Position}">
+        <Grid.Style>
+            <Style TargetType="{x:Type Grid}">
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding IsDraggingActive}" Value="True">
+                        <Setter Property="ToolTip" Value="" />
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </Grid.Style>
+        <Rectangle x:Name="RectOuter">
+            <Rectangle.Style>
+                <Style TargetType="{x:Type Rectangle}">
+                    <Setter Property="Fill" Value="#FF192E8B" />
+                    <Setter Property="Opacity" Value="0.3" />
+                    <Setter Property="Panel.ZIndex" Value="1" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsMouseover}" Value="True">
+                            <Setter Property="Fill" Value="Chartreuse" />
+                            <Setter Property="Opacity" Value="0.5" />
+                            <Setter Property="Panel.ZIndex" Value="1" />
+                        </DataTrigger>
+                        <!-- <DataTrigger Binding="{Binding IsDraggingActive}" Value="True"> -->
+                        <!--     <Setter Property="Fill" Value="Gold" /> -->
+                        <!--     <Setter Property="Opacity" Value="0.8" /> -->
+                        <!-- </DataTrigger> -->
+                    </Style.Triggers>
+                </Style>
+            </Rectangle.Style>
+        </Rectangle>
+        <Rectangle x:Name="RectInner" Fill="Firebrick" Width="2" Panel.ZIndex="10" HorizontalAlignment="Center"/>
+        <!-- Fill="#FF1530AA" -->
+    </Grid>
+</UserControl>
+<!-- <UserControl x:Class="WpfTimelineControl.TimelineElementBase" -->
+<!--              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" -->
+<!--              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" -->
+<!--              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"  -->
+<!--              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" -->
+<!--              xmlns:element="clr-namespace:WpfTimelineControl.Element" -->
+<!--              mc:Ignorable="d" -->
+<!--              d:DataContext="{d:DesignInstance element:TimelineElement, IsDesignTimeCreatable=True}"> -->
+<!--     <ContentControl x:Name="ElementContentControl"> -->
+<!--         <ContentControl.Template> -->
+<!--             <ControlTemplate> -->
+<!--                 <Canvas x:Name="ElementCanvas" Width="5" ToolTip="{Binding Position}"> -->
+<!--                     <Rectangle x:Name="RectOuter" Fill="#FF192E8B" Width="5" Opacity="0.3"/> -->
+<!--                     <Rectangle x:Name="RectInner" Fill="#FF1530AA" Canvas.Left="2" Width="1"/> -->
+<!--                 </Canvas> -->
+<!--             </ControlTemplate> -->
+<!--         </ContentControl.Template> -->
+<!--         <ContentControl.Style> -->
+<!--             <Style TargetType="{x:Type ContentControl}"> -->
+<!--                 <Style.Triggers> -->
+<!--                     <DataTrigger Binding="{Binding HasCustomDataTemplate}" Value="True"> -->
+<!--                         <Setter Property="Template" Value="{Binding CustomDataTemplate}" /> -->
+<!--                     </DataTrigger> -->
+<!--                 </Style.Triggers> -->
+<!--             </Style> -->
+<!--         </ContentControl.Style> -->
+<!--     </ContentControl> -->
+<!-- </UserControl> -->
