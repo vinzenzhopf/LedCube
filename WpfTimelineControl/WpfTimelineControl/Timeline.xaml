@@ -1,0 +1,17 @@
+﻿<UserControl x:Class="WpfTimelineControl.Timeline"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             UseLayoutRounding="True"
+             SnapsToDevicePixels="True"
+             mc:Ignorable="d"
+             d:DesignWidth="600" d:DesignHeight="100">
+    <Border x:Name="Border" BorderBrush="#FF001263" Background="#FFD4D4D4" BorderThickness="1">
+        <ScrollViewer x:Name="ScrollHost" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Hidden">
+            <Canvas x:Name="MainCanvas" Margin="2">
+                <Border x:Name="InnerBorder" BorderBrush="Aqua" Background="#FFF8F8F8" BorderThickness="1" />
+            </Canvas>
+        </ScrollViewer>
+    </Border>
+</UserControl>
