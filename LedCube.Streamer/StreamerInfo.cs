@@ -1,4 +1,4 @@
-﻿namespace LedCube.Streamer.Datagram;
+﻿namespace LedCube.Streamer;
 
 public static class StreamerInfo
 {

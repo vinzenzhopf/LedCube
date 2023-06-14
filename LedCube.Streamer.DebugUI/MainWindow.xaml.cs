@@ -1,34 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Net;
 using System.Net.Sockets;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using LedCube.Streamer.Datagram;
 
-namespace LedCube.Streamer.Test
+namespace LedCube.Streamer.DebugUI
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
-        private Task receiver;
-        private CancellationTokenSource receiverCancellationTks;
+        private Task _receiver;
+        private CancellationTokenSource _receiverCancellationTks;
 
         public ObservableCollection<string> Messages { get; }
 
@@ -47,8 +33,8 @@ namespace LedCube.Streamer.Test
         private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
         {
             _udpClient = new UdpClient(4242);
-            receiverCancellationTks = new CancellationTokenSource();
-            receiver = Task.Run(() => ReceiveMessagesAsync(receiverCancellationTks.Token));
+            _receiverCancellationTks = new CancellationTokenSource();
+            _receiver = Task.Run(() => ReceiveMessagesAsync(_receiverCancellationTks.Token));
         }
 
         private async Task ReceiveMessagesAsync(CancellationToken token)
@@ -82,39 +68,36 @@ namespace LedCube.Streamer.Test
 
         private string GetPayloadString(DatagramType type, ReadOnlySpan<byte> payloadSpan)
         {
-            string payloadStr;
+            var payloadStr = "<unknown payload>";
             switch (type)
             {
-                // case DatagramType.Discovery:
-                //     var payload = Discovery 
-                //     break;
+                case DatagramType.Discovery:
+                    var discoveryPayload = InfoResponsePayload.ReadFromSpan(payloadSpan);
+                    payloadStr = discoveryPayload.ToString(); 
+                    break;
                 case DatagramType.InfoResponse:
                     var infoPayload = InfoResponsePayload.ReadFromSpan(payloadSpan);
-                    payloadStr =
-                        $"Payload:{{ Version:{infoPayload.Version}, RuntimeMs:{infoPayload.RuntimeMs}, " +
-                        $"MaxFrameTimeUs:{infoPayload.MaxFrameTimeUs}, ErrorCode{infoPayload.ErrorCode} }}";
+                    payloadStr = infoPayload.ToString();
                     break;
                 case DatagramType.ErrorResponse:
                     var errorPayload = InfoResponsePayload.ReadFromSpan(payloadSpan);
-                    payloadStr =
-                        $"Payload:{{ Version:{errorPayload.Version}, RuntimeMs:{errorPayload.RuntimeMs}, " +
-                        $"MaxFrameTimeUs:{errorPayload.MaxFrameTimeUs}, ErrorCode{errorPayload.ErrorCode} }}";
+                    payloadStr = errorPayload.ToString();
                     break;
                 case DatagramType.AnimationStartAck:
-                    payloadStr = "Payload:{ <empty payload> }";
+                    var animStartPayload = AnimationStartResponsePayload.ReadFromSpan(payloadSpan);
+                    payloadStr = animStartPayload.ToString();
                     break;
                 case DatagramType.AnimationEndAck:
-                    payloadStr = "Payload:{ <empty payload> }";
+                    var animEndPayload = AnimationEndResponsePayload.ReadFromSpan(payloadSpan);
+                    payloadStr = animEndPayload.ToString();
                     break;
                 case DatagramType.FrameDataAck:
-                    payloadStr = "Payload:{ <empty payload> }";
-                    break;
-                default:
-                    payloadStr = "Payload:{ <unknown payload> }";
+                    var frameDataAck = FrameResponsePayload.ReadFromSpan(payloadSpan);
+                    payloadStr = frameDataAck.ToString();
                     break;
             }
 
-            return payloadStr;
+            return $"Payload:{{ {payloadStr} }}";
         }
         
         private void ButtonSendDiscovery_OnClick(object sender, RoutedEventArgs args)
