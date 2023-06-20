@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using CommunityToolkit.Mvvm.ComponentModel;
 using LedCube.Core.Common.Model.Cube;
+using Serilog;
 using Point = System.Windows.Point;
 using Rectangle = System.Windows.Shapes.Rectangle;
 
@@ -262,11 +263,16 @@ public partial class CubeView2DGrid : UserControl
             });
         }
     }
-    
+
     private void CreateGrid()
     {
-        _leds.Clear();
         _ledGrid.Children.Clear();
+        foreach (var led in _leds)
+        {
+            led.Checked -= OnLedChecked;
+            led.Unchecked -= OnLedUnchecked;
+        }        
+        _leds.Clear();
         _ledGrid.Rows = GridHeight;
         _ledGrid.Columns = GridWidth;
         
@@ -275,25 +281,46 @@ public partial class CubeView2DGrid : UserControl
         var size = Math.Min(sizeX, sizeY);
         if (size is Double.NaN)
             size = 10;
-        for (var i = 0; i < _ledGrid.Rows; i++)
+        var ledCount = GridWidth * GridHeight;
+        for (var y = 0; y < GridWidth; y++)
         {
-            for (var j = 0; j < _ledGrid.Columns; j++)
+            for (var x = 0; x < GridHeight; x++)
             {
-                var rect = new CubeView2DLed
+                var led = new CubeView2DLed
                 {
                     Size = size,
-                    Index = i + j*_ledGrid.Columns,
-                    Foreground = LedBrush
+                    Index = --ledCount,
+                    Foreground = LedBrush,
                 };
-                Grid.SetRow(rect, i);
-                Grid.SetColumn(rect, j);
-                _ledGrid.Children.Add(rect);
-                _leds.Add(rect);
+                led.Checked += OnLedChecked;
+                led.Unchecked += OnLedUnchecked;
+                Grid.SetRow(led, x);
+                Grid.SetColumn(led, y);
+                _ledGrid.Children.Add(led);
+                _leds.Add(led);
             }
         }
-        
     }
 
+    private void OnLedChecked(object sender, RoutedEventArgs e)
+    {
+        if (sender is not CubeView2DLed led)
+            return;
+        HandleLedChanged(led.Index, true);
+    }
+
+    private void OnLedUnchecked(object sender, RoutedEventArgs e)
+    {
+        if (sender is not CubeView2DLed led)
+            return;
+        HandleLedChanged(led.Index, false);
+    }
+
+    private void HandleLedChanged(int index, bool? value)
+    {
+        Log.Information("LED with index {0} changed to {1}", index, value);
+    }
+    
     private void RecalculateSize()
     {
         var innerWidth = ActualWidth - Margin.Left - Margin.Right - Padding.Left - Padding.Right;
