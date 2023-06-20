@@ -2,18 +2,30 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Xml;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace LedCube.Core.UI.Controls.CubeView2D;
 
-[ObservableObject]
 public partial class CubeView2DLed : CheckBox
 {
-    [ObservableProperty]
-    private int _index;
+    public static readonly DependencyProperty IndexProperty = DependencyProperty.Register(
+        nameof(Index), typeof(int), typeof(CubeView2DLed),
+        new FrameworkPropertyMetadata(0));
     
-    [ObservableProperty]
-    private double _size;
+    public static readonly DependencyProperty SizeProperty = DependencyProperty.Register(
+        nameof(Size), typeof(double), typeof(CubeView2DLed),
+        new FrameworkPropertyMetadata(Double.NaN));
+    
+    public int Index{
+        get => (int)GetValue(IndexProperty);
+        set => SetValue(IndexProperty, value);
+    }
+    
+    public double Size{
+        get => (double)GetValue(SizeProperty);
+        set => SetValue(SizeProperty, value);
+    }
     
     public CubeView2DLed()
     {

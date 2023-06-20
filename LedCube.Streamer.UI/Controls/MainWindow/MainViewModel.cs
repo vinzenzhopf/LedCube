@@ -16,11 +16,11 @@ namespace LedCube.Streamer.UI.Controls.MainWindow
         private readonly AppInfo _appInfo;
         public LogAppenderViewModel LogAppenderViewModel { get; }
         public MenuBarViewModel MenuBarViewModel { get; }
-        public CubeView2D CubeView2DViewModel { get; }
+        public CubeView2DViewModel CubeView2DViewModel { get; }
         public string TitleText => $"LedCube Animator - <CurrentAnimationFile.anim>";
         public string BuildInfo => $"Build: {_appInfo.Version}, {_appInfo.BuildDate:yy-MM-dd HH:mm zz}";
         public string BuildInfoDebug => _appInfo.DebugBuild ? ", Debug" : "";
-        public MainViewModel(AppInfo appInfo, LogAppenderViewModel logAppenderViewModel, MenuBarViewModel menuBarViewModel, CubeView2D cubeView2DViewModel)
+        public MainViewModel(AppInfo appInfo, LogAppenderViewModel logAppenderViewModel, MenuBarViewModel menuBarViewModel, CubeView2DViewModel cubeView2DViewModel)
         {
             _appInfo = appInfo;
             LogAppenderViewModel = logAppenderViewModel;

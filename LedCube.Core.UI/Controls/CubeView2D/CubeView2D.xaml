@@ -4,17 +4,41 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:LedCube.Core.UI.Controls.CubeView2D"
+             xmlns:ui="clr-namespace:LedCube.Core.UI"
+             xmlns:converters="clr-namespace:LedCube.Core.UI.Converters"
              mc:Ignorable="d"
+             DataContext="{Binding RelativeSource={RelativeSource Self}}"
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
-        <Style x:Key="LedCheckBoxStyle" TargetType="{x:Type CheckBox}">
-            <Setter Property="Margin" Value="99,71,0,0" />
-            <Setter Property="Foreground" Value="#FFE75959" />
-            <Setter Property="FontFamily" Value="Calibri" />
-            <Setter Property="FontSize" Value="40" />
-        </Style>
+        <!-- <Style x:Key="NumberGridTextStyle" TargetType="TextBlock"> -->
+        <!--     <Setter Property="FontSize" Value="10" /> -->
+        <!-- </Style> -->
+        <converters:IntToDoubleConverter x:Key="intToDoubleConverter" />
     </UserControl.Resources>
     <DockPanel>
-        <Grid x:Name="LedGrid" />
+        <StackPanel DockPanel.Dock="Top">
+            <Label>Settings:</Label>
+
+            <DockPanel>
+                <Label Width="100" DockPanel.Dock="Left">X Size</Label>
+                <TextBox Width="40" DockPanel.Dock="Left" Text="{Binding GridWidth}" />
+                <Slider Maximum="16" TickPlacement="BottomRight" TickFrequency="1" IsSnapToTickEnabled="True" Value="{Binding GridWidth, Converter={StaticResource intToDoubleConverter}}" />
+            </DockPanel>
+            <DockPanel>
+                <Label Width="100" DockPanel.Dock="Left">Y Size</Label>
+                <TextBox Width="40" DockPanel.Dock="Left" Text="{Binding GridHeight}" />
+                <Slider Maximum="16" TickPlacement="BottomRight" TickFrequency="1" IsSnapToTickEnabled="True" Value="{Binding GridHeight, Converter={StaticResource intToDoubleConverter}}" />
+            </DockPanel>
+            <DockPanel>
+                <Label Width="100" DockPanel.Dock="Left">Selected Z Plane</Label>
+                <TextBox Width="40" DockPanel.Dock="Left" Text="{Binding SelectedPlane}" />
+                <Slider Maximum="16" TickPlacement="BottomRight" TickFrequency="1" IsSnapToTickEnabled="True" Value="{Binding SelectedPlane}" />
+            </DockPanel>
+            <Label>Plane:</Label>
+        </StackPanel>
+        <local:CubeView2DGrid
+            GridWidth="{Binding GridWidth,RelativeSource={RelativeSource AncestorType=UserControl}}"
+            GridHeight="{Binding Path=GridHeight,RelativeSource={RelativeSource AncestorType=UserControl}}"
+        />
     </DockPanel>
 </UserControl>

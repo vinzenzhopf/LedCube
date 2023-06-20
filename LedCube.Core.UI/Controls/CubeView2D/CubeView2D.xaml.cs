@@ -1,66 +1,98 @@
-﻿using System.Windows;
+﻿using System.ComponentModel;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
+using LedCube.Core.Common.Config;
+using LedCube.Core.Common.Model.Cube;
 
 namespace LedCube.Core.UI.Controls.CubeView2D;
 
 [ObservableObject]
 public partial class CubeView2D : UserControl
 {
-    private readonly CubeView2DViewModel? _viewModel = null;
-    private CheckBox[]? _checkBoxes; 
+    public static readonly DependencyProperty GridWidthProperty = DependencyProperty.Register(
+        nameof(GridWidth), typeof(int), typeof(CubeView2D),
+        new FrameworkPropertyMetadata(8, OnGridDimensionsChanged));
+
+    public static readonly DependencyProperty GridHeightProperty = DependencyProperty.Register(
+        nameof(GridHeight), typeof(int), typeof(CubeView2D),
+        new FrameworkPropertyMetadata(8, OnGridDimensionsChanged));
     
-    public CubeView2D()
+    public static readonly DependencyProperty SelectedPlaneProperty = DependencyProperty.Register(
+        nameof(SelectedPlane), typeof(int), typeof(CubeView2D),
+        new FrameworkPropertyMetadata(0, OnGridDimensionsChanged));
+
+    private static void OnGridDimensionsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) => 
+        (d as CubeView2D)?.OnGridDimensionsChanged(e);
+
+    public static readonly DependencyProperty LedBrushProperty = DependencyProperty.Register(
+        nameof(LedBrush), typeof(Brush), typeof(CubeView2D),
+        new FrameworkPropertyMetadata(Brushes.Blue));
+    private static void OnLedBrushChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) => 
+        (d as CubeView2D)?.OnLedBrushChanged(e);
+
+    public static readonly DependencyProperty ShowNumbersProperty = DependencyProperty.Register(
+        nameof(ShowNumbers), typeof(bool), typeof(CubeView2D),
+        new FrameworkPropertyMetadata(true));
+
+    private static void OnShowNumbersChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) => 
+        (d as CubeView2D)?.OnShowNumbersChanged(e);
+
+    public int GridWidth
     {
-        InitializeComponent();
-        Update();
+        get => (int)GetValue(GridWidthProperty);
+        set => SetValue(GridWidthProperty, value);
+    }
+    
+    public int GridHeight
+    {
+        get => (int)GetValue(GridHeightProperty);
+        set => SetValue(GridHeightProperty, value);
+    }
+    
+    public int SelectedPlane
+    {
+        get => (int)GetValue(SelectedPlaneProperty);
+        set => SetValue(SelectedPlaneProperty, value);
+    }
+    
+    public Brush LedBrush{
+        get => (Brush)GetValue(LedBrushProperty);
+        set => SetValue(LedBrushProperty, value);
     }
 
-    private void Update()
-    {
-        UpdateContentLayout();
-        RecalculateDimensions();
+    public bool ShowNumbers{
+        get => (bool)GetValue(ShowNumbersProperty);
+        set => SetValue(ShowNumbersProperty, value);
     }
-
-    private void RecalculateDimensions()
+    
+    private void OnGridDimensionsChanged(DependencyPropertyChangedEventArgs dependencyPropertyChangedEventArgs)
     {
         // throw new System.NotImplementedException();
     }
-
-    private void UpdateContentLayout()
+    private void OnLedBrushChanged(DependencyPropertyChangedEventArgs dependencyPropertyChangedEventArgs)
     {
-        if (_viewModel is null)
-            return;
-        _checkBoxes = new CheckBox[_viewModel.X * _viewModel.Y];
-        
-        LedGrid = new Grid();
-        for (var x = 0; x < _viewModel.Config.Dimensions.X; x++)
-        {
-            LedGrid.ColumnDefinitions.Add(new ColumnDefinition());    
-        }
-        for (var y = 0; y < _viewModel.Config.Dimensions.Y; y++)
-        {
-            LedGrid.RowDefinitions.Add(new RowDefinition());    
-        }
-        var width = LedGrid.Width / _viewModel.Config.Dimensions.X;
-        var height = LedGrid.Height / _viewModel.Config.Dimensions.Z;
-        
-        var ledBaseStyle = this.FindResource("LedCheckBoxStyle") as Style;
-        var ledStyle = new Style(typeof(CheckBox), ledBaseStyle);
-        ledStyle.Setters.Add(new Setter(CheckBox.HeightProperty, height));
-        ledStyle.Setters.Add(new Setter(CheckBox.WidthProperty, width));
-        
-        for (var i = 0; i < _viewModel.Config.Dimensions.X * _viewModel.Config.Dimensions.Y; i++)
-        {
-            var cb = new CheckBox()
-            {
-                Style = ledStyle
-            };
-            LedGrid.Children.Add(cb);
-            var x = i % _viewModel.Config.Dimensions.X;
-            var y = i / _viewModel.Config.Dimensions.Y;
-            Grid.SetColumn(LedGrid, _viewModel.Config.Dimensions.X - 1 - x);
-            Grid.SetRow(LedGrid, _viewModel.Config.Dimensions.Y - 1 - y);
-        }
+        // throw new System.NotImplementedException();
     }
+    
+    private void OnShowNumbersChanged(DependencyPropertyChangedEventArgs dependencyPropertyChangedEventArgs)
+    {
+        // throw new System.NotImplementedException();
+    }
+    
+    [ObservableProperty]
+    private CubeConfig _cubeConfig;
+
+    [ObservableProperty]
+    private Plane<BiLed> _planeData;
+    
+    [ObservableProperty]
+    private Orientation3D _viewDirection = Orientation3D.Front;
+
+    public CubeView2D()
+    {
+        InitializeComponent();
+    }
+    
 }

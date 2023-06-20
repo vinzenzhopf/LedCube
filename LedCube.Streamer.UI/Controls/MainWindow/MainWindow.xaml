@@ -59,8 +59,8 @@
             <GridSplitter Grid.Column="3" VerticalAlignment="Stretch" ResizeBehavior="BasedOnAlignment"  Width="5" />
             <Grid Grid.Column="4">
                 <!-- <TextBox AcceptsReturn="True">Right Sidebar</TextBox> -->
-                <!-- <cubeView2D:CubeView2D DataContext="{Binding CubeView2DViewModel}" /> -->
-                <cubeView2D:CubeView2DGrid />
+                <cubeView2D:CubeView2D />
+                <!-- <cubeView2D:CubeView2D /> -->
                 <!-- <StackPanel> -->
                 <!--     <cubeView2D:CubeView2DLed  -->
                 <!--         Foreground="Blue" -->
