@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using LedCube.Animator.Controls.LogAppender;
 using LedCube.Animator.Controls.MenuBar;
+using LedCube.Core;
 
 namespace LedCube.Animator.Controls.MainWindow;
 

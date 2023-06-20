@@ -2,25 +2,27 @@
 using System.Threading.Tasks;
 using Serilog;
 
-namespace LedCube.Animator.Settings;
+namespace LedCube.Core.Settings;
 
 public class SettingsProvider<T> : ISettingsProvider<T> where T : class, new()
 {
-
     public T Settings { get; private set; } = new T();
 
     private readonly SettingsLoader<T> _loader;
 
-    public SettingsProvider(string filename)
+    public SettingsProvider(string applicationName, string filename)
     {
-        _loader = new SettingsLoader<T>(filename);
-        Load();   
+        _loader = new SettingsLoader<T>(applicationName, filename);
     }
 
-    public void Load()
+    public void Load(T? defaultSettings = null)
     {
         try
         {
+            if (defaultSettings is not null && !_loader.Exists())
+            {
+                _loader.SaveSettings(defaultSettings);
+            }
             var settings = _loader.LoadSettings();
             if (settings is null)
             {
@@ -33,10 +35,14 @@ public class SettingsProvider<T> : ISettingsProvider<T> where T : class, new()
         }
     }
     
-    public async Task LoadSettingsAsync()
+    public async Task LoadSettingsAsync(T? defaultSettings = null)
     {
         try
         {
+            if (defaultSettings is not null && !_loader.Exists())
+            {
+                await _loader.SaveSettingsAsync(defaultSettings);   
+            }
             var settings = await _loader.LoadSettingsAsync().ConfigureAwait(false);
             if (settings is null)
             {

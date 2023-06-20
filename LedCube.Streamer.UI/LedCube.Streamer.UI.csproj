@@ -3,9 +3,9 @@
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
         <TargetFramework>net7.0-windows</TargetFramework>
-        <UseWPF>true</UseWPF>
         <Nullable>enable</Nullable>
-        
+        <UseWPF>true</UseWPF>
+        <LangVersion>latest</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>
@@ -28,33 +28,21 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Page Update="Controls\LogAppender\LogAppenderControl.xaml">
-        <Generator>MSBuild:Compile</Generator>
-      </Page>
+      <ProjectReference Include="..\LedCube.Core.UI\LedCube.Core.UI.csproj" />
+      <ProjectReference Include="..\LedCube.Core\LedCube.Core.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
       <Page Update="Controls\MainWindow\MainWindow.xaml">
         <Generator>MSBuild:Compile</Generator>
         <XamlRuntime>Wpf</XamlRuntime>
         <SubType>Designer</SubType>
       </Page>
+      <Page Update="Controls\MenuBar\MenuBar.xaml">
+        <Generator>MSBuild:Compile</Generator>
+        <XamlRuntime>Wpf</XamlRuntime>
+        <SubType>Designer</SubType>
+      </Page>
     </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Converter" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <None Remove="Fonts\Font-Awesome-6-Brands-Regular-400.otf" />
-      <None Remove="Fonts\Font-Awesome-6-Free-Regular-400.otf" />
-      <Resource Include="Fonts\Font-Awesome-6-Free-Regular-400.otf">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Resource>
-      <None Remove="Fonts\Font-Awesome-6-Free-Solid-900.otf" />
-      <Resource Include="Fonts\Font-Awesome-6-Free-Solid-900.otf">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Resource>
-    </ItemGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\..\LedCube.Core\LedCube.Core.csproj" />
-    </ItemGroup>
+    
 </Project>

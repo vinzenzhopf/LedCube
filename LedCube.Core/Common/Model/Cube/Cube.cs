@@ -1,57 +1,55 @@
-using LedCube.Core.Common.Model.Cube;
+using System.Drawing;
 
-namespace LedCube.Core.Common.Model
+namespace LedCube.Core.Common.Model.Cube;
+
+public class Cube<TLed> : ICube<TLed>
 {
-    public class Cube<TLed>
+    public Cube(int sizeX, int sizeY, int sizeZ)
     {
-        public int SizeX { get; }
-        public int SizeY { get; }
-        public int SizeZ { get; }
-        //public IPlane<TLed>[] Planes { get; set; }
+        SizeX = sizeX;
+        SizeY = sizeY;
+        SizeZ = sizeZ;
+        Count = sizeX * sizeY * sizeZ;
+        Leds = new ILed<TLed>[Count];
+        for (var i = 0; i < Count; i++)
+        {
+            Leds[i] = LedFactory.CreateInstance<TLed>();
+        }
     }
 
-    public interface ICube<TLed>
+    public int SizeX { get; }
+    public int SizeY { get; }
+    public int SizeZ { get; }
+    public int Count { get; }
+    public ILed<TLed>[] Leds { get; set; }
+
+    public ILed<TLed> GetLed(int x, int y, int z, Orientation3D orientation3D)
     {
-        int SizeX { get; }
-        int SizeY { get; }
-        int SizeZ { get; }
-        ILed<TLed>[] Leds { get; set; }
-        
-        // ILed<TLed> GetLed(int x, int y, int z)
-        // {
-        //     
-        // }
-        //
-        // IPLane<TLed> GetPlane(int z)
-        // {
-        //     
-        // }
+        throw new System.NotImplementedException();
     }
 
-    public interface IPLane<TLed>
+    public ILed<TLed> GetLed(int n, Orientation3D orientation3D)
     {
-        int SizeX { get; }
-        int SizeY { get; }
-        ILed<TLed>[] Leds { get; set; }
-
-        // ILed<TLed> GetLed(int x, int y)
-        // {
-        //     
-        // }
-        //
-        // IRow<TLed> GetRow(int y)
-        // {
-        //     
-        // }
+        throw new System.NotImplementedException();
     }
 
-    public interface IRow<TLed>
+    public IRow<TLed> GetRow(int x, int y, Orientation3D orientation3D)
     {
-        int SizeX { get; }
-        ILed<TLed>[] Leds { get; set; }
-        // ILed<TLed> GetLed(int x)
-        // {
-        //     
-        // }
+        throw new System.NotImplementedException();
+    }
+
+    public IRow<TLed> GetRow(int n, Orientation3D orientation3D)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public IPlane<TLed> GetPlane(int z, Orientation3D orientation3D)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public static ICube<TLed> Create(int sizeX, int sizeY, int sizeZ)
+    {
+        return new Cube<TLed>(sizeX, sizeY, sizeZ);
     }
 }

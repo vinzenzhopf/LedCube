@@ -2,24 +2,21 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
-using LedCube.Animator.Controls.LogAppender;
-using LedCube.Animator.Settings;
 using LedCube.Core;
 using LedCube.Core.Settings;
+using LedCube.Core.UI.Controls.CubeView2D;
+using LedCube.Core.UI.Controls.LogAppender;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
-using LogAppenderViewModel = LedCube.Animator.Controls.LogAppender.LogAppenderViewModel;
 
-namespace LedCube.Animator
+namespace LedCube.Streamer.UI
 {
     /// <summary>
     /// Interaction logic for App.xaml
@@ -60,9 +57,9 @@ namespace LedCube.Animator
             Log.Verbose("Logger initialized. Logging to {0}", logFile);
 
             //Initialize UserSettings
-            var settingsFile = _configurationRoot.GetValue<string>("SettingsFile") ?? "LedCube.Animator.json";
-            var settingsProvider = new SettingsProvider<LedCubeAnimatorSettings>("LedCube", settingsFile);
-            settingsProvider.Load();
+            var settingsFile = _configurationRoot.GetValue<string>("SettingsFile") ?? "LedCube.Streamer.json";
+            var settingsProvider = new SettingsProvider<LedCubeStreamerSettings>("LedCube", settingsFile);
+            settingsProvider.Load(LedCubeStreamerSettings.Default);
 
             var assembly = Assembly.GetExecutingAssembly();
             var appInfo = new AppInfo(
@@ -75,10 +72,10 @@ namespace LedCube.Animator
             var services = new ServiceCollection();
             services.AddSingleton(appInfo);
             services.AddSingleton<IConfiguration>(_configurationRoot);
-            services.AddSingleton<ISettingsProvider<LedCubeAnimatorSettings>>(settingsProvider);
-            services.AddSingleton<ISettings<LedCubeAnimatorSettings>>(settingsProvider);
+            services.AddSingleton<ISettingsProvider<LedCubeStreamerSettings>>(settingsProvider);
+            services.AddSingleton<ISettings<LedCubeStreamerSettings>>(settingsProvider);
             services.AddLogAppenderControlViewModel(logAppenderControlSink);
-            services.AddSingleton<NavigationController>();
+            // services.AddSingleton<NavigationController>();
             ConfigureServices(services);
             _serviceProvider = services.BuildServiceProvider();
             Log.Verbose("ServiceProvider built!");
@@ -96,8 +93,11 @@ namespace LedCube.Animator
             services.AddSingleton<Controls.MainWindow.MainWindow>();
             services.AddSingleton<Controls.MenuBar.MenuBarViewModel>();
             services.AddSingleton<Controls.MenuBar.MenuBar>();
-            services.AddTransient<Controls.SettingsWindow.SettingsViewModel>();
-            services.AddTransient<Controls.SettingsWindow.SettingsWindow>();
+            services.AddSingleton<CubeView2DViewModel>();
+            services.AddSingleton<CubeView2D>();
+            
+            // services.AddTransient<Controls.SettingsWindow.SettingsViewModel>();
+            // services.AddTransient<Controls.SettingsWindow.SettingsWindow>();
         }
         
         public static DateTime GetLinkerTime(Assembly? targetAssembly = null)

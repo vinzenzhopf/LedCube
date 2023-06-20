@@ -1,10 +1,12 @@
 using System.Drawing;
-using LedCube.Core.Common.Model.Cube;
 
-namespace LedCube.Core.Common.Model
+namespace LedCube.Core.Common.Model.Cube;
+
+public class RgbLed : ILed<Color>
 {
-    public class RgbLed : ILed<Color>
+    public Color Value { get; set; }
+    public static ILed<Color> Create()
     {
-        public Color Value { get; set; }
+        return new RgbLed();
     }
 }

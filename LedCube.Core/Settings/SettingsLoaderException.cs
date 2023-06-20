@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace LedCube.Animator.Settings;
+namespace LedCube.Core.Settings;
 
 public class SettingsLoaderException : Exception
 {

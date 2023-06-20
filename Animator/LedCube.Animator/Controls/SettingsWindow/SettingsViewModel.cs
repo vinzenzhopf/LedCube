@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using LedCube.Animator.Settings;
+using LedCube.Core.Settings;
 
 namespace LedCube.Animator.Controls.SettingsWindow;
 

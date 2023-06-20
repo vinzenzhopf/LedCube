@@ -1,9 +1,6 @@
-using LedCube.Core.Common.Model.Cube;
+namespace LedCube.Core.Common.Model.Cube;
 
-namespace LedCube.Core.Common.Model
+public class BiLed : ILed<bool>
 {
-    public class Led : ILed<bool>
-    {
-        public bool Value { get; set; }
-    }
+    public bool Value { get; set; }
 }

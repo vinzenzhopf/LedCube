@@ -2,11 +2,16 @@
 
     <PropertyGroup>
         <TargetFramework>net7.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <LangVersion>11</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>
       <Folder Include="FileStorage" />
-      <Folder Include="Streaming" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Serilog" Version="2.12.0" />
     </ItemGroup>
 
 </Project>

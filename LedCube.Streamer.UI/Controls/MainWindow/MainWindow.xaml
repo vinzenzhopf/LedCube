@@ -1,0 +1,84 @@
+﻿<mah:MetroWindow x:Class="LedCube.Streamer.UI.Controls.MainWindow.MainWindow"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+                 xmlns:logAppender="clr-namespace:LedCube.Core.UI.Controls.LogAppender;assembly=LedCube.Core.UI"
+                 xmlns:mainWindow="clr-namespace:LedCube.Streamer.UI.Controls.MainWindow"
+                 xmlns:menuBar="clr-namespace:LedCube.Streamer.UI.Controls.MenuBar"
+                 xmlns:cubeView2D="clr-namespace:LedCube.Core.UI.Controls.CubeView2D;assembly=LedCube.Core.UI"
+                 mc:Ignorable="d"
+                 Title="{Binding TitleText}" Height="600" Width="1000"
+                 d:DataContext="{d:DesignInstance mainWindow:MainViewModel, IsDesignTimeCreatable=True}">
+    <mah:MetroWindow.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </mah:MetroWindow.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" /><!-- Title Bar -->
+            <RowDefinition Height="*" /><!-- Content -->
+            <RowDefinition Height="Auto" /><!-- Info Footer -->
+        </Grid.RowDefinitions>
+        
+        <!-- Title Bar -->
+        <menuBar:MenuBar Grid.Row="0" DataContext="{Binding MenuBarViewModel}"/>
+        
+        <!-- Content -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="5" />
+                <ColumnDefinition Width="3*" />
+                <ColumnDefinition Width="5" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid Grid.Column="0">
+                <TextBox AcceptsReturn="True">Left Sidebar</TextBox>
+            </Grid>
+            <GridSplitter Grid.Column="1" VerticalAlignment="Stretch" ResizeBehavior="BasedOnAlignment" Width="5" />
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <TextBox Grid.Row="0" AcceptsReturn="True" Background="CornflowerBlue">This is the main 3d Content to show the Cube!</TextBox>
+                <Grid Grid.Row="1"
+                      Visibility="{Binding LogAppenderViewModel.ShowLog, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition Height="100"
+                                       MinHeight="30"
+                                       MaxHeight="1200" />
+                    </Grid.RowDefinitions>
+                    <GridSplitter Grid.Row="0" Height="5"
+                                  ResizeBehavior="CurrentAndNext" HorizontalAlignment="Stretch" />
+                    <logAppender:LogAppenderControl Grid.Row="1" DataContext="{Binding LogAppenderViewModel}" />
+                </Grid>
+            </Grid>
+            <GridSplitter Grid.Column="3" VerticalAlignment="Stretch" ResizeBehavior="BasedOnAlignment"  Width="5" />
+            <Grid Grid.Column="4">
+                <!-- <TextBox AcceptsReturn="True">Right Sidebar</TextBox> -->
+                <!-- <cubeView2D:CubeView2D DataContext="{Binding CubeView2DViewModel}" /> -->
+                <cubeView2D:CubeView2DGrid />
+                <!-- <StackPanel> -->
+                <!--     <cubeView2D:CubeView2DLed  -->
+                <!--         Foreground="Blue" -->
+                <!--         Size="20"  -->
+                <!--         IsChecked="True" /> -->
+                <!--     <cubeView2D:CubeView2DLed  -->
+                <!--         Foreground="Blue" -->
+                <!--         Size="20"  -->
+                <!--         IsChecked="False" /> -->
+                <!-- </StackPanel> -->
+            </Grid>
+        </Grid>
+        
+        <!-- Info Footer -->
+        <StatusBar Grid.Row="2">
+            <StatusBarItem Content="{Binding BuildInfo}" />
+            <Separator Style="{StaticResource MahApps.Styles.Separator.StatusBar}" />
+            <StatusBarItem Content="{Binding BuildInfoDebug}" />
+        </StatusBar>
+    </Grid>
+</mah:MetroWindow>
