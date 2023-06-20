@@ -1,4 +1,4 @@
-namespace LedCube.Core.Common.Model
+namespace LedCube.Core.Common.Model.Cube
 {
     public interface ILed<T>
     {
