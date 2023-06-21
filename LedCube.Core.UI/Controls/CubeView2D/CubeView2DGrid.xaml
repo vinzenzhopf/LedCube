@@ -12,6 +12,8 @@
             <Setter Property="FontSize" Value="10" />
             <Setter Property="TextAlignment" Value="Center" />
             <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="MinWidth" Value="10" />
+            <Setter Property="MinHeight" Value="10" />
         </Style>
     </UserControl.Resources>
 </UserControl>
