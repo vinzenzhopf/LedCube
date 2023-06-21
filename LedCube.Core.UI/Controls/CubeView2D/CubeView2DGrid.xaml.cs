@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using CommunityToolkit.Mvvm.ComponentModel;
 using LedCube.Core.Common.Model.Cube;
+using LedCube.Core.UI.Controls.ViewModels;
 using Serilog;
 using Point = System.Windows.Point;
 using Rectangle = System.Windows.Shapes.Rectangle;
@@ -64,7 +65,7 @@ public partial class CubeView2DGrid : UserControl
         (d as CubeView2DGrid)?.OnShowNumbersChanged(e);
 
     public static readonly DependencyProperty PlaneDataProperty = DependencyProperty.Register(
-        nameof(PlaneData), typeof(IPlane<BiLed>), typeof(CubeView2DGrid),
+        nameof(PlaneData), typeof(PlaneViewModel), typeof(CubeView2DGrid),
         new FrameworkPropertyMetadata(null));
     
     private static void OnPlaneDataChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) => 
@@ -107,8 +108,8 @@ public partial class CubeView2DGrid : UserControl
         set => SetValue(ShowNumbersProperty, value);
     }
     
-    public IPlane<BiLed>? PlaneData{
-        get => (IPlane<BiLed>?)GetValue(PlaneDataProperty);
+    public PlaneViewModel? PlaneData{
+        get => (PlaneViewModel?)GetValue(PlaneDataProperty);
         set => SetValue(PlaneDataProperty, value);
     }
 
@@ -152,10 +153,10 @@ public partial class CubeView2DGrid : UserControl
         Grid.SetColumn(_ledGrid, 1);
         _numbersGrid = new[]
         {
-            new UniformGrid() {Rows = 1, Background = Brushes.DarkGray}, //Top
-            new UniformGrid() {Rows = 1, Background = Brushes.DarkGray}, //Bottom
-            new UniformGrid() {Columns = 1, Background = Brushes.DarkGray}, //Left
-            new UniformGrid() {Columns = 1, Background = Brushes.DarkGray} //Right
+            new UniformGrid() {Rows = 1}, //Top
+            new UniformGrid() {Rows = 1}, //Bottom
+            new UniformGrid() {Columns = 1}, //Left
+            new UniformGrid() {Columns = 1} //Right
         };
         _innerGrid.Children.Add(_numbersGrid[0]);
         _innerGrid.Children.Add(_numbersGrid[1]);
@@ -218,9 +219,28 @@ public partial class CubeView2DGrid : UserControl
         }
     }
     
-    private void OnPlaneDataChanged(DependencyPropertyChangedEventArgs dependencyPropertyChangedEventArgs)
+    private void OnPlaneDataChanged(DependencyPropertyChangedEventArgs e)
     {
-        
+        if (e.OldValue is PlaneViewModel oldVm)
+        {
+            oldVm.LedChanged -= OnVmLedChanged;
+            oldVm.PlaneChanged -= OnVmPLaneChanged;
+        }
+        if (e.NewValue is PlaneViewModel newVm)
+        {
+            newVm.LedChanged += OnVmLedChanged;
+            newVm.PlaneChanged += OnVmPLaneChanged;
+        }
+    }
+
+    private void OnVmLedChanged(int index, bool value)
+    {
+        throw new NotImplementedException();
+    }
+
+    private void OnVmPLaneChanged(IPlane<BiLed>? data)
+    {
+        throw new NotImplementedException();
     }
 
     private void CreateGridNumbers()
@@ -316,9 +336,14 @@ public partial class CubeView2DGrid : UserControl
         HandleLedChanged(led.Index, false);
     }
 
-    private void HandleLedChanged(int index, bool? value)
+    private void HandleLedChanged(int index, bool value)
     {
         Log.Information("LED with index {0} changed to {1}", index, value);
+        if (PlaneData is not PlaneViewModel vm)
+        {
+            return;
+        }
+        vm.ChangeLed(index, value);
     }
     
     private void RecalculateSize()
