@@ -5,32 +5,35 @@ using LedCube.Core.Common.Model.Cube;
 
 namespace LedCube.Core.UI.Controls.ViewModels;
 
-
-[ObservableObject]
-public partial class PlaneViewModel
+public partial class PlaneViewModel : ObservableObject, IPlaneViewModel
 {
-    private IPlane<BiLed>? _data;
+    public event IPlaneViewModel.LedChangedArgs? LedChanged;
+    public event IPlaneViewModel.PlaneChangedArgs? PlaneChanged;
+
+    [ObservableProperty]
+    private IPlaneData _planeData;
     
-    public delegate void LedChangedArgs(int index, bool value); 
-    public event LedChangedArgs? LedChanged;
-    
-    public delegate void PlaneChangedArgs(IPlane<BiLed>? data); 
-    public event PlaneChangedArgs? PlaneChanged;
-    
-    public void ChangeLed(int index, bool value)
+    public void SetLed(int index, bool? value)
     {
         
     }
+    
+    protected virtual void OnLedChanged(int index, bool value)
+    {
+        LedChanged?.Invoke(index, value);
+    }
 
-    // [RelayCommand]
-    // void LedChanged(int index, bool value)
-    // {
-    //     
-    // }
-    //
-    // [RelayCommand]
-    // void PlaneChanged(IPlane<BiLed> data)
-    // {
-    //     
-    // }
+    protected virtual void OnPlaneChanged(IPlaneData data)
+    {
+        PlaneChanged?.Invoke(data);
+    }
+
+    public bool? GetLed(int index)
+    {
+        if (PlaneData.GetLed(0).GetType() != typeof(bool))
+        {
+            return false;
+        }
+        return ((IPlaneData<bool>) PlaneData).GetLed(index);
+    }
 }

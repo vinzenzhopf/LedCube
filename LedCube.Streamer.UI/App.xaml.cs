@@ -9,12 +9,16 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using LedCube.Core;
+using LedCube.Core.Common.Config;
+using LedCube.Core.CubeData.Repository;
 using LedCube.Core.Settings;
 using LedCube.Core.UI.Controls.CubeView2D;
 using LedCube.Core.UI.Controls.LogAppender;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Serilog;
+using Serilog.Extensions.Logging;
 
 namespace LedCube.Streamer.UI
 {
@@ -46,7 +50,7 @@ namespace LedCube.Streamer.UI
             //Initialize Logger
             var logFile = _configurationRoot.GetValue<string>("LogFile") ?? "LedCube.Animator.log";
             var logAppenderControlSink = new LogAppenderControlSink();
-            Log.Logger = new LoggerConfiguration()
+            var logger = new LoggerConfiguration()
                 .Enrich.WithThreadId()
                 .Enrich.FromLogContext()
                 .MinimumLevel.Verbose()
@@ -54,6 +58,9 @@ namespace LedCube.Streamer.UI
                 .WriteTo.Debug()
                 .WriteTo.LogAppenderControlSink(logAppenderControlSink)
                 .CreateLogger();
+            Log.Logger = logger;
+            var loggerFactory = new SerilogLoggerFactory(logger, true);
+            
             Log.Verbose("Logger initialized. Logging to {0}", logFile);
 
             //Initialize UserSettings
@@ -71,9 +78,11 @@ namespace LedCube.Streamer.UI
             //Build Service Collection
             var services = new ServiceCollection();
             services.AddSingleton(appInfo);
+            services.AddSingleton<ILoggerFactory>(loggerFactory);
             services.AddSingleton<IConfiguration>(_configurationRoot);
             services.AddSingleton<ISettingsProvider<LedCubeStreamerSettings>>(settingsProvider);
             services.AddSingleton<ISettings<LedCubeStreamerSettings>>(settingsProvider);
+            services.AddSingleton<ICubeConfigRepository>(settingsProvider.Settings);
             services.AddLogAppenderControlViewModel(logAppenderControlSink);
             // services.AddSingleton<NavigationController>();
             ConfigureServices(services);
@@ -89,6 +98,7 @@ namespace LedCube.Streamer.UI
         
         private void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<ICubeRepository, CubeRepository>();
             services.AddSingleton<Controls.MainWindow.MainViewModel>();
             services.AddSingleton<Controls.MainWindow.MainWindow>();
             services.AddSingleton<Controls.MenuBar.MenuBarViewModel>();
