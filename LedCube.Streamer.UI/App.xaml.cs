@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using LedCube.Core;
+using LedCube.Core.CubeData.Repository;
 using LedCube.Core.Settings;
 using LedCube.Core.UI.Controls.CubeView2D;
 using LedCube.Core.UI.Controls.LogAppender;
@@ -89,11 +90,12 @@ namespace LedCube.Streamer.UI
         
         private void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<ICubeRepository, CubeRepository>();
             services.AddSingleton<Controls.MainWindow.MainViewModel>();
             services.AddSingleton<Controls.MainWindow.MainWindow>();
             services.AddSingleton<Controls.MenuBar.MenuBarViewModel>();
             services.AddSingleton<Controls.MenuBar.MenuBar>();
-            services.AddSingleton<CubeView2DViewModel>();
+            // services.AddSingleton<CubeView2DViewModel>();
             services.AddSingleton<CubeView2D>();
             
             // services.AddTransient<Controls.SettingsWindow.SettingsViewModel>();

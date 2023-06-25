@@ -3,17 +3,26 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
              xmlns:local="clr-namespace:LedCube.Core.UI.Controls.CubeView2D"
              xmlns:ui="clr-namespace:LedCube.Core.UI"
              xmlns:converters="clr-namespace:LedCube.Core.UI.Converters"
+             xmlns:cube="clr-namespace:LedCube.Core.Common.Model.Cube;assembly=LedCube.Core"
              mc:Ignorable="d"
              DataContext="{Binding RelativeSource={RelativeSource Self}}"
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="500" d:DesignWidth="400">
     <UserControl.Resources>
         <!-- <Style x:Key="NumberGridTextStyle" TargetType="TextBlock"> -->
         <!--     <Setter Property="FontSize" Value="10" /> -->
         <!-- </Style> -->
         <converters:IntToDoubleConverter x:Key="intToDoubleConverter" />
+        <ObjectDataProvider x:Key="OrientationEnumProvider"
+                            MethodName="GetValues"
+                            ObjectType="{x:Type cube:Orientation3D}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="cube:Orientation3D" />
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
     </UserControl.Resources>
     <DockPanel>
         <StackPanel DockPanel.Dock="Top">
@@ -36,9 +45,99 @@
             </DockPanel>
             <Label>Plane:</Label>
         </StackPanel>
-        <local:CubeView2DGrid
-            GridWidth="{Binding GridWidth,RelativeSource={RelativeSource AncestorType=UserControl}}"
-            GridHeight="{Binding Path=GridHeight,RelativeSource={RelativeSource AncestorType=UserControl}}"
-        />
+        <DockPanel>
+            <Grid DockPanel.Dock="Top">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <ComboBox Margin="2" 
+                          ItemsSource="{Binding Source={StaticResource OrientationEnumProvider}}"
+                          SelectedValue="{Binding ViewDirection}"
+                          Style="{DynamicResource MahApps.Styles.ComboBox}"
+                          mah:TextBoxHelper.UseFloatingWatermark="True"
+                          mah:TextBoxHelper.Watermark="Orientation"
+                          SelectedIndex="0"/>
+                <Button Grid.Column="1"
+                        Content="Clear" 
+                        Margin="2"
+                        Command="{Binding ClearPlane}"
+                        Style="{DynamicResource MahApps.Styles.Button.Square}" />
+                <Button Grid.Column="2"
+                        Content="Set"
+                        Margin="2"
+                        Command="{Binding SetPlane}"
+                        Style="{DynamicResource MahApps.Styles.Button.Square}" />
+                <Button Grid.Column="3"
+                        Content="Toggle"
+                        Margin="2"
+                        Command="{Binding TogglePlane}"
+                        Style="{DynamicResource MahApps.Styles.Button.Square}" />
+            </Grid>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <StackPanel Grid.Column="0"
+                            Margin="2"
+                            VerticalAlignment="Center">
+                    <Label DockPanel.Dock="Top"
+                           Content="Plane" />
+                    <ListBox DockPanel.Dock="Top"
+                             MinWidth="60"
+                             mah:MultiSelectorHelper.SelectedItems="{Binding SelectedPlanes,RelativeSource={RelativeSource AncestorType=UserControl}}"
+                             Style="{StaticResource MahApps.Styles.ListBox.Virtualized}"
+                             ItemsSource="{Binding AllPlanes}"
+                             SelectionMode="Extended"
+                             BorderThickness="1"
+                             d:DesignHeight="250">
+                        <ListBox.ItemContainerStyle>
+                            <Style BasedOn="{StaticResource MahApps.Styles.ListBoxItem}" TargetType="{x:Type ListBoxItem}">
+                                <Setter Property="BorderBrush" Value="{StaticResource MahApps.Brushes.Gray1}" />
+                                <Setter Property="BorderThickness" Value="1" />
+                                <Setter Property="Margin" Value="2" />
+                                <!-- <Setter Property="mah:ControlsHelper.CornerRadius" Value="4" /> -->
+                                <Setter Property="mah:ItemHelper.ActiveSelectionBorderBrush" Value="{StaticResource MahApps.Brushes.Gray2}" />
+                                <Setter Property="mah:ItemHelper.HoverBorderBrush" Value="{StaticResource MahApps.Brushes.Gray1}" />
+                                <Setter Property="mah:ItemHelper.HoverSelectedBorderBrush" Value="{StaticResource MahApps.Brushes.Gray2}" />
+                                <Setter Property="mah:ItemHelper.MouseLeftButtonPressedBackgroundBrush" Value="Coral" />
+                                <Setter Property="mah:ItemHelper.MouseLeftButtonPressedForegroundBrush" Value="Black" />
+                                <Setter Property="mah:ItemHelper.MouseRightButtonPressedBackgroundBrush" Value="DarkOliveGreen" />
+                                <Setter Property="mah:ItemHelper.MouseRightButtonPressedForegroundBrush" Value="White" />
+                                <Setter Property="mah:ItemHelper.SelectedBorderBrush" Value="{StaticResource MahApps.Brushes.Gray1}" />
+                                <Style.Triggers>
+                                    <Trigger Property="ItemsControl.AlternationIndex" Value="0">
+                                        <Setter Property="Background" Value="{DynamicResource MahApps.Brushes.Gray10}" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+                        <!-- <ListBox.ItemTemplate> -->
+                        <!--     <DataTemplate> -->
+                        <!--         <Grid Margin="0,2"> -->
+                        <!--             <Grid.ColumnDefinitions> -->
+                        <!--                 <ColumnDefinition Width="*" /> -->
+                        <!--                 <ColumnDefinition Width="100" /> -->
+                        <!--             </Grid.ColumnDefinitions> -->
+                        <!--             <TextBlock Text="{Binding Title}" /> -->
+                        <!--             <ProgressBar Grid.Column="1" Minimum="0" Maximum="100" Value="{Binding Completion}" /> -->
+                        <!--         </Grid> -->
+                        <!--     </DataTemplate> -->
+                        <!-- </ListBox.ItemTemplate> -->
+                    </ListBox>
+                </StackPanel>
+                <local:CubeView2DGrid Grid.Column="1"
+                    GridWidth="{Binding GridWidth,RelativeSource={RelativeSource AncestorType=UserControl}}"
+                    GridHeight="{Binding Path=GridHeight,RelativeSource={RelativeSource AncestorType=UserControl}}"
+                />
+            </Grid>
+        </DockPanel>
     </DockPanel>
 </UserControl>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Net;
@@ -191,6 +192,7 @@ public partial class CubeView2DGrid : UserControl
         InitializeComponent();
         CreateGridNumbers();
         CreateGrid();
+        UpdateLedStatus();
         
         //Finally add everything to the outer grid and content.
         _grid.Children.Add(_innerGrid);
@@ -209,8 +211,21 @@ public partial class CubeView2DGrid : UserControl
         CreateGrid();
         CreateGridNumbers();
         RecalculateSize();
+        UpdateLedStatus();
     }
-    
+
+    private void UpdateLedStatus()
+    {
+        if (PlaneData is not PlaneViewModel vm)
+        {
+            return;
+        }
+        for (var index = 0; index < _leds.Count; index++)
+        {
+            _leds[index].IsChecked = vm.GetLed(index);
+        }
+    }
+
     private void OnLedBrushChanged(DependencyPropertyChangedEventArgs e)
     {
         foreach (var led in _leds)
@@ -224,23 +239,26 @@ public partial class CubeView2DGrid : UserControl
         if (e.OldValue is PlaneViewModel oldVm)
         {
             oldVm.LedChanged -= OnVmLedChanged;
-            oldVm.PlaneChanged -= OnVmPLaneChanged;
+            oldVm.PlaneChanged -= OnVmPlaneChanged;
         }
         if (e.NewValue is PlaneViewModel newVm)
         {
             newVm.LedChanged += OnVmLedChanged;
-            newVm.PlaneChanged += OnVmPLaneChanged;
+            newVm.PlaneChanged += OnVmPlaneChanged;
         }
     }
 
-    private void OnVmLedChanged(int index, bool value)
+    private void OnVmLedChanged(int index, bool? value)
     {
-        throw new NotImplementedException();
+        Application.Current.Dispatcher.Invoke(() =>
+        {
+            _leds[index].IsChecked = value;
+        });
     }
 
-    private void OnVmPLaneChanged(IPlane<BiLed>? data)
+    private void OnVmPlaneChanged(IPlaneData data)
     {
-        throw new NotImplementedException();
+        UpdateLedStatus();
     }
 
     private void CreateGridNumbers()
@@ -343,7 +361,7 @@ public partial class CubeView2DGrid : UserControl
         {
             return;
         }
-        vm.ChangeLed(index, value);
+        if (value) vm.SetLed(index, value);
     }
     
     private void RecalculateSize()
