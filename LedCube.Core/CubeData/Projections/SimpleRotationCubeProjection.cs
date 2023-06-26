@@ -64,7 +64,7 @@ public class SimpleRotationCubeProjection : ICubeData
     
     private Point3D ProjectPoint(Point3D p)
     {
-        var max = Data.Size - 1;
+        var max = Size - 1;
         var p2 = Rotation switch
         {
             Orientation3D.Front => new Point3D(p.X, p.Y, p.Z),
@@ -100,13 +100,13 @@ public class SimpleRotationCubeProjection : ICubeData
         {
             case Orientation3D.Top: 
             case Orientation3D.Bottom:
-                return new Point3D(p.X, p.Y, p.Z);
+                return new Point3D(p.X, p.Z, p.Y);
             case Orientation3D.Front:
             case Orientation3D.Back:
-                return new Point3D(p.X, p.Z, p.Y);
+                return new Point3D(p.X, p.Y, p.Z);
             case Orientation3D.Right:
             case Orientation3D.Left:
-                return new Point3D(p.Z, p.Y, p.X);
+                return new Point3D(p.Y, p.X, p.Z);
             default:
                 throw new ArgumentException("Undefined Orientation", nameof(Rotation));
         };

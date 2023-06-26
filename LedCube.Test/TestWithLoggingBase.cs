@@ -3,12 +3,15 @@ using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Extensions.Logging;
 using Xunit.Abstractions;
+using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace LedCube.Test;
 
 public abstract class TestWithLoggingBase : IDisposable
 {
     private readonly SerilogLoggerFactory _loggerFactory;
+
+    protected ILogger Logger { get; }
 
     protected ILoggerFactory LoggerFactory => _loggerFactory;
 
@@ -19,8 +22,8 @@ public abstract class TestWithLoggingBase : IDisposable
             .WriteTo.TestOutput(output)
             .MinimumLevel.Debug()
             .CreateLogger();
-        Log.Logger = logger;
         _loggerFactory = new SerilogLoggerFactory(logger, true);
+        Logger = _loggerFactory.CreateLogger(GetType());
     }
     
     public virtual void Dispose()

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using LedCube.Core.Common.Model;
 using LedCube.Core.CubeData;
+using Microsoft.Extensions.Logging;
 using Serilog;
 using Xunit;
 using Xunit.Abstractions;
@@ -72,7 +73,7 @@ public abstract class CubeProjectionTestBase : TestWithLoggingBase
         for (var i = 0; i < testPoints.Count; i++)
         {
             var testPoint = testPoints[i];
-            Log.Information("Setting Point: {0}={1}", i, testPoint);
+            Logger.LogInformation("Setting Point: {number}={point}", i, testPoint);
             Assert.False(Sut.GetLed(testPoint));
             Sut.SetLed(testPoint, true);
             Assert.True(Sut.GetLed(testPoint));
@@ -82,7 +83,7 @@ public abstract class CubeProjectionTestBase : TestWithLoggingBase
         for (var i = testPoints.Count-1; i >= 0; i--)
         {
             var testPoint = testPoints[i];
-            Log.Information("Clearing Point: {0}={1}", i, testPoint);
+            Logger.LogInformation("Clearing Point: {number}={point}", i, testPoint);
             Assert.True(Sut.GetLed(testPoint));
             Sut.SetLed(testPoint, false);
             Assert.False(Sut.GetLed(testPoint));
@@ -106,7 +107,7 @@ public abstract class CubeProjectionTestBase : TestWithLoggingBase
         for (var i = 0; i < testPoints.Count; i++)
         {
             var testPoint = testPoints[i];
-            Log.Information("Testing Point: {0}={1}", i, testPoint);
+            Logger.LogInformation("Testing Point: {number}={point}", i, testPoint);
             Assert.ThrowsAny<Exception>(() => Sut.GetLed(testPoint));
             Assert.ThrowsAny<Exception>(() => Sut.SetLed(testPoint, true));
         }
@@ -134,7 +135,7 @@ public abstract class CubeProjectionTestBase : TestWithLoggingBase
         Tuple<Point3D, bool>? eventData = null;
         void OnLedChanged(Point3D point3D, bool value)
         {
-            Log.Debug("Receiving event for Point: {0} Value: {1}", point3D, value);
+            Logger.LogDebug("Receiving event for Point: {point} Value: {value}", point3D, value);
             eventData = new Tuple<Point3D, bool>(point3D, value);
         }
         void AssertLedChangeTriggered(Point3D point3D, bool value)
@@ -149,7 +150,7 @@ public abstract class CubeProjectionTestBase : TestWithLoggingBase
             var testPoint = testPoints[i];
             eventData = null;
             const bool ledData = true;
-            Log.Information("Setting Point: {0}={1}", i, testPoint);
+            Logger.LogInformation("Setting Point: {number}={point}", i, testPoint);
             Sut.SetLed(testPoint, ledData);
             AssertLedChangeTriggered(testPoint, ledData);
         }
@@ -158,7 +159,7 @@ public abstract class CubeProjectionTestBase : TestWithLoggingBase
             var testPoint = testPoints[i];
             eventData = null;
             const bool ledData = false;
-            Log.Information("Clearing Point: {0}={1}", i, testPoint);
+            Logger.LogInformation("Clearing Point: {number}={point}", i, testPoint);
             Sut.SetLed(testPoint, ledData);
             AssertLedChangeTriggered(testPoint, ledData);
         }
@@ -181,7 +182,7 @@ public abstract class CubeProjectionTestBase : TestWithLoggingBase
         Tuple<Point3D, bool>? eventData = null;
         void OnLedChanged(Point3D point3D, bool value)
         {
-            Log.Debug("Receiving event for Point: {0} Value: {1}", point3D, value);
+            Logger.LogDebug("Receiving event for Point: {point} Value: {value}", point3D, value);
             eventData = new Tuple<Point3D, bool>(point3D, value);
         }
         void AssertLedChangeTriggered(Point3D point3D, bool value)
@@ -196,24 +197,24 @@ public abstract class CubeProjectionTestBase : TestWithLoggingBase
             var testPoint = testPoints[i];
             
             eventData = null;
-            Log.Information("Clearing Point: {0}={1}", i, testPoint);
+            Logger.LogInformation("Clearing Point: {number}={point}", i, testPoint);
             Sut.SetLed(testPoint, false);
             //Assume no retrigger when value is already set.
             Assert.Null(eventData);
 
             eventData = null;
-            Log.Information("Setting Point: {0}={1}", i, testPoint);
+            Logger.LogInformation("Setting Point: {number}={point}", i, testPoint);
             Sut.SetLed(testPoint, true);
             AssertLedChangeTriggered(testPoint, true);
             
             eventData = null;
-            Log.Information("Setting Point: {0}={1}", i, testPoint);
+            Logger.LogInformation("Setting Point: {number}={point}", i, testPoint);
             Sut.SetLed(testPoint, true);
             //Assume no retrigger when value is already set.
             Assert.Null(eventData);
             
             eventData = null;
-            Log.Information("Clearing Point: {0}={1}", i, testPoint);
+            Logger.LogInformation("Clearing Point: {number}={point}", i, testPoint);
             Sut.SetLed(testPoint, false);
             AssertLedChangeTriggered(testPoint, false);
         }
