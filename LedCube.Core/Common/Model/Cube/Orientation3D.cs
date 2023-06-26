@@ -9,3 +9,10 @@ public enum Orientation3D
     Left    = 0b110, //6
     Bottom  = 0b111  //7
 }
+
+public enum Plane
+{
+    XY,
+    XZ,
+    YZ
+}

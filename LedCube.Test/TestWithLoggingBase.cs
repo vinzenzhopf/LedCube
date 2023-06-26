@@ -7,7 +7,7 @@ using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace LedCube.Test;
 
-public abstract class TestWithLoggingBase : IDisposable
+public abstract partial class TestWithLoggingBase : IDisposable
 {
     private readonly SerilogLoggerFactory _loggerFactory;
 
@@ -15,11 +15,15 @@ public abstract class TestWithLoggingBase : IDisposable
 
     protected ILoggerFactory LoggerFactory => _loggerFactory;
 
+
+    [LoggerMessage(0, LogLevel.Debug, "Foo Bar {Baz}")]
+    private partial void LogFooBar(string baz);
+    
     protected TestWithLoggingBase(ITestOutputHelper output)
     {
         var logger = new LoggerConfiguration()
             .Enrich.FromLogContext()
-            .WriteTo.TestOutput(output)
+            .WriteTo.TestOutput(output, outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] [{SourceContext}] {Message:lj}{NewLine}{Exception}")
             .MinimumLevel.Debug()
             .CreateLogger();
         _loggerFactory = new SerilogLoggerFactory(logger, true);

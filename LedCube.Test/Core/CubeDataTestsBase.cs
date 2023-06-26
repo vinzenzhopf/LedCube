@@ -43,6 +43,9 @@ public abstract class CubeDataTestsBase : TestWithLoggingBase
         var sut = new CubeData(CubeSize);
         
         Assert.Equal(CubeSize, sut.Size);
+
+        var logger = LoggerFactory.CreateLogger(GetType());
+        logger.LogDebug("Test {Size}", sut.Size);
     }
 
     [Fact]
