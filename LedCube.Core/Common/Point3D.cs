@@ -35,8 +35,11 @@ public readonly struct Point3D : IEquatable<Point3D>
     public int ElementProduct => X * Y * Z;
 
     public static Point3D operator +(Point3D pt, Point3D sz) => Add(pt, sz);
+    public static Point3D operator +(Point3D pt, int sz) => Add(pt, sz);
     
     public static Point3D operator -(Point3D pt, Point3D sz) => Subtract(pt, sz);
+    
+    public static Point3D operator -(Point3D pt, int sz) => Subtract(pt, sz);
     
     public static bool operator ==(Point3D left, Point3D right) => left.X == right.X && left.Y == right.Y && left.Z == right.Z;
 
@@ -67,7 +70,9 @@ public readonly struct Point3D : IEquatable<Point3D>
         p.Z >= min.Z && p.Z < max.Z;
 
     public static Point3D Add(Point3D pt, Point3D sz) => new Point3D(unchecked(pt.X + sz.X), unchecked(pt.Y + sz.Y), unchecked(pt.Z + sz.Z));
+    public static Point3D Add(Point3D pt, int sz) => new Point3D(unchecked(pt.X + sz), unchecked(pt.Y + sz), unchecked(pt.Z + sz));
     public static Point3D Subtract(Point3D pt, Point3D sz) => new Point3D(unchecked(pt.X - sz.X), unchecked(pt.Y - sz.Y), unchecked(pt.Z - sz.Z));
+    public static Point3D Subtract(Point3D pt, int sz) => new Point3D(unchecked(pt.X - sz), unchecked(pt.Y - sz), unchecked(pt.Z - sz));
 
     public readonly override bool Equals([NotNullWhen(true)] object? obj)
     {
