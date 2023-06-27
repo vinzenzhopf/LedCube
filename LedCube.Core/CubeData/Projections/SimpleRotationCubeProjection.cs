@@ -9,21 +9,29 @@ namespace LedCube.Core.CubeData.Projections;
 
 public class SimpleRotationCubeProjection : ICubeData
 {
+    private Orientation3D _rotation;
+    
     public ICubeData Data { get; }
-    public Orientation3D Rotation { get; }
+
+    public Orientation3D Rotation
+    {
+        get => _rotation;
+        set
+        {
+            _rotation = value;
+            OnCubeChanged(this);
+        }
+    }
     public Point3D Size => ProjectSize(Data.Size);
     
     public event LedChangedArgs? LedChanged;
-    public event CubeChangedArgs? CubeChanged
-    {
-        add => Data.CubeChanged += value;
-        remove => Data.CubeChanged -= value;
-    }
+    public event CubeChangedArgs? CubeChanged;
     
     public SimpleRotationCubeProjection(ICubeData cubeData, Orientation3D rotation)
     {
         Data = cubeData;
         Data.LedChanged += OnDataLedChangeTriggered;
+        Data.CubeChanged += OnDataCubeChangeTriggered;
         Rotation = rotation;
     }
 
@@ -31,10 +39,20 @@ public class SimpleRotationCubeProjection : ICubeData
     {
         OnLedChanged(ProjectBackPoint(p), value);
     }
+
+    private void OnDataCubeChangeTriggered(ICubeData cubeData)
+    {
+        OnCubeChanged(this);
+    }
     
     protected virtual void OnLedChanged(Point3D p, bool value)
     {
         LedChanged?.Invoke(p, value);
+    }
+    
+    protected virtual void OnCubeChanged(ICubeData cubeData)
+    {
+        CubeChanged?.Invoke(cubeData);
     }
 
     public bool GetLed(Point3D p)

@@ -14,17 +14,7 @@ public interface ICubeData
     public event CubeChangedArgs? CubeChanged;
     public event LedChangedArgs? LedChanged;
 
-    public bool GetLed(int index)
-    {
-        return GetLed(IndexToCoordinates(Size, index));
-    }
-
     public bool GetLed(Point3D p);
-
-    public void SetLed(int index, bool value)
-    {
-        SetLed(IndexToCoordinates(Size, index), value);
-    }
 
     public void SetLed(Point3D p, bool value);
     

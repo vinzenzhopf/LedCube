@@ -1,18 +1,12 @@
 ﻿using System;
-using System.CodeDom;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Net;
-using System.Security.Cryptography.Pkcs;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Shapes;
-using CommunityToolkit.Mvvm.ComponentModel;
-using LedCube.Core.Common.Model.Cube;
-using LedCube.Core.UI.Controls.ViewModels;
+using LedCube.Core.Common.Model;
+using LedCube.Core.CubeData;
 using Serilog;
 using Point = System.Windows.Point;
 using Rectangle = System.Windows.Shapes.Rectangle;
@@ -66,7 +60,7 @@ public partial class CubeView2DGrid : UserControl
         (d as CubeView2DGrid)?.OnShowNumbersChanged(e);
 
     public static readonly DependencyProperty PlaneDataProperty = DependencyProperty.Register(
-        nameof(PlaneData), typeof(PlaneViewModel), typeof(CubeView2DGrid),
+        nameof(PlaneData), typeof(IPlaneData), typeof(CubeView2DGrid),
         new FrameworkPropertyMetadata(null));
     
     private static void OnPlaneDataChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) => 
@@ -109,8 +103,8 @@ public partial class CubeView2DGrid : UserControl
         set => SetValue(ShowNumbersProperty, value);
     }
     
-    public PlaneViewModel? PlaneData{
-        get => (PlaneViewModel?)GetValue(PlaneDataProperty);
+    public IPlaneData? PlaneData{
+        get => (IPlaneData?)GetValue(PlaneDataProperty);
         set => SetValue(PlaneDataProperty, value);
     }
 
@@ -216,7 +210,7 @@ public partial class CubeView2DGrid : UserControl
 
     private void UpdateLedStatus()
     {
-        if (PlaneData is not PlaneViewModel vm)
+        if (PlaneData is not IPlaneData vm)
         {
             return;
         }
@@ -236,27 +230,28 @@ public partial class CubeView2DGrid : UserControl
     
     private void OnPlaneDataChanged(DependencyPropertyChangedEventArgs e)
     {
-        if (e.OldValue is PlaneViewModel oldVm)
+        if (e.OldValue is IPlaneData oldVm)
         {
-            oldVm.LedChanged -= OnVmLedChanged;
-            oldVm.PlaneChanged -= OnVmPlaneChanged;
+            oldVm.LedChanged -= OnDataLedChanged;
+            oldVm.PlaneChanged -= OnDataPlaneChanged;
         }
-        if (e.NewValue is PlaneViewModel newVm)
+        if (e.NewValue is IPlaneData newVm)
         {
-            newVm.LedChanged += OnVmLedChanged;
-            newVm.PlaneChanged += OnVmPlaneChanged;
+            newVm.LedChanged += OnDataLedChanged;
+            newVm.PlaneChanged += OnDataPlaneChanged;
         }
     }
 
-    private void OnVmLedChanged(int index, bool? value)
+    private void OnDataLedChanged(Point2D led, bool value)
     {
+        var index = led.Y * GridWidth + led.X;
         Application.Current.Dispatcher.Invoke(() =>
         {
             _leds[index].IsChecked = value;
         });
     }
 
-    private void OnVmPlaneChanged(IPlaneData data)
+    private void OnDataPlaneChanged(IPlaneData data)
     {
         UpdateLedStatus();
     }
@@ -357,7 +352,7 @@ public partial class CubeView2DGrid : UserControl
     private void HandleLedChanged(int index, bool value)
     {
         Log.Information("LED with index {0} changed to {1}", index, value);
-        if (PlaneData is not PlaneViewModel vm)
+        if (PlaneData is not IPlaneData vm)
         {
             return;
         }
