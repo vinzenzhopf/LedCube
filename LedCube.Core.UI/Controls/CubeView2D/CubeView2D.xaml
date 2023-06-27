@@ -89,17 +89,21 @@
                            Content="Plane" />
                     <ListBox DockPanel.Dock="Top"
                              MinWidth="60"
-                             mah:MultiSelectorHelper.SelectedItems="{Binding SelectedPlanes,RelativeSource={RelativeSource AncestorType=UserControl}}"
                              Style="{StaticResource MahApps.Styles.ListBox.Virtualized}"
                              ItemsSource="{Binding AllPlanes}"
-                             SelectionMode="Extended"
                              BorderThickness="1"
-                             d:DesignHeight="250">
+                             d:DesignHeight="250"
+                             SelectedItem="{Binding SelectedPlane}"
+                             >
+                        <!--
+                            mah:MultiSelectorHelper.SelectedItems="{Binding SelectedPlanes}"
+                            SelectionMode="Extended"
+                        -->
                         <ListBox.ItemContainerStyle>
                             <Style BasedOn="{StaticResource MahApps.Styles.ListBoxItem}" TargetType="{x:Type ListBoxItem}">
                                 <Setter Property="BorderBrush" Value="{StaticResource MahApps.Brushes.Gray1}" />
                                 <Setter Property="BorderThickness" Value="1" />
-                                <Setter Property="Margin" Value="2" />
+                                <Setter Property="Margin" Value="1" />
                                 <!-- <Setter Property="mah:ControlsHelper.CornerRadius" Value="4" /> -->
                                 <Setter Property="mah:ItemHelper.ActiveSelectionBorderBrush" Value="{StaticResource MahApps.Brushes.Gray2}" />
                                 <Setter Property="mah:ItemHelper.HoverBorderBrush" Value="{StaticResource MahApps.Brushes.Gray1}" />
@@ -133,6 +137,9 @@
                 <local:CubeView2DGrid Grid.Column="1"
                     GridWidth="{Binding GridWidth}"
                     GridHeight="{Binding Path=GridHeight}"
+                    PlaneData="{Binding PlaneData}"
+                    LedBrush="{Binding LedBrush}"
+                    ShowNumbers="{Binding ShowNumbers}"
                 />
             </Grid>
         </DockPanel>

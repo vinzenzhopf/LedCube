@@ -1,15 +1,16 @@
 ﻿using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using LedCube.Core.Common.Config;
+using LedCube.Core.Common.Model;
 using LedCube.Core.Common.Model.Cube;
 using LedCube.Core.CubeData;
 using LedCube.Core.CubeData.Projections;
 using LedCube.Core.CubeData.Repository;
 using LedCube.Core.UI.Messages;
 using Microsoft.Extensions.Logging;
-using IPlaneData = LedCube.Core.UI.Controls.ViewModels.IPlaneData;
 
 namespace LedCube.Core.UI.Controls.CubeView2D;
 
@@ -51,22 +52,72 @@ public partial class CubeView2DViewModel
     private readonly SimpleRotationCubeProjection _cubeProjection;
     private readonly PlaneCubeProjection _planeCubeProjection;
 
-    public CubeView2DViewModel(ICubeConfigRepository cubeConfigRepository, ICubeRepository cubeRepository, ILoggerFactory loggerFactory)
+    public CubeView2DViewModel(ILoggerFactory loggerFactory, ICubeConfigRepository cubeConfigRepository, ICubeRepository cubeRepository)
     {
         Logger = loggerFactory.CreateLogger(GetType());
         _cubeConfigRepository = cubeConfigRepository;
         _cubeRepository = cubeRepository;
 
-        
         //Init values
         _cubeProjection = new SimpleRotationCubeProjection(cubeRepository.GetCubeData(), _viewDirection);
         _planeCubeProjection = new PlaneCubeProjection(_cubeProjection, _selectedPlane);
         var dimensions = _planeCubeProjection.Size;
+        _planeData = _planeCubeProjection;
         _gridWidth = dimensions.X;
         _gridHeight = dimensions.Y;
+        UpdatePlaneElements();
+        SelectedPlanes.CollectionChanged += OnSelectedPlanesCollectionChanged;
+        _cubeProjection.CubeChanged += CubeProjection_OnCubeChanged;
+        _planeData.LedChanged += PlaneData_OnLedChanged;
+        _planeData.PlaneChanged += PlaneData_OnPlaneChanged;
 
         //Register Listeners
         WeakReferenceMessenger.Default.Register<CubeConfigChangedMessage>(this, HandleCubeConfigChangedMessage);
+    }
+
+    private void CubeProjection_OnCubeChanged(ICubeData cubedata)
+    {
+        Logger.LogDebug("CubeProjection_OnCubeChanged");
+    }
+
+    private void PlaneData_OnLedChanged(Point2D p, bool value)
+    {
+        Logger.LogDebug("PlaneData_OnLedChanged");
+    }
+    
+    private void PlaneData_OnPlaneChanged(IPlaneData plane)
+    {
+        Logger.LogDebug("PlaneData_OnPlaneChanged");
+    }
+
+    private void UpdatePlaneElements()
+    {
+        var target = _cubeProjection.Size.Z;
+        for(var i = AllPlanes.Count-1; i >= target; i--)
+        {
+            AllPlanes.RemoveAt(i);
+        }
+        for(var i = AllPlanes.Count; i < target; i++)
+        {
+            AllPlanes.Add(i);
+        }
+    }
+
+    private void OnSelectedPlanesCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        Logger.LogDebug("Selected Planes changed: {action}, {startIndex}, {endIndex}", e.Action, e.NewStartingIndex, e.OldStartingIndex);
+    }
+    
+    partial void OnViewDirectionChanged(Orientation3D value)
+    {
+        Logger.LogDebug("View-Direction changed: {orientation}", value);
+        _cubeProjection.Rotation = value;
+    }
+
+    partial void OnSelectedPlaneChanged(int value)
+    {
+        Logger.LogDebug("Selected Plane changed: {value}", value);
+        _planeCubeProjection.Z = value;
     }
 
     private void HandleCubeConfigChangedMessage(object recipient, CubeConfigChangedMessage message)
