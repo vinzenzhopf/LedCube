@@ -9,8 +9,9 @@
              xmlns:converters="clr-namespace:LedCube.Core.UI.Converters"
              xmlns:cube="clr-namespace:LedCube.Core.Common.Model.Cube;assembly=LedCube.Core"
              mc:Ignorable="d"
-             DataContext="{Binding RelativeSource={RelativeSource Self}}"
+             d:DataContext="{d:DesignInstance local:CubeView2DViewModel, IsDesignTimeCreatable=True}"
              d:DesignHeight="500" d:DesignWidth="400">
+    <!-- DataContext="{Binding RelativeSource={RelativeSource Self}}" -->
     <UserControl.Resources>
         <!-- <Style x:Key="NumberGridTextStyle" TargetType="TextBlock"> -->
         <!--     <Setter Property="FontSize" Value="10" /> -->
@@ -25,26 +26,23 @@
         </ObjectDataProvider>
     </UserControl.Resources>
     <DockPanel>
-        <StackPanel DockPanel.Dock="Top">
-            <Label>Settings:</Label>
-
-            <DockPanel>
-                <Label Width="100" DockPanel.Dock="Left">X Size</Label>
-                <TextBox Width="40" DockPanel.Dock="Left" Text="{Binding GridWidth}" />
-                <Slider Maximum="16" TickPlacement="BottomRight" TickFrequency="1" IsSnapToTickEnabled="True" Value="{Binding GridWidth, Converter={StaticResource intToDoubleConverter}}" />
-            </DockPanel>
-            <DockPanel>
-                <Label Width="100" DockPanel.Dock="Left">Y Size</Label>
-                <TextBox Width="40" DockPanel.Dock="Left" Text="{Binding GridHeight}" />
-                <Slider Maximum="16" TickPlacement="BottomRight" TickFrequency="1" IsSnapToTickEnabled="True" Value="{Binding GridHeight, Converter={StaticResource intToDoubleConverter}}" />
-            </DockPanel>
-            <DockPanel>
-                <Label Width="100" DockPanel.Dock="Left">Selected Z Plane</Label>
-                <TextBox Width="40" DockPanel.Dock="Left" Text="{Binding SelectedPlane}" />
-                <Slider Maximum="16" TickPlacement="BottomRight" TickFrequency="1" IsSnapToTickEnabled="True" Value="{Binding SelectedPlane}" />
-            </DockPanel>
-            <Label>Plane:</Label>
-        </StackPanel>
+        <GroupBox DockPanel.Dock="Top" 
+                  Header="Settings:">
+            <StackPanel>
+                <DockPanel>
+                    <Label Width="150" DockPanel.Dock="Left">X Size</Label>
+                    <TextBox Text="{Binding GridWidth}" IsReadOnly="True"/>
+                </DockPanel>
+                <DockPanel>
+                    <Label Width="150" DockPanel.Dock="Left">Y Size</Label>
+                    <TextBox Text="{Binding GridHeight}" IsReadOnly="True"/>
+                </DockPanel>
+                <DockPanel>
+                    <Label Width="150" DockPanel.Dock="Left">Selected Z Plane</Label>
+                    <TextBox Text="{Binding SelectedPlane}" IsReadOnly="True"/>
+                </DockPanel>
+            </StackPanel>
+        </GroupBox>
         <DockPanel>
             <Grid DockPanel.Dock="Top">
                 <Grid.ColumnDefinitions>
@@ -53,7 +51,6 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-
                 <ComboBox Margin="2" 
                           ItemsSource="{Binding Source={StaticResource OrientationEnumProvider}}"
                           SelectedValue="{Binding ViewDirection}"
@@ -134,8 +131,8 @@
                     </ListBox>
                 </StackPanel>
                 <local:CubeView2DGrid Grid.Column="1"
-                    GridWidth="{Binding GridWidth,RelativeSource={RelativeSource AncestorType=UserControl}}"
-                    GridHeight="{Binding Path=GridHeight,RelativeSource={RelativeSource AncestorType=UserControl}}"
+                    GridWidth="{Binding GridWidth}"
+                    GridHeight="{Binding Path=GridHeight}"
                 />
             </Grid>
         </DockPanel>

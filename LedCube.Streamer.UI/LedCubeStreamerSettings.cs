@@ -4,7 +4,7 @@ using LedCube.Core.Common.Config;
 
 namespace LedCube.Streamer.UI;
 
-public record LedCubeStreamerSettings
+public record LedCubeStreamerSettings : ICubeConfigRepository
 {
     public CubeConfig CubeConfig { get; set; } = new();
 
@@ -12,20 +12,32 @@ public record LedCubeStreamerSettings
     {
         CubeConfig = new CubeConfig()
         {
+            Name = "LedCube",
             Dimensions = new CubeDimensions() {
                 X = 8, 
                 Y = 8, 
-                Z = 8, 
-                Orientation = EuclideanOrientation.RightHanded
+                Z = 8,
             },
-            DrawWireframe = true,
-            LedType = new LedType()
+            StreamerSettings = new CubeStreamerSettings()
             {
-                LedDimensions = 5,
-                Shape = LedShape.Zylinder,
-                Tint = Color.Blue
+                Hostname = "",
+                Port = 4242,
+                SearchPerBroadcast = true,
+                Projection = new CubeDataProjectionSettings()
+                {
+                    Orientation = CartesianOrientation.LeftHanded
+                }
             },
-            Name = "LedCube"
+            Cube3DDrawingConfig =
+            {
+                DrawWireframe = true,
+                LedType = new LedType()
+                {
+                    LedDimensions = 5,
+                    Shape = LedShape.Zylinder,
+                    Tint = Color.Blue
+                }
+            }
         }
     };
 }

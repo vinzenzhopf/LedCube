@@ -78,22 +78,6 @@ public class SimpleRotationCubeProjection : ICubeData
         return p2;
     }
 
-    
-    // case Orientation3D.Front:
-    // return new Point3D(p.X, p.Y, p.Z);
-    //     case Orientation3D.Right:
-    // return new Point3D(p.Z, p.Y, -p.X + Size.X - 1);
-    // case Orientation3D.Top:
-    // return new Point3D(p.X, -p.Z + Size.Z - 1, p.Y);
-    // case Orientation3D.Back:
-    // return new Point3D(-p.X + Size.X - 1, p.Y, -p.Z + Size.Z - 1);
-    // case Orientation3D.Left:
-    // return new Point3D(-p.Z + Size.Z - 1, p.Y, p.X);
-    // case Orientation3D.Bottom:
-    // return new Point3D(p.X, p.Z, p.Y);
-    //     default:
-    //     return p;
-    
     private Point3D ProjectSize(Point3D p)
     {
         switch(Rotation)
