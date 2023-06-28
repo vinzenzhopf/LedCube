@@ -1,7 +1,9 @@
 ﻿using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using LedCube.Core.Common.Config;
 using LedCube.Core.Common.Model;
@@ -11,6 +13,8 @@ using LedCube.Core.CubeData.Projections;
 using LedCube.Core.CubeData.Repository;
 using LedCube.Core.UI.Messages;
 using Microsoft.Extensions.Logging;
+using Serilog;
+using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace LedCube.Core.UI.Controls.CubeView2D;
 
@@ -39,9 +43,6 @@ public partial class CubeView2DViewModel
 
     [ObservableProperty]
     private bool _showNumbers = true;
-    
-    [ObservableProperty]
-    private ICubeData _cubeConfig;
 
     [ObservableProperty]
     private IPlaneData _planeData;
@@ -62,7 +63,7 @@ public partial class CubeView2DViewModel
         _cubeProjection = new SimpleRotationCubeProjection(cubeRepository.GetCubeData(), _viewDirection);
         _planeCubeProjection = new PlaneCubeProjection(_cubeProjection, _selectedPlane);
         var dimensions = _planeCubeProjection.Size;
-        _planeData = _planeCubeProjection;
+        PlaneData = _planeCubeProjection;
         _gridWidth = dimensions.X;
         _gridHeight = dimensions.Y;
         UpdatePlaneElements();
@@ -73,6 +74,13 @@ public partial class CubeView2DViewModel
 
         //Register Listeners
         WeakReferenceMessenger.Default.Register<CubeConfigChangedMessage>(this, HandleCubeConfigChangedMessage);
+        
+        this.PropertyChanged += OnPropertyChanged;
+    }
+
+    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        Logger.LogTrace("PropertyChanged on {property}, {sender}", e.PropertyName, sender);
     }
 
     private void CubeProjection_OnCubeChanged(ICubeData cubedata)
@@ -123,5 +131,35 @@ public partial class CubeView2DViewModel
     private void HandleCubeConfigChangedMessage(object recipient, CubeConfigChangedMessage message)
     {
         Logger.LogDebug("Received Message: CubeConfigChanged {data}", message);
+    }
+
+    [RelayCommand]
+    private void ClearSelectedPlanesClicked()
+    {
+        Logger.LogDebug("ClearSelectedPlanesClicked");
+    }
+
+    [RelayCommand]
+    private void SetSelectedPlanesClicked()
+    {
+        Logger.LogDebug("SetSelectedPlanesClicked");
+    }
+    
+    [RelayCommand]
+    private void ToggleSelectedPlanesClicked()
+    {
+        Logger.LogDebug("ToggleSelectedPlanesClicked");
+    }
+    
+    [RelayCommand]
+    private void SelectAllPlanesClicked()
+    {
+        Logger.LogDebug("SelectAllPlanesClicked");
+    }
+    
+    [RelayCommand]
+    private void ClearPlaneSelectionClicked()
+    {
+        Logger.LogDebug("ClearPlaneSelectionClicked");
     }
 }

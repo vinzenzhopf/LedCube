@@ -61,7 +61,7 @@ public partial class CubeView2DGrid : UserControl
 
     public static readonly DependencyProperty PlaneDataProperty = DependencyProperty.Register(
         nameof(PlaneData), typeof(IPlaneData), typeof(CubeView2DGrid),
-        new FrameworkPropertyMetadata(null));
+        new FrameworkPropertyMetadata(null, OnPlaneDataChanged));
     
     private static void OnPlaneDataChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) => 
         (d as CubeView2DGrid)?.OnPlaneDataChanged(e);
@@ -273,12 +273,12 @@ public partial class CubeView2DGrid : UserControl
         {
             _numbersGrid[0].Children.Add(new TextBlock()
             {
-                Text = $"{GridWidth-x}",
+                Text = $"{x}",
                 Style = style
             });
             _numbersGrid[1].Children.Add(new TextBlock()
             {
-                Text = $"{GridWidth-x}",
+                Text = $"{x}",
                 Style = style
             });
         }
@@ -286,12 +286,12 @@ public partial class CubeView2DGrid : UserControl
         {
             _numbersGrid[2].Children.Add(new TextBlock()
             {
-                Text = $"{GridHeight-y}",
+                Text = $"{GridHeight-1-y}",
                 Style = style
             });
             _numbersGrid[3].Children.Add(new TextBlock()
             {
-                Text = $"{GridHeight-y}",
+                Text = $"{GridHeight-1-y}",
                 Style = style
             });
         }
@@ -314,24 +314,28 @@ public partial class CubeView2DGrid : UserControl
         var size = Math.Min(sizeX, sizeY);
         if (size is Double.NaN)
             size = 10;
-        var ledCount = GridWidth * GridHeight;
-        for (var y = 0; y < GridWidth; y++)
+        var max = _ledGrid.Rows * _ledGrid.Columns;
+        for (var i = 0; i < max; i++)
         {
-            for (var x = 0; x < GridHeight; x++)
+            var led = new CubeView2DLed
             {
-                var led = new CubeView2DLed
-                {
-                    Size = size,
-                    Index = --ledCount,
-                    Foreground = LedBrush,
-                };
-                led.Checked += OnLedChecked;
-                led.Unchecked += OnLedUnchecked;
-                Grid.SetRow(led, x);
-                Grid.SetColumn(led, y);
-                _ledGrid.Children.Add(led);
-                _leds.Add(led);
-            }
+                Size = size,
+                Index = i,
+                Foreground = LedBrush,
+            };
+            led.Checked += OnLedChecked;
+            led.Unchecked += OnLedUnchecked;
+            _leds.Add(led);
+        }
+        for (var i = 0; i < max; i++)
+        {
+            var x = i % _ledGrid.Columns;
+            var y = _ledGrid.Rows - 1 - (i / _ledGrid.Columns);
+            
+            var led = _leds[x+y*_ledGrid.Columns];
+            _ledGrid.Children.Add(led);
+            Grid.SetRow(led, y);
+            Grid.SetColumn(led, x);
         }
     }
 
