@@ -29,9 +29,9 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="5" />
-                <ColumnDefinition Width="3*" />
+                <ColumnDefinition Width="2*" />
                 <ColumnDefinition Width="5" />
-                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="3*" />
             </Grid.ColumnDefinitions>
             <Grid Grid.Column="0">
                 <TextBox AcceptsReturn="True">Left Sidebar</TextBox>
@@ -39,8 +39,9 @@
             <GridSplitter Grid.Column="1" VerticalAlignment="Stretch" ResizeBehavior="BasedOnAlignment" Width="5" />
             <Grid Grid.Column="2">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="2*" />
+                    <RowDefinition Height="1*" />
+                    <!-- <RowDefinition Height="Auto" /> -->
                 </Grid.RowDefinitions>
                 <TextBox Grid.Row="0" AcceptsReturn="True" Background="CornflowerBlue">This is the main 3d Content to show the Cube!</TextBox>
                 <Grid Grid.Row="1"

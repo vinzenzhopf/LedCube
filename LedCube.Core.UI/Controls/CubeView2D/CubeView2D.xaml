@@ -61,17 +61,17 @@
                 <Button Grid.Column="1"
                         Content="Clear" 
                         Margin="2"
-                        Command="{Binding ClearPlane}"
+                        Command="{Binding ClearSelectedPlanesClickedCommand}"
                         Style="{DynamicResource MahApps.Styles.Button.Square}" />
                 <Button Grid.Column="2"
                         Content="Set"
                         Margin="2"
-                        Command="{Binding SetPlane}"
+                        Command="{Binding SetSelectedPlanesClickedCommand}"
                         Style="{DynamicResource MahApps.Styles.Button.Square}" />
                 <Button Grid.Column="3"
                         Content="Toggle"
                         Margin="2"
-                        Command="{Binding TogglePlane}"
+                        Command="{Binding ToggleSelectedPlanesClickedCommand}"
                         Style="{DynamicResource MahApps.Styles.Button.Square}" />
             </Grid>
             <Grid>
@@ -137,8 +137,10 @@
                 <local:CubeView2DGrid Grid.Column="1"
                     GridWidth="{Binding GridWidth}"
                     GridHeight="{Binding Path=GridHeight}"
-                    PlaneData="{Binding PlaneData}"
-                    LedBrush="{Binding LedBrush}"
+                    PlaneData="{Binding PlaneData,
+                        Mode=OneWay,UpdateSourceTrigger=PropertyChanged,
+                        PresentationTraceSources.TraceLevel=High}"
+                    LedBrush="{Binding LedBrush,Mode=OneWay,UpdateSourceTrigger=PropertyChanged}"
                     ShowNumbers="{Binding ShowNumbers}"
                 />
             </Grid>
