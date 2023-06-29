@@ -28,12 +28,6 @@ public partial class CubeView2DViewModel
 
     public ObservableCollection<int> AllPlanes { get; } = new();
     public ObservableCollection<int> SelectedPlanes { get; } = new();
-    
-    [ObservableProperty]
-    private int _gridWidth;
-
-    [ObservableProperty]
-    private int _gridHeight;
 
     [ObservableProperty]
     private int _selectedPlane = 0;
@@ -64,8 +58,6 @@ public partial class CubeView2DViewModel
         _planeCubeProjection = new PlaneCubeProjection(_cubeProjection, _selectedPlane);
         var dimensions = _planeCubeProjection.Size;
         PlaneData = _planeCubeProjection;
-        _gridWidth = dimensions.X;
-        _gridHeight = dimensions.Y;
         UpdatePlaneElements();
         SelectedPlanes.CollectionChanged += OnSelectedPlanesCollectionChanged;
         _cubeProjection.CubeChanged += CubeProjection_OnCubeChanged;

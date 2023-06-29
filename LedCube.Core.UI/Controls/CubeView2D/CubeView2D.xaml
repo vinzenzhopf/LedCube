@@ -26,23 +26,23 @@
         </ObjectDataProvider>
     </UserControl.Resources>
     <DockPanel>
-        <GroupBox DockPanel.Dock="Top" 
-                  Header="Settings:">
-            <StackPanel>
-                <DockPanel>
-                    <Label Width="150" DockPanel.Dock="Left">X Size</Label>
-                    <TextBox Text="{Binding GridWidth}" IsReadOnly="True"/>
-                </DockPanel>
-                <DockPanel>
-                    <Label Width="150" DockPanel.Dock="Left">Y Size</Label>
-                    <TextBox Text="{Binding GridHeight}" IsReadOnly="True"/>
-                </DockPanel>
-                <DockPanel>
-                    <Label Width="150" DockPanel.Dock="Left">Selected Z Plane</Label>
-                    <TextBox Text="{Binding SelectedPlane}" IsReadOnly="True"/>
-                </DockPanel>
-            </StackPanel>
-        </GroupBox>
+        <!-- <GroupBox DockPanel.Dock="Top"  -->
+        <!--           Header="Settings:"> -->
+        <!--     <StackPanel> -->
+        <!--         <DockPanel> -->
+        <!--             <Label Width="150" DockPanel.Dock="Left">X Size</Label> -->
+        <!--             <TextBox Text="{Binding GridWidth}" IsReadOnly="True"/> -->
+        <!--         </DockPanel> -->
+        <!--         <DockPanel> -->
+        <!--             <Label Width="150" DockPanel.Dock="Left">Y Size</Label> -->
+        <!--             <TextBox Text="{Binding GridHeight}" IsReadOnly="True"/> -->
+        <!--         </DockPanel> -->
+        <!--         <DockPanel> -->
+        <!--             <Label Width="150" DockPanel.Dock="Left">Selected Z Plane</Label> -->
+        <!--             <TextBox Text="{Binding SelectedPlane}" IsReadOnly="True"/> -->
+        <!--         </DockPanel> -->
+        <!--     </StackPanel> -->
+        <!-- </GroupBox> -->
         <DockPanel>
             <Grid DockPanel.Dock="Top">
                 <Grid.ColumnDefinitions>
@@ -135,8 +135,6 @@
                     </ListBox>
                 </StackPanel>
                 <local:CubeView2DGrid Grid.Column="1"
-                    GridWidth="{Binding GridWidth}"
-                    GridHeight="{Binding Path=GridHeight}"
                     PlaneData="{Binding PlaneData,
                         Mode=OneWay,UpdateSourceTrigger=PropertyChanged,
                         PresentationTraceSources.TraceLevel=High}"
