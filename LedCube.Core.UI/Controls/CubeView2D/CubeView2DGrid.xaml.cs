@@ -21,14 +21,10 @@ public partial class CubeView2DGrid : UserControl
         Disable,
         Toggle
     }
-
-    public static readonly DependencyProperty GridWidthProperty = DependencyProperty.Register(
-        nameof(GridWidth), typeof(int), typeof(CubeView2DGrid),
-        new FrameworkPropertyMetadata(8, OnGridDimensionsChanged));
-
-    public static readonly DependencyProperty GridHeightProperty = DependencyProperty.Register(
-        nameof(GridHeight), typeof(int), typeof(CubeView2DGrid),
-        new FrameworkPropertyMetadata(8, OnGridDimensionsChanged));
+    
+    public static readonly DependencyProperty GridSizeProperty = DependencyProperty.Register(
+        nameof(GridSize), typeof(Point2D), typeof(CubeView2DGrid),
+        new FrameworkPropertyMetadata(new Point2D(8,8), OnGridDimensionsChanged));
     
     private static void OnGridDimensionsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) => 
         (d as CubeView2DGrid)?.OnGridDimensionsChanged(e);
@@ -65,17 +61,11 @@ public partial class CubeView2DGrid : UserControl
     
     private static void OnPlaneDataChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) => 
         (d as CubeView2DGrid)?.OnPlaneDataChanged(e);
-
-    public int GridWidth
-    {
-        get => (int)GetValue(GridWidthProperty);
-        set => SetValue(GridWidthProperty, value);
-    }
     
-    public int GridHeight
+    public Point2D GridSize
     {
-        get => (int)GetValue(GridHeightProperty);
-        set => SetValue(GridHeightProperty, value);
+        get => (Point2D)GetValue(GridSizeProperty);
+        set => SetValue(GridSizeProperty, value);
     }
     
     public Brush LedBrush{
@@ -118,6 +108,8 @@ public partial class CubeView2DGrid : UserControl
     private Rectangle _selectionRectangle;
     private readonly UniformGrid[] _numbersGrid;
     
+    private bool _disableLedChangedEventPropagation;
+
     public CubeView2DGrid()
     {
         _grid = new Grid();
@@ -138,8 +130,8 @@ public partial class CubeView2DGrid : UserControl
         };
         _ledGrid = new UniformGrid()
         {
-            Rows = GridHeight,
-            Columns = GridWidth,
+            Rows = GridSize.Y,
+            Columns = GridSize.X,
             VerticalAlignment = VerticalAlignment.Stretch,
             HorizontalAlignment = HorizontalAlignment.Stretch
         };
@@ -214,11 +206,29 @@ public partial class CubeView2DGrid : UserControl
         {
             return;
         }
-        for (var index = 0; index < _leds.Count; index++)
+
+        try
         {
-            _leds[index].IsChecked = vm.GetLed(index);
+            _disableLedChangedEventPropagation = true;
+            for (var index = 0; index < _leds.Count; index++)
+            {
+
+                _leds[index].IsChecked = vm.GetLed(IndexToCoordinates(vm.Size, index));
+            }
+        }
+        finally
+        {
+            _disableLedChangedEventPropagation = false;
         }
     }
+    
+    public static Point2D IndexToCoordinates(Point2D size, int index) => new(
+        index % size.X,
+        (index / size.X) % size.Y
+    );
+
+    public static int CoordinatesToIndex(Point2D size, Point2D p) =>
+        p.X + p.Y * size.Y;
 
     private void OnLedBrushChanged(DependencyPropertyChangedEventArgs e)
     {
@@ -239,12 +249,13 @@ public partial class CubeView2DGrid : UserControl
         {
             newVm.LedChanged += OnDataLedChanged;
             newVm.PlaneChanged += OnDataPlaneChanged;
+            GridSize = newVm.Size;
         }
     }
 
     private void OnDataLedChanged(Point2D led, bool value)
     {
-        var index = led.Y * GridWidth + led.X;
+        var index = led.Y * GridSize.X + led.X;
         Application.Current.Dispatcher.Invoke(() =>
         {
             _leds[index].IsChecked = value;
@@ -253,6 +264,7 @@ public partial class CubeView2DGrid : UserControl
 
     private void OnDataPlaneChanged(IPlaneData data)
     {
+        GridSize = data.Size;
         UpdateLedStatus();
     }
 
@@ -269,7 +281,7 @@ public partial class CubeView2DGrid : UserControl
         
         var style = FindResource("NumberGridTextStyle") as Style;
         
-        for (var x = 0; x < GridWidth; x++)
+        for (var x = 0; x < GridSize.X; x++)
         {
             _numbersGrid[0].Children.Add(new TextBlock()
             {
@@ -282,16 +294,16 @@ public partial class CubeView2DGrid : UserControl
                 Style = style
             });
         }
-        for (var y = 0; y < GridHeight; y++)
+        for (var y = 0; y < GridSize.Y; y++)
         {
             _numbersGrid[2].Children.Add(new TextBlock()
             {
-                Text = $"{GridHeight-1-y}",
+                Text = $"{GridSize.Y-1-y}",
                 Style = style
             });
             _numbersGrid[3].Children.Add(new TextBlock()
             {
-                Text = $"{GridHeight-1-y}",
+                Text = $"{GridSize.Y-1-y}",
                 Style = style
             });
         }
@@ -306,11 +318,11 @@ public partial class CubeView2DGrid : UserControl
             led.Unchecked -= OnLedUnchecked;
         }        
         _leds.Clear();
-        _ledGrid.Rows = GridHeight;
-        _ledGrid.Columns = GridWidth;
+        _ledGrid.Rows = GridSize.Y;
+        _ledGrid.Columns = GridSize.X;
         
-        var sizeX = Width / GridWidth;
-        var sizeY = Height / GridHeight;
+        var sizeX = Width / GridSize.X;
+        var sizeY = Height / GridSize.Y;
         var size = Math.Min(sizeX, sizeY);
         if (size is Double.NaN)
             size = 10;
@@ -341,6 +353,8 @@ public partial class CubeView2DGrid : UserControl
 
     private void OnLedChecked(object sender, RoutedEventArgs e)
     {
+        if (_disableLedChangedEventPropagation)
+            return;
         if (sender is not CubeView2DLed led)
             return;
         HandleLedChanged(led.Index, true);
@@ -348,6 +362,8 @@ public partial class CubeView2DGrid : UserControl
 
     private void OnLedUnchecked(object sender, RoutedEventArgs e)
     {
+        if (_disableLedChangedEventPropagation)
+            return;
         if (sender is not CubeView2DLed led)
             return;
         HandleLedChanged(led.Index, false);
@@ -360,18 +376,18 @@ public partial class CubeView2DGrid : UserControl
         {
             return;
         }
-        if (value) vm.SetLed(index, value);
+        vm.SetLed(IndexToCoordinates(vm.Size, index), value);
     }
     
     private void RecalculateSize()
     {
         var innerWidth = ActualWidth - Margin.Left - Margin.Right - Padding.Left - Padding.Right;
         var innerHeight = ActualHeight - Margin.Top - Margin.Bottom - Padding.Top - Padding.Bottom;
-        var ledWidth = innerWidth / GridWidth;
-        var ledHeight = innerHeight / GridHeight;
+        var ledWidth = innerWidth / GridSize.X;
+        var ledHeight = innerHeight / GridSize.Y;
         var ledSize = Math.Min(ledWidth, ledHeight);
-        _innerGrid.Width = ledSize * GridWidth;
-        _innerGrid.Height = ledSize * GridHeight;
+        _innerGrid.Width = ledSize * GridSize.X;
+        _innerGrid.Height = ledSize * GridSize.Y;
     }
         
     private void OnWindowSizeChanged(object sender, SizeChangedEventArgs e)
