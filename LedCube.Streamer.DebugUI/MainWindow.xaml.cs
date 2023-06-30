@@ -46,13 +46,13 @@ namespace LedCube.Streamer.DebugUI
                     var result = await _udpClient.ReceiveAsync(token);
                     var datagram = result.Buffer;
 
-                    var header = Header.ReadFromSpan(datagram.AsSpan().Slice(0, Header.Size));
+                    var header = CubeDatagramHeader.ReadFromSpan(datagram.AsSpan().Slice(0, CubeDatagramHeader.Size));
 
                     var headerStr = string.Format("Header{{ Type:{0}, Count:{1} }}", header.PayloadType.ToString(),
                         header.PacketCount);
 
                     var payloadStr = GetPayloadString(header.PayloadType, 
-                        datagram.AsSpan().Slice(Header.Size));
+                        datagram.AsSpan().Slice(CubeDatagramHeader.Size));
 
                     Application.Current.Dispatcher.Invoke(() =>
                     {
@@ -219,12 +219,12 @@ namespace LedCube.Streamer.DebugUI
 
         private static void SendDatagram(UdpClient client, ushort packetCount, DatagramType type, ReadOnlySpan<byte> dataSpan)
         {
-            var header = new Header()
+            var header = new CubeDatagramHeader()
             {
                 PacketCount = packetCount,
                 PayloadType = type
             };
-            var headerSpan = Header.WriteToSpan(header);
+            var headerSpan = CubeDatagramHeader.WriteToSpan(header);
 
             var buffer = new byte[1024].AsSpan();
             headerSpan.CopyTo(buffer);
