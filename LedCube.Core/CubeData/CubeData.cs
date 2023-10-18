@@ -6,7 +6,7 @@ namespace LedCube.Core.CubeData;
 
 public class CubeData : ICubeData
 {
-    private readonly ILed<bool>[] _leds;
+    private readonly bool[] _leds;
     
     public Point3D Size { get; }
     
@@ -17,16 +17,16 @@ public class CubeData : ICubeData
     public CubeData(Point3D size)
     {
         Size = size;
-        _leds = new ILed<bool>[Count];
+        _leds = new bool[Count];
         for (var i = 0; i < Count; i++)
         {
-            _leds[i] = new BiLed();
+            _leds[i] = false;
         }
     }
 
     public bool GetLedIndex(int index)
     {
-        return _leds[index].Value;
+        return _leds[index];
     }
     
     /// <summary>
@@ -36,14 +36,14 @@ public class CubeData : ICubeData
     /// <param name="value">The new Value</param>
     public void SetLedIndex(int index, bool value)
     {
-        _leds[index].Value = value;
+        _leds[index] = value;
     }
     
     public bool GetLed(Point3D p)
     {
         if(!Point3D.CheckBounds(p, Point3D.Empty, Size))
             throw new ArgumentException("Point out of Range", nameof(p));
-        return _leds[CoordinatesToIndex(p)].Value;
+        return _leds[CoordinatesToIndex(p)];
     }
 
     public void SetLed(Point3D p, bool value)
@@ -51,9 +51,9 @@ public class CubeData : ICubeData
         if(!Point3D.CheckBounds(p, Point3D.Empty, Size))
             throw new ArgumentException("Point out of Range", nameof(p));
         var i = CoordinatesToIndex(p);
-        if (_leds[i].Value == value) 
+        if (_leds[i] == value) 
             return;
-        _leds[i].Value = value;
+        _leds[i] = value;
         OnLedChanged(p, value);
     }
 

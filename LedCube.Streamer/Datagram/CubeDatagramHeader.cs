@@ -18,13 +18,16 @@ public struct CubeDatagramHeader
         };
     }
 
-    public static ReadOnlySpan<byte> WriteToSpan(CubeDatagramHeader cubeDatagramHeader)
+    public static ReadOnlyMemory<byte> WriteToMemory(CubeDatagramHeader cubeDatagramHeader)
     {
-        var span = new byte[Size].AsSpan();
-        MemoryMarshal.Write(span[0..], ref cubeDatagramHeader.PayloadType);
-        MemoryMarshal.Write(span[2..], ref cubeDatagramHeader.PacketCount);
-        return span;
+        var buffer = new byte[Size].AsMemory();
+        MemoryMarshal.Write(buffer.Span[0..], ref cubeDatagramHeader.PayloadType);
+        MemoryMarshal.Write(buffer.Span[2..], ref cubeDatagramHeader.PacketCount);
+        return buffer;
     }
+    
+    public static ReadOnlySpan<byte> WriteToSpan(CubeDatagramHeader cubeDatagramHeader)
+        => WriteToMemory(cubeDatagramHeader).Span;
 
     public override string ToString()
     {

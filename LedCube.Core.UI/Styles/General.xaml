@@ -1,0 +1,27 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Themes/Light.Blue.xaml" />
+        <!-- <ResourceDictionary Source="/Styles/Controls.xaml" /> -->
+    </ResourceDictionary.MergedDictionaries>
+    
+    <Color x:Key="CubeRedColor">#b42127</Color>
+    <Color x:Key="CubeYellowColor">#b5b521</Color>
+    <Color x:Key="CubeGreenColor">#21b521</Color>
+    <Color x:Key="CubeBlueColor">#216bb5</Color>
+
+    <SolidColorBrush
+        x:Key="CubeRedBrush"
+        Color="{StaticResource CubeRedColor}" />
+    <SolidColorBrush
+        x:Key="CubeYellowBrush"
+        Color="{StaticResource CubeYellowColor}" />
+    <SolidColorBrush
+        x:Key="CubeGreenBrush"
+        Color="{StaticResource CubeGreenColor}" />
+    <SolidColorBrush
+        x:Key="CubeBlueBrush"
+        Color="{StaticResource CubeBlueColor}" />
+</ResourceDictionary>

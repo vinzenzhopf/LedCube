@@ -6,7 +6,10 @@ using CommunityToolkit.Mvvm.Input;
 using LedCube.Core;
 using LedCube.Core.UI.Controls.CubeView2D;
 using LedCube.Core.UI.Controls.LogAppender;
+using LedCube.Streamer.UI.Controls.AnimationList;
 using LedCube.Streamer.UI.Controls.MenuBar;
+using LedCube.Streamer.UI.Controls.PlaybackControl;
+using LedCube.Streamer.UI.Controls.StreamingControl;
 
 namespace LedCube.Streamer.UI.Controls.MainWindow
 {
@@ -17,15 +20,24 @@ namespace LedCube.Streamer.UI.Controls.MainWindow
         public LogAppenderViewModel LogAppenderViewModel { get; }
         public MenuBarViewModel MenuBarViewModel { get; }
         public CubeView2DViewModel CubeView2DViewModel { get; }
+        public AnimationListViewModel AnimationListViewModel { get; }
+        public PlaybackControlViewModel PlaybackControlViewModel { get; }
+        public StreamingControlViewModel StreamingControlViewModel { get; }
         public string TitleText => $"LedCube Animator - <CurrentAnimationFile.anim>";
         public string BuildInfo => $"Build: {_appInfo.Version}, {_appInfo.BuildDate:yy-MM-dd HH:mm zz}";
         public string BuildInfoDebug => _appInfo.DebugBuild ? ", Debug" : "";
-        public MainViewModel(AppInfo appInfo, LogAppenderViewModel logAppenderViewModel, MenuBarViewModel menuBarViewModel, CubeView2DViewModel cubeView2DViewModel)
+        public MainViewModel(AppInfo appInfo, LogAppenderViewModel logAppenderViewModel, 
+            MenuBarViewModel menuBarViewModel, CubeView2DViewModel cubeView2DViewModel, 
+            AnimationListViewModel animationListViewModel, PlaybackControlViewModel playbackControlViewModel,
+            StreamingControlViewModel streamingControlViewModel)
         {
             _appInfo = appInfo;
             LogAppenderViewModel = logAppenderViewModel;
             MenuBarViewModel = menuBarViewModel;
             CubeView2DViewModel = cubeView2DViewModel;
+            AnimationListViewModel = animationListViewModel;
+            PlaybackControlViewModel = playbackControlViewModel;
+            StreamingControlViewModel = streamingControlViewModel;
         }
         
         [RelayCommand]

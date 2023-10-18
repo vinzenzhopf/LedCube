@@ -16,12 +16,15 @@ public struct AnimationEndPayload
         };
     }
 
-    public static ReadOnlySpan<byte> WriteToSpan(AnimationEndPayload data)
+    public static ReadOnlyMemory<byte> WriteToMemory(AnimationEndPayload data)
     {   
-        var span = new byte[Size].AsSpan();
-        MemoryMarshal.Write(span[0..], ref data.CurrentTicks);
-        return span;
+        var buffer = new byte[Size].AsMemory();
+        MemoryMarshal.Write(buffer.Span[0..], ref data.CurrentTicks);
+        return buffer;
     }
+
+    public static ReadOnlySpan<byte> WriteToSpan(AnimationEndPayload data)
+        => WriteToMemory(data).Span;
 
     public override string ToString()
     {

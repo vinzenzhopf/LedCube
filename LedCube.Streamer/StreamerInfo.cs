@@ -2,5 +2,5 @@
 
 public static class StreamerInfo
 {
-    public const string DataVersion = "LedCube v0.1";
+    public const string DataVersion = "LedCube_V0.1";
 }

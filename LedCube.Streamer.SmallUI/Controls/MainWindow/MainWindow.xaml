@@ -1,0 +1,76 @@
+﻿<mah:MetroWindow x:Class="LedCube.Streamer.SmallUI.Controls.MainWindow.MainWindow"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+                 xmlns:logAppender="clr-namespace:LedCube.Core.UI.Controls.LogAppender;assembly=LedCube.Core.UI"
+                 xmlns:mainWindow="clr-namespace:LedCube.Streamer.SmallUI.Controls.MainWindow"
+                 xmlns:menuBar="clr-namespace:LedCube.Streamer.SmallUI.Controls.MenuBar"
+                 xmlns:streamingControl="clr-namespace:LedCube.Streamer.SmallUI.Controls.StreamingControl"
+                 mc:Ignorable="d"
+                 Title="{Binding TitleText}" 
+                 Height="600" 
+                 Width="800"
+                 d:DataContext="{d:DesignInstance mainWindow:MainViewModel, IsDesignTimeCreatable=True}">
+    <mah:MetroWindow.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <Style x:Key="ShowLogWindow" TargetType="{x:Type RowDefinition}">
+            <Style.Setters>
+                <Setter Property="Height" Value="*"/>
+            </Style.Setters>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding LogAppenderViewModel.ShowLog}" Value="False">
+                    <DataTrigger.Setters>
+                        <Setter Property="Height" Value="0"/>
+                        <Setter Property="MaxHeight" Value="0"/>
+                    </DataTrigger.Setters>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="ShowLogWindowSplitter" TargetType="{x:Type RowDefinition}">
+            <Style.Setters>
+                <Setter Property="Height" Value="4"/>
+            </Style.Setters>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding LogAppenderViewModel.ShowLog}" Value="False">
+                    <DataTrigger.Setters>
+                        <Setter Property="Height" Value="0"/>
+                        <Setter Property="MaxHeight" Value="0"/>
+                    </DataTrigger.Setters>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </mah:MetroWindow.Resources>
+    <DockPanel>
+        <!-- Title Bar -->
+        <menuBar:MenuBar DockPanel.Dock="Top" DataContext="{Binding MenuBarViewModel}"/>
+        <!-- Info Footer -->
+        <StatusBar DockPanel.Dock="Bottom">
+            <StatusBarItem Content="{Binding BuildInfo}" />
+            <Separator Style="{StaticResource MahApps.Styles.Separator.StatusBar}" />
+            <StatusBarItem Content="{Binding BuildInfoDebug}" />
+        </StatusBar>
+        
+        <!-- Content -->
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="2*"/>
+                <RowDefinition Style="{StaticResource ShowLogWindowSplitter}"/>
+                <RowDefinition Style="{StaticResource ShowLogWindow}"/>
+            </Grid.RowDefinitions>
+            <StackPanel Grid.Row="0" VerticalAlignment="Stretch">
+                <!-- <Button Content="Test" Command="{Binding TestCommand}" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" /> -->
+                <!-- <Button Content="Broadcast search" Command="{Binding BroadcastSearchCommand}" Style="{StaticResource MahApps.Styles.Button.Square}" /> -->
+                <!-- <playbackControl:PlaybackControl DockPanel.Dock="Bottom" -->
+                <!--                                  DataContext="{Binding PlaybackControlViewModel}" /> -->
+                <streamingControl:StreamingControl DataContext="{Binding StreamingControlViewModel}" />
+            </StackPanel>
+            <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" />
+            <logAppender:LogAppenderControl 
+                Grid.Row="2" 
+                Background="{StaticResource MahApps.Brushes.Gray10}" 
+                DataContext="{Binding LogAppenderViewModel}" />
+        </Grid>
+    </DockPanel>
+</mah:MetroWindow>

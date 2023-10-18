@@ -24,15 +24,18 @@ public struct FramePayload
         };
     }
 
-    public static ReadOnlySpan<byte> WriteToSpan(FramePayload data)
+    public static ReadOnlyMemory<byte> WriteToMemory(FramePayload data)
     {   
-        var span = new byte[Size].AsSpan();
-        MemoryMarshal.Write(span[0..], ref data.FrameNumber);
-        MemoryMarshal.Write(span[4..], ref data.FrameTimeUs);
-        MemoryMarshal.Write(span[8..], ref data.CurrentTicks);
-        data.Data.AsSpan()[0..DataSize].CopyTo(span[12..]);
-        return span;
+        var buffer = new byte[Size].AsMemory();
+        MemoryMarshal.Write(buffer.Span[0..], ref data.FrameNumber);
+        MemoryMarshal.Write(buffer.Span[4..], ref data.FrameTimeUs);
+        MemoryMarshal.Write(buffer.Span[8..], ref data.CurrentTicks);
+        data.Data.AsSpan()[0..DataSize].CopyTo(buffer.Span[12..]);
+        return buffer;
     }
+
+    public static ReadOnlySpan<byte> WriteToSpan(FramePayload data)
+        => WriteToMemory(data).Span;
 
     public override string ToString()
     {

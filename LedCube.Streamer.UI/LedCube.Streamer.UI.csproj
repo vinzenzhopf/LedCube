@@ -32,6 +32,7 @@
     <ItemGroup>
       <ProjectReference Include="..\LedCube.Core.UI\LedCube.Core.UI.csproj" />
       <ProjectReference Include="..\LedCube.Core\LedCube.Core.csproj" />
+      <ProjectReference Include="..\LedCube.Streamer\LedCube.Streamer.csproj" />
     </ItemGroup>
 
     <ItemGroup>
@@ -45,6 +46,11 @@
         <XamlRuntime>Wpf</XamlRuntime>
         <SubType>Designer</SubType>
       </Page>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Converter\" />
+      <Folder Include="Styles\" />
     </ItemGroup>
     
 </Project>

@@ -16,8 +16,8 @@ public abstract partial class TestWithLoggingBase : IDisposable
     protected ILoggerFactory LoggerFactory => _loggerFactory;
 
 
-    [LoggerMessage(0, LogLevel.Debug, "Foo Bar {Baz}")]
-    private partial void LogFooBar(string baz);
+    // [LoggerMessage(0, LogLevel.Debug, "Foo Bar {Baz}")]
+    // private partial void LogFooBar(string baz);
     
     protected TestWithLoggingBase(ITestOutputHelper output)
     {
