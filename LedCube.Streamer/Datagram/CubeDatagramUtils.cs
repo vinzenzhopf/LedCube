@@ -1,11 +1,11 @@
 ﻿using System.Net.Sockets;
-using LedCube.Streamer.Service;
+using LedCube.Streamer.UdpCom;
 
 namespace LedCube.Streamer.Datagram;
 
 public static class CubeDatagramUtils
 {
-    public static ReceivedDatagram ResolveDatagramContent(this UdpReceiveResult result)
+    public static ReceivedDatagram ResolveDatagramContent(UdpReceiveResult result)
     {
         var datagram = result.Buffer.AsSpan();
         

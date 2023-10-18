@@ -25,14 +25,17 @@ public struct AnimationStartPayload
         };
     }
 
-    public static ReadOnlySpan<byte> WriteToSpan(AnimationStartPayload data)
-    {   
-        var span = new byte[Size].AsSpan();
-        MemoryMarshal.Write(span[0..], ref data.FrameTimeUs);
+    public static ReadOnlySpan<byte> WriteToSpan(AnimationStartPayload data) => 
+            WriteToMemory(data).Span;
+
+    public static ReadOnlyMemory<byte> WriteToMemory(AnimationStartPayload data)
+    {
+        var buffer = new byte[Size].AsMemory();
+        MemoryMarshal.Write(buffer.Span[0..], ref data.FrameTimeUs);
         Encoding.ASCII.GetBytes(data.AnimationName).AsSpan()
-            .CopyTo(span.Slice(4,64));
-        MemoryMarshal.Write(span[68..], ref data.CurrentTicks);
-        return span;
+            .CopyTo(buffer.Span.Slice(4,64));
+        MemoryMarshal.Write(buffer.Span[68..], ref data.CurrentTicks);
+        return buffer;
     }
 
     public override string ToString()

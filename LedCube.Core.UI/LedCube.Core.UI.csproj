@@ -29,14 +29,24 @@
         <XamlRuntime>Wpf</XamlRuntime>
         <SubType>Designer</SubType>
       </Page>
-    </ItemGroup>
-    
-    <ItemGroup>
-      <Folder Include="Styles\" />
+      <Page Update="Styles\Controls.xaml">
+        <Generator>MSBuild:Compile</Generator>
+        <XamlRuntime>Wpf</XamlRuntime>
+        <SubType>Designer</SubType>
+      </Page>
+      <Page Update="Styles\General.xaml">
+        <Generator>MSBuild:Compile</Generator>
+        <XamlRuntime>Wpf</XamlRuntime>
+        <SubType>Designer</SubType>
+      </Page>
+      <Page Update="Dialog\BroadcastSearchDialog\BroadcastSearchDialogWindow.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </Page>
     </ItemGroup>
     
     <ItemGroup>
       <ProjectReference Include="..\LedCube.Core\LedCube.Core.csproj" />
+      <ProjectReference Include="..\LedCube.Streamer\LedCube.Streamer.csproj" />
     </ItemGroup>
     
     

@@ -29,16 +29,19 @@ public struct InfoResponsePayload
         };
     }
 
-    public static ReadOnlySpan<byte> WriteToSpan(InfoResponsePayload data)
+    public static ReadOnlyMemory<byte> WriteToMemory(InfoResponsePayload data)
     {
-        var span = new byte[42].AsSpan();
-        Encoding.ASCII.GetBytes(data.Version).AsSpan().CopyTo(span[0..]);
-        MemoryMarshal.Write(span[32..], ref data.LastFrameTimeUs);
-        MemoryMarshal.Write(span[36..], ref data.CurrentTicks);
-        MemoryMarshal.Write(span[40..], ref data.ErrorCode);
-        MemoryMarshal.Write(span[42..], ref data.Status);
-        return span;
+        var buffer = new byte[42].AsMemory();
+        Encoding.ASCII.GetBytes(data.Version).AsSpan().CopyTo(buffer.Span[0..]);
+        MemoryMarshal.Write(buffer.Span[32..], ref data.LastFrameTimeUs);
+        MemoryMarshal.Write(buffer.Span[36..], ref data.CurrentTicks);
+        MemoryMarshal.Write(buffer.Span[40..], ref data.ErrorCode);
+        MemoryMarshal.Write(buffer.Span[42..], ref data.Status);
+        return buffer;
     }
+
+    public static ReadOnlySpan<byte> WriteToSpan(InfoResponsePayload data)
+        => WriteToMemory(data).Span;
 
     public override string ToString()
     {

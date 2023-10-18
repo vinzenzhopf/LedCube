@@ -20,13 +20,16 @@ public struct InfoPayload
         };
     }
 
-    public static ReadOnlySpan<byte> WriteToSpan(InfoPayload data)
+    public static ReadOnlyMemory<byte> WriteToMemory(InfoPayload data)
     {
-        var span = new byte[Size].AsSpan();
-        Encoding.ASCII.GetBytes(data.Version).AsSpan().CopyTo(span[0..]);
-        return span;
+        var buffer = new byte[Size].AsMemory();
+        Encoding.ASCII.GetBytes(data.Version).AsSpan().CopyTo(buffer.Span[0..]);
+        return buffer;
     }
 
+    public static ReadOnlySpan<byte> WriteToSpan(InfoPayload data)
+        => WriteToMemory(data).Span;
+    
     public override string ToString()
     {
         return $"{nameof(Version)}: {Version}";

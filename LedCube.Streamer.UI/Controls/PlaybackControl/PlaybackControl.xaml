@@ -5,22 +5,221 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:LedCube.Streamer.UI.Controls.PlaybackControl"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
-             mc:Ignorable="d">
+             mc:Ignorable="d"
+             d:DesignWidth="600"
+             d:DataContext="{d:DesignInstance local:PlaybackControlViewModel, IsDesignTimeCreatable=True}">
+    <UserControl.Resources>
+        <Style x:Key="PlaybackButton" 
+               TargetType="{x:Type ButtonBase}" 
+               BasedOn="{StaticResource MahApps.Styles.Button.Circle}">
+            <Style.Setters>
+                <Setter Property="Width" Value="38"/>
+                <Setter Property="Height" Value="38"/>
+                <Setter Property="Margin" Value="2"/>
+                <Setter Property="Foreground" Value="{StaticResource MahApps.Brushes.Gray2}" />
+            </Style.Setters>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="BorderBrush" Value="{DynamicResource MahApps.Brushes.Accent}" />
+                    <Setter Property="Foreground" Value="{StaticResource MahApps.Brushes.Accent}" />
+                </Trigger>
+            </Style.Triggers>
+            <Style.Resources>
+                <Style TargetType="iconPacks:PackIconModern">
+                    <Setter Property="VerticalAlignment" Value="Center" />
+                    <Setter Property="HorizontalAlignment" Value="Center" />
+                    <!-- <Setter Property="Width" Value="18"/> -->
+                    <!-- <Setter Property="Height" Value="18"/> -->
+                </Style>
+            </Style.Resources>
+        </Style>
+        <Style x:Key="PlaybackButtonLarge" 
+               TargetType="{x:Type ButtonBase}" 
+               BasedOn="{StaticResource PlaybackButton}">
+            <Style.Setters>
+                <Setter Property="Width" Value="48"/>
+                <Setter Property="Height" Value="48"/>
+            </Style.Setters>
+            <Style.Resources>
+                <Style TargetType="iconPacks:PackIconModern">
+                    <Setter Property="VerticalAlignment" Value="Center" />
+                    <Setter Property="HorizontalAlignment" Value="Center" />
+                    <Setter Property="Width" Value="22"/>
+                    <Setter Property="Height" Value="22"/>
+                </Style>
+            </Style.Resources>
+        </Style>
+    </UserControl.Resources>
     <StackPanel>
-        <Button Content="Deploy CupCakes" Style="{DynamicResource MahApps.Styles.Button.Circle}">
-            <Button.ContentTemplate>
-                <DataTemplate>
-                    <StackPanel Orientation="Horizontal">
-                        <iconPacks:PackIconModern Width="22"
-                                                  Height="22"
-                                                  VerticalAlignment="Center"
-                                                  Kind="FoodCupcake" />
-                        <TextBlock Margin="4 0 0 0"
-                                   VerticalAlignment="Center"
-                                   Text="Test" />
-                    </StackPanel>
-                </DataTemplate>
-            </Button.ContentTemplate>
-        </Button>
+        <!-- Upper Timeline Bar -->
+        <Grid>
+            <Slider Margin="5"
+                    Height="40"
+                    Maximum="{Binding ActiveAnimation.FrameCount}"
+                    Minimum="1"
+                    Orientation="Horizontal"
+                    LargeChange="{Binding ActiveAnimation.FrameFrequency}"
+                    SmallChange="1"
+                    IsSelectionRangeEnabled="False"
+                    IsSnapToTickEnabled="True"
+                    TickFrequency="1"
+                    TickPlacement="Both"
+                    Value="1"
+                    AutoToolTipPlacement="BottomRight" AutoToolTipPrecision="2" />
+        </Grid>
+        <!-- Lower control Bar -->
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="2*" />
+            </Grid.ColumnDefinitions>
+            <Grid Grid.Column="0" >
+                <!-- Active Animation View -->
+                <Grid>
+                    <Grid.Style>
+                        <Style TargetType="Grid">
+                            <Style.Setters>
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </Style.Setters>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsAnimationSelected}" 
+                                             Value="True">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Grid.Style>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" 
+                               Text="{Binding ActiveAnimation.Name}" FontWeight="Bold" />
+                    <TextBlock Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="4" 
+                               Text="{Binding ActiveAnimation.Description}"/>
+                    <WrapPanel Grid.Column="2" Grid.Row="0" 
+                               HorizontalAlignment="Right">
+                        <TextBlock Text="#" Foreground="Gray" />
+                        <TextBlock Text="{Binding ActiveAnimation.Index}" 
+                                   Foreground="Gray"/>
+                    </WrapPanel>
+                    <WrapPanel Grid.Column="0" Grid.Row="2">
+                        <TextBlock Text="Frames: " 
+                                   Foreground="Gray" />
+                        <TextBlock Text="{Binding ActiveAnimation.FrameCount}" 
+                                   Foreground="Gray"/>
+                    </WrapPanel>
+                    <WrapPanel Grid.Column="1" Grid.Row="2">
+                        <TextBlock Text="FPS: " 
+                                   Foreground="Gray" />
+                        <TextBlock Text="{Binding ActiveAnimation.FrameFrequency}" 
+                                   Foreground="Gray"/>
+                    </WrapPanel>
+                    <WrapPanel Grid.Column="2" Grid.Row="2" 
+                               HorizontalAlignment="Right">
+                        <iconPacks:PackIconMaterialDesign 
+                            Kind="AccessTime" 
+                            Foreground="Gray" 
+                            Height="12" 
+                            Width="12" 
+                            VerticalAlignment="Center" 
+                            Margin="0,0,2,0"/>
+                        <TextBlock Text="{Binding ActiveAnimation.AnimationLength}"
+                                   Foreground="Gray"/>
+                    </WrapPanel>
+                </Grid>
+                <Grid>
+                    <Grid.Style>
+                        <Style TargetType="Grid">
+                            <Style.Setters>
+                                <Setter Property="Visibility" Value="Visible" />
+                            </Style.Setters>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsAnimationSelected}" 
+                                             Value="True">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Grid.Style>
+                    <TextBlock Foreground="{StaticResource MahApps.Brushes.Gray2}">No Animation selected.</TextBlock>
+                </Grid>
+            </Grid>
+            <!-- Animation Control Buttons -->
+            <StackPanel Grid.Column="1"
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Margin="5">
+                <Button Style="{StaticResource PlaybackButton}">
+                    <iconPacks:PackIconModern Kind="ControlRewind" />
+                </Button>
+                <Button Style="{StaticResource PlaybackButton}">
+                    <iconPacks:PackIconModern Kind="ControlResume" />
+                </Button>
+                <Grid>
+                    <Button>
+                        <Button.Style>
+                            <Style BasedOn="{StaticResource PlaybackButtonLarge}" TargetType="{x:Type ButtonBase}">
+                                <Style.Setters>
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </Style.Setters>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding PlaybackState}" 
+                                                 Value="{x:Static local:PlaybackState.Playing}">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <iconPacks:PackIconModern Kind="ControlPlay" Padding="3,0,0,0"/>
+                    </Button>
+                    <Button>
+                        <Button.Style>
+                            <Style BasedOn="{StaticResource PlaybackButtonLarge}" TargetType="{x:Type ButtonBase}">
+                                <Style.Setters>
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </Style.Setters>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding PlaybackState}" 
+                                                 Value="{x:Static local:PlaybackState.Playing}">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <iconPacks:PackIconModern Kind="ControlPause" />
+                    </Button>
+                </Grid>
+                <Button Style="{StaticResource PlaybackButton}">
+                    <iconPacks:PackIconModern Kind="ControlStop" />
+                </Button>
+                <Button Style="{StaticResource PlaybackButton}">
+                    <iconPacks:PackIconModern Kind="ControlFastforward" />
+                </Button>
+            </StackPanel>
+            <!-- <StackPanel Orientation="Horizontal"> -->
+            <!--     <Button Style="{StaticResource PlaybackButton}"> -->
+            <!--         <iconPacks:PackIconModern Kind="ControlEject" /> -->
+            <!--     </Button> -->
+            <!--     <Button Style="{StaticResource PlaybackButton}"> -->
+            <!--         <iconPacks:PackIconModern Kind="ControlPlayLive" /> -->
+            <!--     </Button> -->
+            <!--      -->
+            <!--     <Button Style="{StaticResource PlaybackButton}"> -->
+            <!--         <iconPacks:PackIconModern Kind="ControlFastforwardVariant" /> -->
+            <!--     </Button> -->
+            <!--     <Button Style="{StaticResource PlaybackButton}"> -->
+            <!--         <iconPacks:PackIconModern Kind="ControlRewindVariant" /> -->
+            <!--     </Button> -->
+            <!-- </StackPanel> -->
+        </Grid>
     </StackPanel>
 </UserControl>

@@ -24,16 +24,19 @@ public struct FrameResponsePayload
         };
     }
 
-    public static ReadOnlySpan<byte> WriteToSpan(FrameResponsePayload data)
+    public static ReadOnlyMemory<byte> WriteToMemory(FrameResponsePayload data)
     {   
-        var span = new byte[Size].AsSpan();
-        MemoryMarshal.Write(span[0..], ref data.FrameNumber);
-        MemoryMarshal.Write(span[4..], ref data.LastFrameTimeUs);
-        MemoryMarshal.Write(span[8..], ref data.CurrentTicks);
-        MemoryMarshal.Write(span[12..], ref data.ReceivedTicks);
-        MemoryMarshal.Write(span[16..], ref data.Status);
-        return span;
+        var buffer = new byte[Size].AsMemory();
+        MemoryMarshal.Write(buffer.Span[0..], ref data.FrameNumber);
+        MemoryMarshal.Write(buffer.Span[4..], ref data.LastFrameTimeUs);
+        MemoryMarshal.Write(buffer.Span[8..], ref data.CurrentTicks);
+        MemoryMarshal.Write(buffer.Span[12..], ref data.ReceivedTicks);
+        MemoryMarshal.Write(buffer.Span[16..], ref data.Status);
+        return buffer;
     }
+
+    public static ReadOnlySpan<byte> WriteToSpan(FrameResponsePayload data)
+        => WriteToMemory(data).Span;
 
     public override string ToString()
     {

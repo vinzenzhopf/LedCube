@@ -1,0 +1,77 @@
+﻿<mah:MetroWindow x:Class="LedCube.Core.UI.Dialog.SimpleDialog.SimpleDialogWindow"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:LedCube.Core.UI.Dialog.SimpleDialog"
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance local:SimpleDialogViewModel, IsDesignTimeCreatable=True}"
+             Height="200"
+             Width="350"
+             Title="{Binding Title}"
+             Closed="SimpleDialogWindow_OnClosed"
+             x:Name="DialogWindow">
+        <Window.Resources>
+                <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+                <Style x:Key="DialogButton" 
+                       TargetType="{x:Type Button}"
+                       BasedOn="{StaticResource MahApps.Styles.Button}">
+                    <Style.Setters>
+                        <Setter Property="Margin" Value="5,0,0,0"/>
+                        <Setter Property="Padding" Value="8" />
+                        <Setter Property="MinWidth" Value="50" />
+                    </Style.Setters>
+                </Style>
+                <Style x:Key="DialogButtonAccent" 
+                       TargetType="{x:Type Button}"
+                       BasedOn="{StaticResource DialogButton}">
+                    <Style.Setters>
+                        <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Accent}" />
+                        <Setter Property="Foreground" Value="{StaticResource MahApps.Brushes.Dialog.Foreground.Accent}" />
+                    </Style.Setters>
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Accent3}" />
+                            <Setter Property="Foreground" Value="{StaticResource MahApps.Brushes.Button.AccentedSquare.Foreground.MouseOver}" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+        </Window.Resources>
+        <DockPanel
+            Margin="20">
+        <StackPanel DockPanel.Dock="Bottom" 
+                    Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="Cancel"
+                    Command="{Binding CancelClickedCommand}"
+                    CommandParameter="{Binding ElementName=DialogWindow}"
+                    Visibility="{Binding ShowCancelButton, 
+                        Converter={StaticResource BooleanToVisibilityConverter}}"
+                    IsDefault="{Binding CancelIsPrimary}" />
+            <Button Style="{StaticResource DialogButton}" 
+                    Content="No"
+                    Command="{Binding NoClickedCommand}"
+                    CommandParameter="{Binding ElementName=DialogWindow}"
+                    Visibility="{Binding ShowNoButton, 
+                        Converter={StaticResource BooleanToVisibilityConverter}}" />
+            <Button Style="{StaticResource DialogButton}" 
+                    Content="Yes" 
+                    Command="{Binding YesClickedCommand}"
+                    CommandParameter="{Binding ElementName=DialogWindow}"
+                    Visibility="{Binding ShowYesButton, 
+                        Converter={StaticResource BooleanToVisibilityConverter}}"
+                    IsDefault="{Binding YesIsPrimary}" />
+            <Button Style="{StaticResource DialogButtonAccent}" 
+                    Content="Ok"
+                    Command="{Binding OkClickedCommand}"
+                    CommandParameter="{Binding ElementName=DialogWindow}"
+                    Visibility="{Binding ShowOkButton, 
+                        Converter={StaticResource BooleanToVisibilityConverter}}"
+                    IsDefault="{Binding OkIsPrimary}"/>
+        </StackPanel>
+        <TextBlock Text="{Binding Text}" 
+                   HorizontalAlignment="Left" 
+                   VerticalAlignment="Center" 
+                   TextWrapping="Wrap" />
+    </DockPanel>
+</mah:MetroWindow>

@@ -8,6 +8,7 @@
 
 
     <ItemGroup>
+      <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.0" />
       <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="7.0.0" />
       <PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
       <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
@@ -16,6 +17,19 @@
 
     <ItemGroup>
       <ProjectReference Include="..\LedCube.Core\LedCube.Core.csproj" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <Reference Include="LedCube.Streamer">
+        <HintPath>..\LedCube.Streamer.Test\bin\Debug\net7.0\LedCube.Streamer.dll</HintPath>
+      </Reference>
+      <Reference Include="PresentationFramework" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <Folder Include="Styles\" />
     </ItemGroup>
 
 </Project>

@@ -8,11 +8,42 @@
                  xmlns:mainWindow="clr-namespace:LedCube.Streamer.UI.Controls.MainWindow"
                  xmlns:menuBar="clr-namespace:LedCube.Streamer.UI.Controls.MenuBar"
                  xmlns:cubeView2D="clr-namespace:LedCube.Core.UI.Controls.CubeView2D;assembly=LedCube.Core.UI"
+                 xmlns:animationList="clr-namespace:LedCube.Streamer.UI.Controls.AnimationList"
+                 xmlns:playbackControl="clr-namespace:LedCube.Streamer.UI.Controls.PlaybackControl"
+                 xmlns:streamingControl="clr-namespace:LedCube.Streamer.UI.Controls.StreamingControl"
                  mc:Ignorable="d"
-                 Title="{Binding TitleText}" Height="600" Width="1000"
+                 Title="{Binding TitleText}" 
+                 Height="800" 
+                 Width="1200"
                  d:DataContext="{d:DesignInstance mainWindow:MainViewModel, IsDesignTimeCreatable=True}">
     <mah:MetroWindow.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <Style x:Key="ShowLogWindow" TargetType="{x:Type RowDefinition}">
+            <Style.Setters>
+                <Setter Property="Height" Value="*"/>
+            </Style.Setters>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding LogAppenderViewModel.ShowLog}" Value="False">
+                    <DataTrigger.Setters>
+                        <Setter Property="Height" Value="0"/>
+                        <Setter Property="MaxHeight" Value="0"/>
+                    </DataTrigger.Setters>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="ShowLogWindowSplitter" TargetType="{x:Type RowDefinition}">
+            <Style.Setters>
+                <Setter Property="Height" Value="4"/>
+            </Style.Setters>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding LogAppenderViewModel.ShowLog}" Value="False">
+                    <DataTrigger.Setters>
+                        <Setter Property="Height" Value="0"/>
+                        <Setter Property="MaxHeight" Value="0"/>
+                    </DataTrigger.Setters>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
     </mah:MetroWindow.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -27,37 +58,42 @@
         <!-- Content -->
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="5" />
                 <ColumnDefinition Width="2*" />
-                <ColumnDefinition Width="5" />
+                <ColumnDefinition Width="4" />
                 <ColumnDefinition Width="3*" />
+                <ColumnDefinition Width="4"/>
+                <ColumnDefinition Width="2*"/>
             </Grid.ColumnDefinitions>
-            <Grid Grid.Column="0">
-                <TextBox AcceptsReturn="True">Left Sidebar</TextBox>
-            </Grid>
-            <GridSplitter Grid.Column="1" VerticalAlignment="Stretch" ResizeBehavior="BasedOnAlignment" Width="5" />
-            <Grid Grid.Column="2">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="2*" />
-                    <RowDefinition Height="1*" />
-                    <!-- <RowDefinition Height="Auto" /> -->
-                </Grid.RowDefinitions>
-                <TextBox Grid.Row="0" AcceptsReturn="True" Background="CornflowerBlue">This is the main 3d Content to show the Cube!</TextBox>
-                <Grid Grid.Row="1"
-                      Visibility="{Binding LogAppenderViewModel.ShowLog, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <DockPanel Grid.Column="0">
+                <Border DockPanel.Dock="Top"
+                        BorderBrush="Gray"
+                        BorderThickness="0, 0, 0, 0"
+                        Margin="0, 0, 0,5">
+                    <streamingControl:StreamingControl DataContext="{Binding StreamingControlViewModel}" />
+                </Border>
+                <animationList:AnimationList DataContext="{Binding AnimationListViewModel}"/>
+            </DockPanel>
+            <GridSplitter Grid.Column="1" VerticalAlignment="Stretch" ResizeBehavior="BasedOnAlignment"/>
+            <DockPanel Grid.Column="2">
+                <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition />
-                        <RowDefinition Height="100"
-                                       MinHeight="30"
-                                       MaxHeight="1200" />
+                        <RowDefinition Height="2*"/>
+                        <RowDefinition Style="{StaticResource ShowLogWindowSplitter}"/>
+                        <RowDefinition Style="{StaticResource ShowLogWindow}"/>
                     </Grid.RowDefinitions>
-                    <GridSplitter Grid.Row="0" Height="5"
-                                  ResizeBehavior="CurrentAndNext" HorizontalAlignment="Stretch" />
-                    <logAppender:LogAppenderControl Grid.Row="1" DataContext="{Binding LogAppenderViewModel}" />
+                    <DockPanel Grid.Row="0" VerticalAlignment="Stretch">
+                        <playbackControl:PlaybackControl DockPanel.Dock="Bottom"
+                                                         DataContext="{Binding PlaybackControlViewModel}" />
+                        <TextBox AcceptsReturn="True" Background="CornflowerBlue">This is the main 3d Content to show the Cube!</TextBox>
+                    </DockPanel>
+                    <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" />
+                    <logAppender:LogAppenderControl 
+                        Grid.Row="2" 
+                        Background="Chartreuse" 
+                        DataContext="{Binding LogAppenderViewModel}" />
                 </Grid>
-            </Grid>
-            <GridSplitter Grid.Column="3" VerticalAlignment="Stretch" ResizeBehavior="BasedOnAlignment"  Width="5" />
+            </DockPanel>
+            <GridSplitter Grid.Column="3" VerticalAlignment="Stretch" ResizeBehavior="BasedOnAlignment"/>
             <Grid Grid.Column="4">
                 <!-- <TextBox AcceptsReturn="True">Right Sidebar</TextBox> -->
                 <cubeView2D:CubeView2D DataContext="{Binding CubeView2DViewModel}"/>
