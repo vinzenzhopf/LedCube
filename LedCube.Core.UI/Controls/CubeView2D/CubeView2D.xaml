@@ -8,6 +8,7 @@
              xmlns:ui="clr-namespace:LedCube.Core.UI"
              xmlns:converters="clr-namespace:LedCube.Core.UI.Converters"
              xmlns:cube="clr-namespace:LedCube.Core.Common.Model.Cube;assembly=LedCube.Core"
+             xmlns:cube1="clr-namespace:LedCube.Core.Common.Model.Cube;assembly=LedCube.Core.Common"
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance local:CubeView2DViewModel, IsDesignTimeCreatable=True}"
              d:DesignHeight="500" d:DesignWidth="400">
@@ -19,9 +20,9 @@
         <converters:IntToDoubleConverter x:Key="intToDoubleConverter" />
         <ObjectDataProvider x:Key="OrientationEnumProvider"
                             MethodName="GetValues"
-                            ObjectType="{x:Type cube:Orientation3D}">
+                            ObjectType="{x:Type cube1:Orientation3D}">
             <ObjectDataProvider.MethodParameters>
-                <x:Type TypeName="cube:Orientation3D" />
+                <x:Type TypeName="cube1:Orientation3D" />
             </ObjectDataProvider.MethodParameters>
         </ObjectDataProvider>
     </UserControl.Resources>

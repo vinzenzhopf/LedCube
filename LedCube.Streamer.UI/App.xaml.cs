@@ -10,7 +10,7 @@ using System.Runtime.Serialization;
 using System.Threading.Tasks;
 using System.Windows;
 using LedCube.Core;
-using LedCube.Core.Common.Config;
+using LedCube.Core.Config;
 using LedCube.Core.CubeData.Repository;
 using LedCube.Core.Settings;
 using LedCube.Core.UI.Controls.CubeView2D;

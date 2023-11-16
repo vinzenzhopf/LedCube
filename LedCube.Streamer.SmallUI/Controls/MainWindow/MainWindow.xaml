@@ -8,6 +8,8 @@
                  xmlns:mainWindow="clr-namespace:LedCube.Streamer.SmallUI.Controls.MainWindow"
                  xmlns:menuBar="clr-namespace:LedCube.Streamer.SmallUI.Controls.MenuBar"
                  xmlns:streamingControl="clr-namespace:LedCube.Streamer.SmallUI.Controls.StreamingControl"
+                 xmlns:playbackControl="clr-namespace:LedCube.Streamer.UI.Controls.PlaybackControl;assembly=LedCube.Streamer.UI"
+                 xmlns:animationList="clr-namespace:LedCube.Streamer.UI.Controls.AnimationList;assembly=LedCube.Streamer.UI"
                  mc:Ignorable="d"
                  Title="{Binding TitleText}" 
                  Height="600" 
@@ -59,13 +61,20 @@
                 <RowDefinition Style="{StaticResource ShowLogWindowSplitter}"/>
                 <RowDefinition Style="{StaticResource ShowLogWindow}"/>
             </Grid.RowDefinitions>
-            <StackPanel Grid.Row="0" VerticalAlignment="Stretch">
-                <!-- <Button Content="Test" Command="{Binding TestCommand}" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" /> -->
-                <!-- <Button Content="Broadcast search" Command="{Binding BroadcastSearchCommand}" Style="{StaticResource MahApps.Styles.Button.Square}" /> -->
-                <!-- <playbackControl:PlaybackControl DockPanel.Dock="Bottom" -->
-                <!--                                  DataContext="{Binding PlaybackControlViewModel}" /> -->
-                <streamingControl:StreamingControl DataContext="{Binding StreamingControlViewModel}" />
-            </StackPanel>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0">
+                    <streamingControl:StreamingControl DataContext="{Binding StreamingControlViewModel}" />
+                </StackPanel>
+                <DockPanel Grid.Column="1">
+                    <!-- <playbackControl:PlaybackControl DockPanel.Dock="Bottom" /> -->
+                                                     <!-- DataContext="{Binding PlaybackControlViewModel}" /> -->
+                    <!-- <animationList:AnimationList /> -->
+                </DockPanel>
+            </Grid>
             <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" />
             <logAppender:LogAppenderControl 
                 Grid.Row="2" 

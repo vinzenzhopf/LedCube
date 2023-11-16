@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using LedCube.Core.Common.Model;
+using LedCube.Core.Common.Model.Cube;
 using LedCube.Core.CubeData;
 using Microsoft.Extensions.Logging;
 using Serilog;

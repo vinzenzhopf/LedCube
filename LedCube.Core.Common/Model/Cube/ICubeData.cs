@@ -1,7 +1,4 @@
-using LedCube.Core.Common.Model;
-using LedCube.Core.Common.Model.Cube;
-
-namespace LedCube.Core.CubeData;
+namespace LedCube.Core.Common.Model.Cube;
 
 public delegate void LedChangedArgs(Point3D p, bool value);
 

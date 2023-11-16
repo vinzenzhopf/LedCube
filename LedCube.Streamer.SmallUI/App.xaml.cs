@@ -7,7 +7,7 @@ using System.Threading;
 using System.Windows;
 using CommunityToolkit.Mvvm.Messaging;
 using LedCube.Core;
-using LedCube.Core.Common.Config;
+using LedCube.Core.Config;
 using LedCube.Core.CubeData.Repository;
 using LedCube.Core.Settings;
 using LedCube.Core.UI.Controls.CubeView2D;
@@ -65,9 +65,11 @@ namespace LedCube.Streamer.SmallUI
                         .WriteTo.LogAppenderControlSink(logAppenderControlSink)
                         .CreateLogger();
                     Log.Logger = logger;
-                    var loggerFactory = new SerilogLoggerFactory(logger, true);
+                    var loggerFactory = new SerilogLoggerFactory(logger, false);
                     Log.Verbose("Logger initialized. Logging to {0}", logFile);
                     
+                    loggingBuilder.AddSerilog(logger, true);
+                    loggingBuilder.Services.AddSingleton<Serilog.ILogger>(logger);
                     loggingBuilder.Services.AddSingleton<ILoggerFactory>(loggerFactory);
                     loggingBuilder.Services.AddSingleton(logAppenderControlSink);
                 })

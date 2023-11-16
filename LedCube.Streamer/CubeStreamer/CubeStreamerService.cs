@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Net;
 using CommunityToolkit.Mvvm.ComponentModel;
-using LedCube.Core.Common.Config;
+using LedCube.Core.Config;
 using LedCube.Core.CubeData.Repository;
 using LedCube.Streamer.Datagram;
 using LedCube.Streamer.UdpCom;

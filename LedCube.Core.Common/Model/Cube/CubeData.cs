@@ -1,14 +1,9 @@
-﻿using System;
-using LedCube.Core.Common.Model;
-using LedCube.Core.Common.Model.Cube;
+﻿namespace LedCube.Core.Common.Model.Cube;
 
-namespace LedCube.Core.CubeData;
-
-public class CubeData : ICubeData
+public class CubeData : ICubeDataBuffer
 {
-    private readonly bool[] _leds;
-    
     public Point3D Size { get; }
+    public bool[] Buffer { get; }
     
     public event CubeChangedArgs? CubeChanged;
     public event LedChangedArgs? LedChanged;
@@ -17,16 +12,16 @@ public class CubeData : ICubeData
     public CubeData(Point3D size)
     {
         Size = size;
-        _leds = new bool[Count];
+        Buffer = new bool[Count];
         for (var i = 0; i < Count; i++)
         {
-            _leds[i] = false;
+            Buffer[i] = false;
         }
     }
 
     public bool GetLedIndex(int index)
     {
-        return _leds[index];
+        return Buffer[index];
     }
     
     /// <summary>
@@ -36,14 +31,14 @@ public class CubeData : ICubeData
     /// <param name="value">The new Value</param>
     public void SetLedIndex(int index, bool value)
     {
-        _leds[index] = value;
+        Buffer[index] = value;
     }
     
     public bool GetLed(Point3D p)
     {
         if(!Point3D.CheckBounds(p, Point3D.Empty, Size))
             throw new ArgumentException("Point out of Range", nameof(p));
-        return _leds[CoordinatesToIndex(p)];
+        return Buffer[CoordinatesToIndex(p)];
     }
 
     public void SetLed(Point3D p, bool value)
@@ -51,9 +46,9 @@ public class CubeData : ICubeData
         if(!Point3D.CheckBounds(p, Point3D.Empty, Size))
             throw new ArgumentException("Point out of Range", nameof(p));
         var i = CoordinatesToIndex(p);
-        if (_leds[i] == value) 
+        if (Buffer[i] == value) 
             return;
-        _leds[i] = value;
+        Buffer[i] = value;
         OnLedChanged(p, value);
     }
 
