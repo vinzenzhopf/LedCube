@@ -26,4 +26,10 @@
       <ProjectReference Include="..\..\LedCube.PluginBase\LedCube.PluginBase.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Update="Plugins\.gitkeep">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>

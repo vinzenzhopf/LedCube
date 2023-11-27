@@ -26,7 +26,7 @@ public abstract class CubeProjectionTestBase : TestWithLoggingBase
     {
         for (var i = 0; i < CubeData.Size.ElementProduct; i++)
         {
-            Assert.False(CubeData.GetLedIndex(i));
+            Assert.False(CubeData.GetLed(i));
         }
     }
 
@@ -35,7 +35,7 @@ public abstract class CubeProjectionTestBase : TestWithLoggingBase
         var count = 0;
         for (var i = 0; i < CubeData.Size.ElementProduct; i++)
         {
-            if (CubeData.GetLedIndex(i)) count++;
+            if (CubeData.GetLed(i)) count++;
         }
         return count;
     }

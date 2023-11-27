@@ -4,9 +4,18 @@ using LedCube.Plugin.Base;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Serilog;
 
 namespace LedCube.PluginHost;
+
+public interface IPluginContext
+{
+    public void UnloadAll();
+    public void LoadAssemblies();
+    public TType GetService<TType>() where TType : class;
+    public IEnumerable<TType> GetServices<TType>() where TType : class;
+}
 
 public class PluginContext : IPluginContext
 {
@@ -15,15 +24,15 @@ public class PluginContext : IPluginContext
     
     private readonly IServiceProvider _serviceProvider;
     private readonly ILogger<PluginContext> _logger;
-    private readonly FrameGeneratorLoaderConfiguration _frameGeneratorLoaderConfiguration;
+    private readonly PluginOptions _pluginOptions;
     
     private readonly ConcurrentDictionary<LoadedPlugin, ServiceProvider> _loadedPlugins = new();
     
-    public PluginContext(ILogger<PluginContext> logger, IServiceProvider serviceProvider, FrameGeneratorLoaderConfiguration frameGeneratorLoaderConfiguration)
+    public PluginContext(ILogger<PluginContext> logger, IServiceProvider serviceProvider, IOptions<PluginOptions> pluginOptions)
     {
         _logger = logger;
         _serviceProvider = serviceProvider;
-        _frameGeneratorLoaderConfiguration = frameGeneratorLoaderConfiguration;
+        _pluginOptions = pluginOptions.Value;
     }
     
     public TType GetService<TType>() where TType : class
@@ -46,7 +55,17 @@ public class PluginContext : IPluginContext
     public void LoadAssemblies()
     {
         // load plugin via PluginLoader
-        var assemblyDirectories = Directory.GetDirectories(_frameGeneratorLoaderConfiguration.Plugins);
+        if (string.IsNullOrWhiteSpace(_pluginOptions.Path))
+        {
+            _logger.LogError("Plugin Loader: Plugin directory is empty. Skip plugin loading...");
+            return;
+        }
+        if (!Directory.Exists(_pluginOptions.Path))
+        {
+            _logger.LogError("Plugin Loader: Plugin directory does not exist. Skip plugin loading...");
+            return;
+        }
+        var assemblyDirectories = Directory.GetDirectories(_pluginOptions.Path);
         foreach (var assemblyDirectoryToLoad in assemblyDirectories)
         {
             var pluginLoader = new PluginLoader(_serviceProvider.GetService<ILogger<PluginLoader>>()!);
@@ -121,27 +140,4 @@ public class PluginContext : IPluginContext
         IPlugin Plugin,
         PluginLoader Loader
     );
-    
-    public class HostServiceProxy : IHostServiceProxy
-    {
-        private readonly IServiceProvider _serviceProvider;
-
-        public HostServiceProxy(IServiceProvider serviceProvider)
-        {
-            _serviceProvider = serviceProvider;
-        }
-
-        public TType GetHostService<TType>()
-            where TType : class
-        {
-            using var scope = _serviceProvider.CreateScope();
-            // var assemblyName = typeof(TType).Assembly.GetName().Name;
-            // if (assemblyName != "Coral.Events")
-            // {
-            //     throw new ArgumentException("You may only access types belonging to the Coral.Events assembly.");
-            // }
-            return scope.ServiceProvider.GetRequiredService<TType>();
-        }
-    }
-
 }

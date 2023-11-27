@@ -17,29 +17,25 @@ public class PluginLoader : AssemblyLoadContext
     public (Assembly Assembly, IPlugin Plugin)? LoadPluginAssemblies(string assemblyDirectory)
     {
         (Assembly Assembly, IPlugin Plugin)? assemblyGroup = null;
-        // load the plugins with their dependencies
         foreach (var assemblyPath in Directory.GetFiles(assemblyDirectory, "*.dll"))
         {
             // if PluginBase is present, skip loading
-            // if (Path.GetFileName(assemblyPath).StartsWith("Coral.PluginBase"))
-            // {
-            //     _logger.LogWarning("Coral.PluginBase assembly detected, please remove from plugin folder. " +
-            //                                         $"Skipping load of: {assemblyPath}" +
-            //                                         " to ensure plug-in can load.");
-            //     continue;
-            // }
+            if (Path.GetFileName(assemblyPath).StartsWith("LedCube.PluginBase"))
+            {
+                _logger.LogWarning("LedCube.PluginBase assembly detected, please remove from plugin folder. " +
+                                                    $"Skipping load of: {assemblyPath}" +
+                                                    " to ensure plug-in can load.");
+                continue;
+            }
 
             var assembly = LoadFromAssemblyPath(assemblyPath);
             try
             {
                 var types = assembly.GetTypes();
-                // if assembly has more than 1 plugin,
-                // throw exception about poor design.
                 var pluginCount = types.Count(t => typeof(IPlugin).IsAssignableFrom(t));
                 if (pluginCount > 1)
                 {
-                    throw new ConstraintException("Cannot load assembly with more than 1 plugin." +
-                                                  " Please separate your plugins into multiple assemblies");
+                    throw new ConstraintException("Cannot load assembly with more than 1 plugin.");
                 }
 
                 // if assembly has no plugins, continue, it's a needed dependency

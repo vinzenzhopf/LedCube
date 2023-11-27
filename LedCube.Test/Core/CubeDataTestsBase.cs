@@ -24,7 +24,7 @@ public abstract class CubeDataTestsBase : TestWithLoggingBase
     {
         for (var i = 0; i < CubeSize.ElementProduct; i++)
         {
-            Assert.False(sut.GetLedIndex(i));
+            Assert.False(sut.GetLed(i));
         }
     }
 
@@ -33,7 +33,7 @@ public abstract class CubeDataTestsBase : TestWithLoggingBase
         int count = 0;
         for (var i = 0; i < CubeSize.ElementProduct; i++)
         {
-            if (sut.GetLedIndex(i)) count++;
+            if (sut.GetLed(i)) count++;
         }
         return count;
     }

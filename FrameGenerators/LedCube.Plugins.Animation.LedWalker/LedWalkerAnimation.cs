@@ -1,31 +1,58 @@
-﻿using LedCube.Plugin.Base;
+﻿using LedCube.Core.Common.Extensions;
+using LedCube.Core.Common.Model.Cube;
+using LedCube.Plugin.Base;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace LedCube.Plugins.Animation.LedWalker;
 
-public class LedWalkerAnimation : FrameGeneratorBase{
+public class LedWalkerAnimation : IFrameGenerator
+{
+    private readonly IConfiguration _configuration;
+    private readonly ILogger<LedWalkerAnimation> _logger;
+
+    public TimeSpan? FrameTime { get; } = null;
     
-    public override void Initialize(GeneratorCubeConfiguration config)
+    private int _activeLedPos;
+    private long _lastMove;
+    private int _walkingSpeedMs;
+    private GeneratorCubeConfiguration? _config = null;
+
+    public LedWalkerAnimation(IConfiguration configuration, ILogger<LedWalkerAnimation> logger)
     {
-        throw new NotImplementedException();
+        _configuration = configuration;
+        _logger = logger;
+        
+        _walkingSpeedMs = 200;
     }
 
-    public override void AnimationStart()
+    public void Initialize(GeneratorCubeConfiguration config)
     {
-        throw new NotImplementedException();
+        _config = config;
     }
 
-    public override void DrawFrame(FrameContext frameContext)
+    public void AnimationStart(AnimationContext animationContext)
     {
-        throw new NotImplementedException();
+        _activeLedPos = 0;
+        _lastMove = animationContext.CurrentTicks;
     }
 
-    public override void AnimationEnd()
+    public void DrawFrame(FrameContext frameContext)
     {
-        throw new NotImplementedException();
+        var lastMoveDiff = (frameContext.CurrentTicks - _lastMove);
+        if (lastMoveDiff > _walkingSpeedMs)
+        {
+            _activeLedPos = (_activeLedPos + 1) % frameContext.Buffer.Length;
+        }
+        frameContext.Buffer.Clear();
+        frameContext.Buffer.SetLed(_activeLedPos, true);
     }
 
-    public override void Dispose()
+    public void AnimationEnd(AnimationContext animationContext)
     {
-        throw new NotImplementedException();
+    }
+
+    public void Dispose()
+    {
     }
 }

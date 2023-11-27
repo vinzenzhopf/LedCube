@@ -31,6 +31,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\FrameGenerators\LedCube.PluginHost\LedCube.PluginHost.csproj" />
         <ProjectReference Include="..\LedCube.Core.UI\LedCube.Core.UI.csproj" />
         <ProjectReference Include="..\LedCube.Core\LedCube.Core.csproj" />
         <ProjectReference Include="..\LedCube.Streamer.UI\LedCube.Streamer.UI.csproj" />
@@ -58,10 +59,6 @@
         <XamlRuntime>Wpf</XamlRuntime>
         <SubType>Designer</SubType>
       </Page>
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Dialogs\" />
     </ItemGroup>
 
 </Project>

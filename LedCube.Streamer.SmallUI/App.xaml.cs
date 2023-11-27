@@ -15,6 +15,7 @@ using LedCube.Core.UI.Controls.LogAppender;
 using LedCube.Core.UI.Dialog;
 using LedCube.Core.UI.Dialog.BroadcastSearchDialog;
 using LedCube.Core.UI.Dialog.SimpleDialog;
+using LedCube.PluginHost;
 using LedCube.Streamer.CubeStreamer;
 using LedCube.Streamer.SmallUI.Controls.StreamingControl;
 using LedCube.Streamer.UdpCom;
@@ -95,6 +96,9 @@ namespace LedCube.Streamer.SmallUI
                         services.AddSingleton<ICubeConfigRepository>(settingsProvider.Settings);
                         services.AddSingleton<LogAppenderViewModel>();
                         // services.AddSingleton<NavigationController>();
+                        
+                        
+                        services.ConfigurePluginHost(context.Configuration);
                         ConfigureServices(services);
                     })
                 .Build();

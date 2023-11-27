@@ -7,19 +7,19 @@ public class CubeData : ICubeDataBuffer
     
     public event CubeChangedArgs? CubeChanged;
     public event LedChangedArgs? LedChanged;
-    public int Count => Size.X * Size.Y * Size.Z;
+    public int Length => Size.X * Size.Y * Size.Z;
 
     public CubeData(Point3D size)
     {
         Size = size;
-        Buffer = new bool[Count];
-        for (var i = 0; i < Count; i++)
+        Buffer = new bool[Length];
+        for (var i = 0; i < Length; i++)
         {
             Buffer[i] = false;
         }
     }
 
-    public bool GetLedIndex(int index)
+    public bool GetLed(int index)
     {
         return Buffer[index];
     }
@@ -29,7 +29,7 @@ public class CubeData : ICubeDataBuffer
     /// </summary>
     /// <param name="index">Index of the array.</param>
     /// <param name="value">The new Value</param>
-    public void SetLedIndex(int index, bool value)
+    public void SetLed(int index, bool value)
     {
         Buffer[index] = value;
     }
@@ -52,17 +52,15 @@ public class CubeData : ICubeDataBuffer
         OnLedChanged(p, value);
     }
 
-    private int CoordinatesToIndex(Point3D p) => 
-        p.X + 
-        p.Y * Size.X + 
-        p.Z * Size.X * Size.Y;
+    public void Clear()
+    {
+        for (var i = 0; i < Length; i++)
+        {
+            Buffer[i] = false;
+        }
+        OnCubeChanged(this);
+    }
 
-    private Point3D IndexToCoordinates(int index) => new(
-        index % Size.X,
-        (index / Size.X) % Size.Y,
-        (index / (Size.X * Size.Y)) % Size.Z
-    );
-    
     protected virtual void OnLedChanged(Point3D p, bool value)
     {
         LedChanged?.Invoke(p, value);
@@ -72,4 +70,15 @@ public class CubeData : ICubeDataBuffer
     {
         CubeChanged?.Invoke(cubedata);
     }
+    
+    public int CoordinatesToIndex(Point3D p) => 
+        p.X + 
+        p.Y * Size.X + 
+        p.Z * Size.X * Size.Y;
+
+    public Point3D IndexToCoordinates(int index) => new(
+        index % Size.X,
+        (index / Size.X) % Size.Y,
+        (index / (Size.X * Size.Y)) % Size.Z
+    );
 }
