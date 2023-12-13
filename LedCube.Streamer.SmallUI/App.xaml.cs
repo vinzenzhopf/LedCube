@@ -2,12 +2,13 @@
 using System.Configuration;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Windows;
 using CommunityToolkit.Mvvm.Messaging;
 using LedCube.Core;
-using LedCube.Core.Common.Config;
+using LedCube.Core.Config;
 using LedCube.Core.CubeData.Repository;
 using LedCube.Core.Settings;
 using LedCube.Core.UI.Controls.CubeView2D;
@@ -15,6 +16,8 @@ using LedCube.Core.UI.Controls.LogAppender;
 using LedCube.Core.UI.Dialog;
 using LedCube.Core.UI.Dialog.BroadcastSearchDialog;
 using LedCube.Core.UI.Dialog.SimpleDialog;
+using LedCube.PluginBase;
+using LedCube.PluginHost;
 using LedCube.Streamer.CubeStreamer;
 using LedCube.Streamer.SmallUI.Controls.StreamingControl;
 using LedCube.Streamer.UdpCom;
@@ -65,7 +68,7 @@ namespace LedCube.Streamer.SmallUI
                         .WriteTo.LogAppenderControlSink(logAppenderControlSink)
                         .CreateLogger();
                     Log.Logger = logger;
-                    var loggerFactory = new SerilogLoggerFactory(logger, true);
+                    var loggerFactory = new SerilogLoggerFactory(logger, false);
                     Log.Verbose("Logger initialized. Logging to {0}", logFile);
                     
                     loggingBuilder.AddSerilog(logger, true);
@@ -95,6 +98,11 @@ namespace LedCube.Streamer.SmallUI
                         services.AddSingleton<ICubeConfigRepository>(settingsProvider.Settings);
                         services.AddSingleton<LogAppenderViewModel>();
                         // services.AddSingleton<NavigationController>();
+                        
+                        
+                        // services.SetupPluginHost(context.Configuration);
+                        SetupPluginHost(services, context.Configuration);
+                        
                         ConfigureServices(services);
                     })
                 .Build();
@@ -102,7 +110,31 @@ namespace LedCube.Streamer.SmallUI
             
             base.OnStartup(e);
         }
-        
+
+        public static void SetupPluginHost(IServiceCollection services, IConfiguration configuration)
+        {
+            services.Configure<PluginOptions>(
+                configuration.GetSection(PluginOptions.Key));
+
+            var assemblies = Directory
+                .GetFiles(System.AppDomain.CurrentDomain.BaseDirectory, "*.dll", SearchOption.AllDirectories)
+                .Select(Assembly.LoadFrom)
+                .ToList();
+
+            // var frameGeneratorTypes = assemblies
+            //     .SelectMany(a => a.DefinedTypes
+            //         .Where(x =>
+            //             typeof(IFrameGenerator).IsAssignableFrom(x) &&
+            //             !x.IsInterface &&
+            //             !x.IsAbstract))
+            //     .ToList();
+            //
+            // foreach (var type in frameGeneratorTypes)
+            // {
+            //     services.AddTransient(typeof(IFrameGenerator), type);
+            // }
+        }
+
         private async void Application_Startup(object sender, StartupEventArgs e)
         {
             WeakReferenceMessenger.Default.Register<OpenSimpleDialogMessage>(this);
