@@ -65,6 +65,11 @@ public class SimpleRotationCubeProjection : ICubeData
         Data.SetLed(ProjectPoint(p), value);
     }
 
+    public void Clear()
+    {
+        Data.Clear();
+    }
+
     private Point3D ProjectBackPoint(Point3D p)
     {
         var max = Data.Size-1;

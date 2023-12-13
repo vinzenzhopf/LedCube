@@ -6,6 +6,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using LedCube.Core.Common.Model;
+using LedCube.Core.Common.Model.Cube;
 using LedCube.Core.CubeData;
 using Serilog;
 using Point = System.Windows.Point;

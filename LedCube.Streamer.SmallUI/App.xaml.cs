@@ -68,6 +68,8 @@ namespace LedCube.Streamer.SmallUI
                     var loggerFactory = new SerilogLoggerFactory(logger, true);
                     Log.Verbose("Logger initialized. Logging to {0}", logFile);
                     
+                    loggingBuilder.AddSerilog(logger, true);
+                    loggingBuilder.Services.AddSingleton<Serilog.ILogger>(logger);
                     loggingBuilder.Services.AddSingleton<ILoggerFactory>(loggerFactory);
                     loggingBuilder.Services.AddSingleton(logAppenderControlSink);
                 })

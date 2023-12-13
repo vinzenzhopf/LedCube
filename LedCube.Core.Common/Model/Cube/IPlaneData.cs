@@ -1,6 +1,4 @@
-﻿using LedCube.Core.Common.Model;
-
-namespace LedCube.Core.CubeData;
+﻿namespace LedCube.Core.Common.Model.Cube;
 
 public delegate void PlaneLedChangedArgs(Point2D p, bool value);
 public delegate void PlaneChangedArgs(IPlaneData plane);

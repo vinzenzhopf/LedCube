@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Net;
 using CommunityToolkit.Mvvm.ComponentModel;
-using LedCube.Core.Common.Config;
+using LedCube.Core.Config;
 using LedCube.Core.CubeData.Repository;
 using LedCube.Streamer.Datagram;
 using LedCube.Streamer.UdpCom;
@@ -175,18 +175,18 @@ public partial class CubeStreamerService : BackgroundService, ICubeStreamer
                     _activeFrameTime = FrameTime;
                     _frameTimer = new PeriodicTimer(_activeFrameTime);
                 }
+
                 if (StreamingState is not StreamingState.Stopped and not StreamingState.Disconnected)
                 {
                     if (FrameTransmissionEnabled)
                     {
-                        await SendFrame(token);   
+                        await SendFrame(token);
                     }
                 }
-                if (!await _frameTimer.WaitForNextTickAsync(token).ConfigureAwait(false))
-                {
-                    //if frame timer is disposed
-                    _frameTimer = null;
-                }
+                await _frameTimer.WaitForNextTickAsync(token).ConfigureAwait(false);
+            }
+            catch (OperationCanceledException _)
+            {
             }
             catch (Exception e)
             {

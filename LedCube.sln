@@ -40,6 +40,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LedCube.Streamer.SmallUI", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LedCube.Streamer.Test", "LedCube.Streamer.Test\LedCube.Streamer.Test.csproj", "{66C119DF-DB0F-46F7-B93C-1D46CCFC3FFB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LedCube.Core.Common", "LedCube.Core.Common\LedCube.Core.Common.csproj", "{A37C1F0E-5824-44EA-8E4B-100A31B5F252}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -110,6 +112,10 @@ Global
 		{66C119DF-DB0F-46F7-B93C-1D46CCFC3FFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{66C119DF-DB0F-46F7-B93C-1D46CCFC3FFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{66C119DF-DB0F-46F7-B93C-1D46CCFC3FFB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A37C1F0E-5824-44EA-8E4B-100A31B5F252}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A37C1F0E-5824-44EA-8E4B-100A31B5F252}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A37C1F0E-5824-44EA-8E4B-100A31B5F252}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A37C1F0E-5824-44EA-8E4B-100A31B5F252}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{68A322D7-0A18-43C2-8D40-26ADA8D7C9F0} = {BD7277D3-0869-46B1-A5EE-AEE5F773F4C1}

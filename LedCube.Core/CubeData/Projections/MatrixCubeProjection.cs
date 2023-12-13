@@ -73,6 +73,11 @@ public class MatrixCubeProjection : ICubeData
         Data.SetLed(ProjectPoint(p), value);
     }
 
+    public void Clear()
+    {
+        Data.Clear();
+    }
+    
     private Point3D ProjectPoint(Point3D p)
     {
         // Apply rotation transformation

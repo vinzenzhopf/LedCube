@@ -1,7 +1,4 @@
-using LedCube.Core.Common.Model;
-using LedCube.Core.Common.Model.Cube;
-
-namespace LedCube.Core.CubeData;
+namespace LedCube.Core.Common.Model.Cube;
 
 public delegate void LedChangedArgs(Point3D p, bool value);
 
@@ -17,6 +14,8 @@ public interface ICubeData
     public bool GetLed(Point3D p);
 
     public void SetLed(Point3D p, bool value);
+
+    public void Clear();
     
     protected static Point3D IndexToCoordinates(Point3D size, int index) => new(
         index % size.X,

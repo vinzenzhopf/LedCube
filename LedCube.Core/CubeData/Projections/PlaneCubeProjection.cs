@@ -1,5 +1,6 @@
 ﻿using System.Data.Common;
 using LedCube.Core.Common.Model;
+using LedCube.Core.Common.Model.Cube;
 
 namespace LedCube.Core.CubeData.Projections;
 

@@ -1,4 +1,4 @@
-﻿using LedCube.Core.Common.Config;
+﻿using LedCube.Core.Config;
 
 namespace LedCube.Animator.Settings;
 

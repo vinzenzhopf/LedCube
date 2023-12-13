@@ -1,4 +1,4 @@
-﻿namespace LedCube.Core.Common.Config;
+﻿namespace LedCube.Core.Config;
 
 public interface ICubeConfigRepository
 {

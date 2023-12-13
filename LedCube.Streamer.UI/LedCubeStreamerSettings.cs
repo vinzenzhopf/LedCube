@@ -1,6 +1,7 @@
 ﻿using System.Drawing;
 using System.Windows.Controls;
 using LedCube.Core.Common.Config;
+using LedCube.Core.Config;
 
 namespace LedCube.Streamer.UI;
 

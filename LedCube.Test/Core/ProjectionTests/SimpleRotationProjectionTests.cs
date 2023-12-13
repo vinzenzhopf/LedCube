@@ -10,7 +10,7 @@ public class SimpleRotationToFrontProjectionTests
     public class Bool4CubeProjectionTests : CubeProjectionTestBase
     {
         public Bool4CubeProjectionTests(ITestOutputHelper output) : 
-            base(output, new LedCube.Core.CubeData.CubeData(new Point3D(4, 4, 4)))
+            base(output, new CubeData(new Point3D(4, 4, 4)))
         {
             Sut = new SimpleRotationCubeProjection(CubeData, Orientation3D.Front);
         }
@@ -19,7 +19,7 @@ public class SimpleRotationToFrontProjectionTests
     public class BoolUnequalLongXCubeProjectionTests : CubeProjectionTestBase
     {
         public BoolUnequalLongXCubeProjectionTests(ITestOutputHelper output) : 
-            base(output, new LedCube.Core.CubeData.CubeData(new Point3D(4, 7, 35)))
+            base(output, new CubeData(new Point3D(4, 7, 35)))
         {
             Sut = new SimpleRotationCubeProjection(CubeData, Orientation3D.Front);
         }
@@ -28,7 +28,7 @@ public class SimpleRotationToFrontProjectionTests
     public class BoolUnequalLongYCubeProjectionTests : CubeProjectionTestBase
     {
         public BoolUnequalLongYCubeProjectionTests(ITestOutputHelper output) : 
-            base(output, new LedCube.Core.CubeData.CubeData(new Point3D(4, 100, 8)))
+            base(output, new CubeData(new Point3D(4, 100, 8)))
         {
             Sut = new SimpleRotationCubeProjection(CubeData, Orientation3D.Front);
         }
@@ -37,7 +37,7 @@ public class SimpleRotationToFrontProjectionTests
     public class BoolUnequalLongZCubeProjectionTests : CubeProjectionTestBase
     {
         public BoolUnequalLongZCubeProjectionTests(ITestOutputHelper output) : 
-            base(output, new LedCube.Core.CubeData.CubeData(new Point3D(66, 42, 12)))
+            base(output, new CubeData(new Point3D(66, 42, 12)))
         {
             Sut = new SimpleRotationCubeProjection(CubeData, Orientation3D.Front);
         }
@@ -49,7 +49,7 @@ public class SimpleRotationToRearProjectionTests
     public class Bool4CubeProjectionTests : CubeProjectionTestBase
     {
         public Bool4CubeProjectionTests(ITestOutputHelper output) : 
-            base(output, new LedCube.Core.CubeData.CubeData(new Point3D(4, 4, 4)))
+            base(output, new CubeData(new Point3D(4, 4, 4)))
         {
             Sut = new SimpleRotationCubeProjection(CubeData, Orientation3D.Back);
         }
@@ -58,7 +58,7 @@ public class SimpleRotationToRearProjectionTests
     public class BoolUnequalLongXCubeProjectionTests : CubeProjectionTestBase
     {
         public BoolUnequalLongXCubeProjectionTests(ITestOutputHelper output) : 
-            base(output, new LedCube.Core.CubeData.CubeData(new Point3D(4, 7, 35)))
+            base(output, new CubeData(new Point3D(4, 7, 35)))
         {
             Sut = new SimpleRotationCubeProjection(CubeData, Orientation3D.Back);
         }
@@ -67,7 +67,7 @@ public class SimpleRotationToRearProjectionTests
     public class BoolUnequalLongYCubeProjectionTests : CubeProjectionTestBase
     {
         public BoolUnequalLongYCubeProjectionTests(ITestOutputHelper output) : 
-            base(output, new LedCube.Core.CubeData.CubeData(new Point3D(4, 100, 8)))
+            base(output, new CubeData(new Point3D(4, 100, 8)))
         {
             Sut = new SimpleRotationCubeProjection(CubeData, Orientation3D.Back);
         }
@@ -76,7 +76,7 @@ public class SimpleRotationToRearProjectionTests
     public class BoolUnequalLongZCubeProjectionTests : CubeProjectionTestBase
     {
         public BoolUnequalLongZCubeProjectionTests(ITestOutputHelper output) : 
-            base(output, new LedCube.Core.CubeData.CubeData(new Point3D(66, 42, 12)))
+            base(output, new CubeData(new Point3D(66, 42, 12)))
         {
             Sut = new SimpleRotationCubeProjection(CubeData, Orientation3D.Back);
         }
@@ -92,7 +92,7 @@ public class SimpleRotationToLeftProjectionTests : TestWithLoggingBase
     public class Bool4CubeProjectionTests : CubeProjectionTestBase
     {
         public Bool4CubeProjectionTests(ITestOutputHelper output) : 
-            base(output, new LedCube.Core.CubeData.CubeData(new Point3D(4, 4, 4)))
+            base(output, new CubeData(new Point3D(4, 4, 4)))
         {
             Sut = new SimpleRotationCubeProjection(CubeData, Orientation3D.Left);
         }
@@ -101,7 +101,7 @@ public class SimpleRotationToLeftProjectionTests : TestWithLoggingBase
     public class BoolUnequalLongXCubeProjectionTests : CubeProjectionTestBase
     {
         public BoolUnequalLongXCubeProjectionTests(ITestOutputHelper output) : 
-            base(output, new LedCube.Core.CubeData.CubeData(new Point3D(4, 7, 35)))
+            base(output, new CubeData(new Point3D(4, 7, 35)))
         {
             Sut = new SimpleRotationCubeProjection(CubeData, Orientation3D.Left);
         }
@@ -110,7 +110,7 @@ public class SimpleRotationToLeftProjectionTests : TestWithLoggingBase
     public class BoolUnequalLongYCubeProjectionTests : CubeProjectionTestBase
     {
         public BoolUnequalLongYCubeProjectionTests(ITestOutputHelper output) : 
-            base(output, new LedCube.Core.CubeData.CubeData(new Point3D(4, 100, 8)))
+            base(output, new CubeData(new Point3D(4, 100, 8)))
         {
             Sut = new SimpleRotationCubeProjection(CubeData, Orientation3D.Left);
         }
@@ -119,7 +119,7 @@ public class SimpleRotationToLeftProjectionTests : TestWithLoggingBase
     public class BoolUnequalLongZCubeProjectionTests : CubeProjectionTestBase
     {
         public BoolUnequalLongZCubeProjectionTests(ITestOutputHelper output) : 
-            base(output, new LedCube.Core.CubeData.CubeData(new Point3D(66, 42, 12)))
+            base(output, new CubeData(new Point3D(66, 42, 12)))
         {
             Sut = new SimpleRotationCubeProjection(CubeData, Orientation3D.Left);
         }
@@ -135,7 +135,7 @@ public class SimpleRotationToRightProjectionTests : TestWithLoggingBase
     public class Bool4CubeProjectionTests : CubeProjectionTestBase
     {
         public Bool4CubeProjectionTests(ITestOutputHelper output) : 
-            base(output, new LedCube.Core.CubeData.CubeData(new Point3D(4, 4, 4)))
+            base(output, new CubeData(new Point3D(4, 4, 4)))
         {
             Sut = new SimpleRotationCubeProjection(CubeData, Orientation3D.Right);
         }
@@ -144,7 +144,7 @@ public class SimpleRotationToRightProjectionTests : TestWithLoggingBase
     public class BoolUnequalLongXCubeProjectionTests : CubeProjectionTestBase
     {
         public BoolUnequalLongXCubeProjectionTests(ITestOutputHelper output) : 
-            base(output, new LedCube.Core.CubeData.CubeData(new Point3D(4, 7, 35)))
+            base(output, new CubeData(new Point3D(4, 7, 35)))
         {
             Sut = new SimpleRotationCubeProjection(CubeData, Orientation3D.Right);
         }
@@ -153,7 +153,7 @@ public class SimpleRotationToRightProjectionTests : TestWithLoggingBase
     public class BoolUnequalLongYCubeProjectionTests : CubeProjectionTestBase
     {
         public BoolUnequalLongYCubeProjectionTests(ITestOutputHelper output) : 
-            base(output, new LedCube.Core.CubeData.CubeData(new Point3D(4, 100, 8)))
+            base(output, new CubeData(new Point3D(4, 100, 8)))
         {
             Sut = new SimpleRotationCubeProjection(CubeData, Orientation3D.Right);
         }
@@ -162,7 +162,7 @@ public class SimpleRotationToRightProjectionTests : TestWithLoggingBase
     public class BoolUnequalLongZCubeProjectionTests : CubeProjectionTestBase
     {
         public BoolUnequalLongZCubeProjectionTests(ITestOutputHelper output) : 
-            base(output, new LedCube.Core.CubeData.CubeData(new Point3D(66, 42, 12)))
+            base(output, new CubeData(new Point3D(66, 42, 12)))
         {
             Sut = new SimpleRotationCubeProjection(CubeData, Orientation3D.Right);
         }
@@ -178,7 +178,7 @@ public class SimpleRotationToTopProjectionTests : TestWithLoggingBase
     public class Bool4CubeProjectionTests : CubeProjectionTestBase
     {
         public Bool4CubeProjectionTests(ITestOutputHelper output) : 
-            base(output, new LedCube.Core.CubeData.CubeData(new Point3D(4, 4, 4)))
+            base(output, new CubeData(new Point3D(4, 4, 4)))
         {
             Sut = new SimpleRotationCubeProjection(CubeData, Orientation3D.Top);
         }
@@ -187,7 +187,7 @@ public class SimpleRotationToTopProjectionTests : TestWithLoggingBase
     public class BoolUnequalLongXCubeProjectionTests : CubeProjectionTestBase
     {
         public BoolUnequalLongXCubeProjectionTests(ITestOutputHelper output) : 
-            base(output, new LedCube.Core.CubeData.CubeData(new Point3D(4, 7, 35)))
+            base(output, new CubeData(new Point3D(4, 7, 35)))
         {
             Sut = new SimpleRotationCubeProjection(CubeData, Orientation3D.Top);
         }
@@ -196,7 +196,7 @@ public class SimpleRotationToTopProjectionTests : TestWithLoggingBase
     public class BoolUnequalLongYCubeProjectionTests : CubeProjectionTestBase
     {
         public BoolUnequalLongYCubeProjectionTests(ITestOutputHelper output) : 
-            base(output, new LedCube.Core.CubeData.CubeData(new Point3D(4, 100, 8)))
+            base(output, new CubeData(new Point3D(4, 100, 8)))
         {
             Sut = new SimpleRotationCubeProjection(CubeData, Orientation3D.Top);
         }
@@ -205,7 +205,7 @@ public class SimpleRotationToTopProjectionTests : TestWithLoggingBase
     public class BoolUnequalLongZCubeProjectionTests : CubeProjectionTestBase
     {
         public BoolUnequalLongZCubeProjectionTests(ITestOutputHelper output) : 
-            base(output, new LedCube.Core.CubeData.CubeData(new Point3D(66, 42, 12)))
+            base(output, new CubeData(new Point3D(66, 42, 12)))
         {
             Sut = new SimpleRotationCubeProjection(CubeData, Orientation3D.Top);
         }
@@ -221,7 +221,7 @@ public class SimpleRotationToBottomProjectionTests : TestWithLoggingBase
     public class Bool4CubeProjectionTests : CubeProjectionTestBase
     {
         public Bool4CubeProjectionTests(ITestOutputHelper output) : 
-            base(output, new LedCube.Core.CubeData.CubeData(new Point3D(4, 4, 4)))
+            base(output, new CubeData(new Point3D(4, 4, 4)))
         {
             Sut = new SimpleRotationCubeProjection(CubeData, Orientation3D.Bottom);
         }
@@ -230,7 +230,7 @@ public class SimpleRotationToBottomProjectionTests : TestWithLoggingBase
     public class BoolUnequalLongXCubeProjectionTests : CubeProjectionTestBase
     {
         public BoolUnequalLongXCubeProjectionTests(ITestOutputHelper output) : 
-            base(output, new LedCube.Core.CubeData.CubeData(new Point3D(4, 7, 35)))
+            base(output, new CubeData(new Point3D(4, 7, 35)))
         {
             Sut = new SimpleRotationCubeProjection(CubeData, Orientation3D.Bottom);
         }
@@ -239,7 +239,7 @@ public class SimpleRotationToBottomProjectionTests : TestWithLoggingBase
     public class BoolUnequalLongYCubeProjectionTests : CubeProjectionTestBase
     {
         public BoolUnequalLongYCubeProjectionTests(ITestOutputHelper output) : 
-            base(output, new LedCube.Core.CubeData.CubeData(new Point3D(4, 100, 8)))
+            base(output, new CubeData(new Point3D(4, 100, 8)))
         {
             Sut = new SimpleRotationCubeProjection(CubeData, Orientation3D.Bottom);
         }
@@ -248,7 +248,7 @@ public class SimpleRotationToBottomProjectionTests : TestWithLoggingBase
     public class BoolUnequalLongZCubeProjectionTests : CubeProjectionTestBase
     {
         public BoolUnequalLongZCubeProjectionTests(ITestOutputHelper output) : 
-            base(output, new LedCube.Core.CubeData.CubeData(new Point3D(66, 42, 12)))
+            base(output, new CubeData(new Point3D(66, 42, 12)))
         {
             Sut = new SimpleRotationCubeProjection(CubeData, Orientation3D.Bottom);
         }

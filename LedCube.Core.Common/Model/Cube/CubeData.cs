@@ -1,32 +1,27 @@
-﻿using System;
-using LedCube.Core.Common.Model;
-using LedCube.Core.Common.Model.Cube;
+﻿namespace LedCube.Core.Common.Model.Cube;
 
-namespace LedCube.Core.CubeData;
-
-public class CubeData : ICubeData
+public class CubeData : ICubeDataBuffer
 {
-    private readonly bool[] _leds;
-    
     public Point3D Size { get; }
+    public bool[] Buffer { get; }
     
     public event CubeChangedArgs? CubeChanged;
     public event LedChangedArgs? LedChanged;
-    public int Count => Size.X * Size.Y * Size.Z;
+    public int Length => Size.X * Size.Y * Size.Z;
 
     public CubeData(Point3D size)
     {
         Size = size;
-        _leds = new bool[Count];
-        for (var i = 0; i < Count; i++)
+        Buffer = new bool[Length];
+        for (var i = 0; i < Length; i++)
         {
-            _leds[i] = false;
+            Buffer[i] = false;
         }
     }
 
-    public bool GetLedIndex(int index)
+    public bool GetLed(int index)
     {
-        return _leds[index];
+        return Buffer[index];
     }
     
     /// <summary>
@@ -34,16 +29,16 @@ public class CubeData : ICubeData
     /// </summary>
     /// <param name="index">Index of the array.</param>
     /// <param name="value">The new Value</param>
-    public void SetLedIndex(int index, bool value)
+    public void SetLed(int index, bool value)
     {
-        _leds[index] = value;
+        Buffer[index] = value;
     }
     
     public bool GetLed(Point3D p)
     {
         if(!Point3D.CheckBounds(p, Point3D.Empty, Size))
             throw new ArgumentException("Point out of Range", nameof(p));
-        return _leds[CoordinatesToIndex(p)];
+        return Buffer[CoordinatesToIndex(p)];
     }
 
     public void SetLed(Point3D p, bool value)
@@ -51,23 +46,21 @@ public class CubeData : ICubeData
         if(!Point3D.CheckBounds(p, Point3D.Empty, Size))
             throw new ArgumentException("Point out of Range", nameof(p));
         var i = CoordinatesToIndex(p);
-        if (_leds[i] == value) 
+        if (Buffer[i] == value) 
             return;
-        _leds[i] = value;
+        Buffer[i] = value;
         OnLedChanged(p, value);
     }
 
-    private int CoordinatesToIndex(Point3D p) => 
-        p.X + 
-        p.Y * Size.X + 
-        p.Z * Size.X * Size.Y;
+    public void Clear()
+    {
+        for (var i = 0; i < Length; i++)
+        {
+            Buffer[i] = false;
+        }
+        OnCubeChanged(this);
+    }
 
-    private Point3D IndexToCoordinates(int index) => new(
-        index % Size.X,
-        (index / Size.X) % Size.Y,
-        (index / (Size.X * Size.Y)) % Size.Z
-    );
-    
     protected virtual void OnLedChanged(Point3D p, bool value)
     {
         LedChanged?.Invoke(p, value);
@@ -77,4 +70,15 @@ public class CubeData : ICubeData
     {
         CubeChanged?.Invoke(cubedata);
     }
+    
+    public int CoordinatesToIndex(Point3D p) => 
+        p.X + 
+        p.Y * Size.X + 
+        p.Z * Size.X * Size.Y;
+
+    public Point3D IndexToCoordinates(int index) => new(
+        index % Size.X,
+        (index / Size.X) % Size.Y,
+        (index / (Size.X * Size.Y)) % Size.Z
+    );
 }

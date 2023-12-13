@@ -221,7 +221,7 @@ public class SpecificSimpleRotationProjectionTests : TestWithLoggingBase
 
         for(var i = 0; i < cubeData.Size.ElementProduct; i++)
         {
-            Assert.True(cubeData.GetLedIndex(i));
+            Assert.True(cubeData.GetLed(i));
         }
     }
 }
