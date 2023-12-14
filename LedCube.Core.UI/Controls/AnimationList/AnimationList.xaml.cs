@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace LedCube.Streamer.UI.Controls.AnimationList;
+namespace LedCube.Core.UI.Controls.AnimationList;
 
 public partial class AnimationList : UserControl
 {

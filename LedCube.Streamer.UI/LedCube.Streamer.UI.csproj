@@ -47,10 +47,5 @@
         <SubType>Designer</SubType>
       </Page>
     </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Converter\" />
-      <Folder Include="Styles\" />
-    </ItemGroup>
     
 </Project>

@@ -11,8 +11,10 @@ using LedCube.Core;
 using LedCube.Core.Config;
 using LedCube.Core.CubeData.Repository;
 using LedCube.Core.Settings;
+using LedCube.Core.UI.Controls.AnimationList;
 using LedCube.Core.UI.Controls.CubeView2D;
 using LedCube.Core.UI.Controls.LogAppender;
+using LedCube.Core.UI.Controls.PlaybackControl;
 using LedCube.Core.UI.Dialog;
 using LedCube.Core.UI.Dialog.BroadcastSearchDialog;
 using LedCube.Core.UI.Dialog.SimpleDialog;
@@ -169,6 +171,7 @@ namespace LedCube.Streamer.SmallUI
             services.AddSingleton<StreamingControlViewModel>();
             services.AddSingleton<StreamingControl>();
             services.AddSingleton<BroadcastSearchDialogViewModel>();
+            
 
             services.AddTransient<IUdpCubeCommunication, UdpCubeCubeCommunication>();
             services.AddSingleton<ICubeStreamingStatusMutable, CubeStreamingStatus>();
@@ -180,10 +183,10 @@ namespace LedCube.Streamer.SmallUI
             services.AddTransient<Func<IUdpCubeCommunication>>(
                 x => () => x.GetService<IUdpCubeCommunication>()!);
 
-            // services.AddSingleton<AnimationListViewModel>();
-            // services.AddSingleton<AnimationList>();
-            // services.AddSingleton<PlaybackControlViewModel>();
-            // services.AddSingleton<PlaybackControl>();
+            services.AddSingleton<AnimationListViewModel>();
+            services.AddSingleton<AnimationList>();
+            services.AddSingleton<PlaybackControlViewModel>();
+            services.AddSingleton<PlaybackControl>();
 
             // services.AddTransient<Controls.SettingsWindow.SettingsViewModel>();
             // services.AddTransient<Controls.SettingsWindow.SettingsWindow>();

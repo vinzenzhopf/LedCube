@@ -6,14 +6,14 @@
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              xmlns:udpCom="clr-namespace:LedCube.Streamer.UdpCom;assembly=LedCube.Streamer"
              xmlns:cubeView2D="clr-namespace:LedCube.Core.UI.Controls.CubeView2D;assembly=LedCube.Core.UI"
-             xmlns:converter="clr-namespace:LedCube.Streamer.UI.Converter;assembly=LedCube.Core.UI"
              xmlns:streamingControl="clr-namespace:LedCube.Streamer.SmallUI.Controls.StreamingControl"
+             xmlns:converters="clr-namespace:LedCube.Core.UI.Converters;assembly=LedCube.Core.UI"
              mc:Ignorable="d"
              d:DesignWidth="350"
              d:DataContext="{d:DesignInstance streamingControl:StreamingControlViewModel, IsDesignTimeCreatable=True}">
     <UserControl.Resources>
-        <converter:EnumToStringConverter x:Key="EnumToStringConverter" />
-        <converter:TimeSpanToTotalTimeConverter x:Key="TimeSpanToTotalTimeConverter" />
+        <converters:EnumToStringConverter x:Key="EnumToStringConverter" />
+        <converters:TimeSpanToTotalTimeConverter x:Key="TimeSpanToTotalTimeConverter" />
         <Style x:Key="PlaybackButton" 
                TargetType="{x:Type ButtonBase}" 
                BasedOn="{StaticResource MahApps.Styles.Button.Circle}">

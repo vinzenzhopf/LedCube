@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Globalization;
-using System.Windows;
 using System.Windows.Data;
 
-namespace LedCube.Streamer.UI.Converter;
+namespace LedCube.Core.UI.Converters;
 
 [ValueConversion(typeof(TimeSpan), typeof(double))]
 public class TimeSpanToTotalTimeConverter : IValueConverter

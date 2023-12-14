@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
@@ -11,7 +10,7 @@ using CommunityToolkit.Mvvm.Input;
 using LedCube.Streamer.Datagram;
 using LedCube.Streamer.UdpCom;
 
-namespace LedCube.Streamer.UI.Controls.StreamingControl;
+namespace LedCube.Core.UI.Controls.StreamingControl;
 
 [ObservableObject]
 public partial class StreamingControlViewModel
@@ -73,7 +72,7 @@ public partial class StreamingControlViewModel
             Connections.Clear();
             Connections.Add(new HostAndPort("10.10.10.42", 42));
             Connections.Add(new HostAndPort("127.0.0.1", 1337));
-            SelectedConnection = Connections.First();
+            SelectedConnection = Enumerable.First<HostAndPort>(Connections);
         });    
     }
 

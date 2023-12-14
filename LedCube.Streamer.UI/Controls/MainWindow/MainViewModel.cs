@@ -4,12 +4,12 @@ using System.Xml.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using LedCube.Core;
+using LedCube.Core.UI.Controls.AnimationList;
 using LedCube.Core.UI.Controls.CubeView2D;
 using LedCube.Core.UI.Controls.LogAppender;
-using LedCube.Streamer.UI.Controls.AnimationList;
+using LedCube.Core.UI.Controls.PlaybackControl;
+using LedCube.Core.UI.Controls.StreamingControl;
 using LedCube.Streamer.UI.Controls.MenuBar;
-using LedCube.Streamer.UI.Controls.PlaybackControl;
-using LedCube.Streamer.UI.Controls.StreamingControl;
 
 namespace LedCube.Streamer.UI.Controls.MainWindow
 {

@@ -1,19 +1,19 @@
-﻿<UserControl x:Class="LedCube.Streamer.UI.Controls.StreamingControl.StreamingControl"
+﻿<UserControl x:Class="LedCube.Core.UI.Controls.StreamingControl.StreamingControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:LedCube.Streamer.UI.Controls.StreamingControl"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              xmlns:udpCom="clr-namespace:LedCube.Streamer.UdpCom;assembly=LedCube.Streamer"
-             xmlns:cubeView2D="clr-namespace:LedCube.Core.UI.Controls.CubeView2D;assembly=LedCube.Core.UI"
-             xmlns:converter="clr-namespace:LedCube.Streamer.UI.Converter;assembly=LedCube.Core.UI"
+             xmlns:local="clr-namespace:LedCube.Core.UI.Controls.StreamingControl"
+             xmlns:converters="clr-namespace:LedCube.Core.UI.Converters"
+             xmlns:cubeView2D="clr-namespace:LedCube.Core.UI.Controls.CubeView2D"
              mc:Ignorable="d"
              d:DesignWidth="350"
              d:DataContext="{d:DesignInstance local:StreamingControlViewModel, IsDesignTimeCreatable=True}">
     <UserControl.Resources>
-        <converter:EnumToStringConverter x:Key="EnumToStringConverter" />
-        <converter:TimeSpanToTotalTimeConverter x:Key="TimeSpanToTotalTimeConverter" />
+        <converters:EnumToStringConverter x:Key="EnumToStringConverter" />
+        <converters:TimeSpanToTotalTimeConverter x:Key="TimeSpanToTotalTimeConverter" />
         <Style x:Key="PlaybackButton" 
                TargetType="{x:Type ButtonBase}" 
                BasedOn="{StaticResource MahApps.Styles.Button.Circle}">

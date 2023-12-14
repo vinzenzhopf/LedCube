@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 
-namespace LedCube.Streamer.UI.Controls;
+namespace LedCube.Core.UI.Controls;
 
 public class Led : CheckBox
 {

@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace LedCube.Streamer.UI.Converter;
+namespace LedCube.Core.UI.Converters;
 
 [ValueConversion(typeof(int), typeof(Visibility))]
 public sealed class VisibleWhenIntConverter : IValueConverter

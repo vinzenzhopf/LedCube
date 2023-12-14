@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
-using LedCube.Streamer.UI.Controls.AnimationList;
+using LedCube.Core.UI.Controls.AnimationList;
 
-namespace LedCube.Streamer.UI.Controls.PlaybackControl;
+namespace LedCube.Core.UI.Controls.PlaybackControl;
 
 [ObservableObject]
 public partial class PlaybackControlViewModel
@@ -35,10 +34,6 @@ public partial class PlaybackControlViewModel
     {
         // _playbackService = playbackService;
     }
-}
-
-public interface IPlaybackService
-{
 }
 
 public enum PlaybackState

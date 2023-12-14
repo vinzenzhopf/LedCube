@@ -42,6 +42,18 @@
       <Page Update="Dialog\BroadcastSearchDialog\BroadcastSearchDialogWindow.xaml">
         <Generator>MSBuild:Compile</Generator>
       </Page>
+      <Page Update="Controls\AnimationList\AnimationList.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </Page>
+      <Page Update="Controls\AnimationList\AnimationListEntry.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </Page>
+      <Page Update="Controls\StreamingControl\StreamingControl.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </Page>
+      <Page Update="Controls\PlaybackControl\PlaybackControl.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </Page>
     </ItemGroup>
     
     <ItemGroup>

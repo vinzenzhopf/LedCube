@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Data;
 
-namespace LedCube.Streamer.UI.Converter;
+namespace LedCube.Core.UI.Converters;
 
 public class EnumToStringConverter : IValueConverter
 {

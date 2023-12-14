@@ -5,8 +5,10 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using LedCube.Core;
+using LedCube.Core.UI.Controls.AnimationList;
 using LedCube.Core.UI.Controls.CubeView2D;
 using LedCube.Core.UI.Controls.LogAppender;
+using LedCube.Core.UI.Controls.PlaybackControl;
 using LedCube.Core.UI.Dialog;
 using LedCube.Core.UI.Dialog.BroadcastSearchDialog;
 using LedCube.Core.UI.Dialog.SimpleDialog;
@@ -27,8 +29,8 @@ public partial class MainViewModel
     public LogAppenderViewModel LogAppenderViewModel { get; }
     public MenuBarViewModel MenuBarViewModel { get; }
     public CubeView2DViewModel CubeView2DViewModel { get; }
-    // public AnimationListViewModel AnimationListViewModel { get; }
-    // public PlaybackControlViewModel PlaybackControlViewModel { get; }
+    public AnimationListViewModel AnimationListViewModel { get; }
+    public PlaybackControlViewModel PlaybackControlViewModel { get; }
     
     public StreamingControlViewModel StreamingControlViewModel { get; }
     public string TitleText => $"LedCube Animator - <CurrentAnimationFile.anim>";
@@ -40,8 +42,8 @@ public partial class MainViewModel
         LogAppenderViewModel logAppenderViewModel, 
         MenuBarViewModel menuBarViewModel, 
         CubeView2DViewModel cubeView2DViewModel, 
-        // AnimationListViewModel animationListViewModel, 
-        // PlaybackControlViewModel playbackControlViewModel,
+        AnimationListViewModel animationListViewModel, 
+        PlaybackControlViewModel playbackControlViewModel,
         StreamingControlViewModel streamingControlViewModel
         )
     {
@@ -50,8 +52,8 @@ public partial class MainViewModel
         LogAppenderViewModel = logAppenderViewModel;
         MenuBarViewModel = menuBarViewModel;
         CubeView2DViewModel = cubeView2DViewModel;
-        // AnimationListViewModel = animationListViewModel;
-        // PlaybackControlViewModel = playbackControlViewModel;
+        AnimationListViewModel = animationListViewModel;
+        PlaybackControlViewModel = playbackControlViewModel;
         StreamingControlViewModel = streamingControlViewModel;
     }
     

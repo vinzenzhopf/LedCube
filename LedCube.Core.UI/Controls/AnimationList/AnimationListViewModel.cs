@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
-using LedCube.Streamer.UI.Controls.PlaybackControl;
 
-namespace LedCube.Streamer.UI.Controls.AnimationList;
+namespace LedCube.Core.UI.Controls.AnimationList;
 
 [ObservableObject]
 public partial class AnimationListViewModel

@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace LedCube.Streamer.UI.Controls.StreamingControl;
+namespace LedCube.Core.UI.Controls.StreamingControl;
 
 public partial class StreamingControl : UserControl
 {
