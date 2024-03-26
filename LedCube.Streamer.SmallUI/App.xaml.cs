@@ -1,27 +1,24 @@
 ﻿using System;
-using System.Configuration;
 using System.Globalization;
-using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Threading;
 using System.Windows;
 using CommunityToolkit.Mvvm.Messaging;
-using LedCube.Core;
-using LedCube.Core.Config;
-using LedCube.Core.CubeData.Repository;
-using LedCube.Core.Settings;
-using LedCube.Core.UI.Controls.AnimationList;
+using LedCube.Core.Common;
+using LedCube.Core.Common.Config.Config;
+using LedCube.Core.Common.CubeData.Repository;
+using LedCube.Core.Common.Settings;
+using LedCube.Core.UI.Controls.AnimationInstanceList;
 using LedCube.Core.UI.Controls.CubeView2D;
 using LedCube.Core.UI.Controls.LogAppender;
 using LedCube.Core.UI.Controls.PlaybackControl;
-using LedCube.Core.UI.Dialog;
+using LedCube.Core.UI.Controls.StreamingControl;
 using LedCube.Core.UI.Dialog.BroadcastSearchDialog;
+using LedCube.Core.UI.Dialog.EditAnimationInstanceDialog;
+using LedCube.Core.UI.Dialog.SelectAnimationDialog;
 using LedCube.Core.UI.Dialog.SimpleDialog;
-using LedCube.PluginBase;
+using LedCube.Core.UI.Services;
 using LedCube.PluginHost;
 using LedCube.Streamer.CubeStreamer;
-using LedCube.Streamer.SmallUI.Controls.StreamingControl;
 using LedCube.Streamer.UdpCom;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -36,10 +33,14 @@ namespace LedCube.Streamer.SmallUI
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
-    public partial class App : Application, IRecipient<OpenSimpleDialogMessage>, IRecipient<OpenBroadcastSearchDialogMessage>
+    public partial class App : Application, 
+        IRecipient<OpenSimpleDialogMessage>, 
+        IRecipient<OpenBroadcastSearchDialogMessage>, 
+        IRecipient<OpenSelectAnimationDialogMessage>,
+        IRecipient<EditAnimationInstanceDialogMessage>
     {
         private IHost? _host;
-
+        
         protected override void OnStartup(StartupEventArgs e)
         {
             #if DEBUG
@@ -103,7 +104,7 @@ namespace LedCube.Streamer.SmallUI
                         
                         
                         // services.SetupPluginHost(context.Configuration);
-                        SetupPluginHost(services, context.Configuration);
+                        services.SetupPluginHost(context.Configuration);
                         
                         ConfigureServices(services);
                     })
@@ -112,35 +113,13 @@ namespace LedCube.Streamer.SmallUI
             
             base.OnStartup(e);
         }
-
-        public static void SetupPluginHost(IServiceCollection services, IConfiguration configuration)
-        {
-            services.Configure<PluginOptions>(
-                configuration.GetSection(PluginOptions.Key));
-
-            var assemblies = Directory
-                .GetFiles(System.AppDomain.CurrentDomain.BaseDirectory, "*.dll", SearchOption.AllDirectories)
-                .Select(Assembly.LoadFrom)
-                .ToList();
-
-            // var frameGeneratorTypes = assemblies
-            //     .SelectMany(a => a.DefinedTypes
-            //         .Where(x =>
-            //             typeof(IFrameGenerator).IsAssignableFrom(x) &&
-            //             !x.IsInterface &&
-            //             !x.IsAbstract))
-            //     .ToList();
-            //
-            // foreach (var type in frameGeneratorTypes)
-            // {
-            //     services.AddTransient(typeof(IFrameGenerator), type);
-            // }
-        }
-
+        
         private async void Application_Startup(object sender, StartupEventArgs e)
         {
             WeakReferenceMessenger.Default.Register<OpenSimpleDialogMessage>(this);
             WeakReferenceMessenger.Default.Register<OpenBroadcastSearchDialogMessage>(this);
+            WeakReferenceMessenger.Default.Register<OpenSelectAnimationDialogMessage>(this);
+            WeakReferenceMessenger.Default.Register<EditAnimationInstanceDialogMessage>(this);
             
             await _host!.StartAsync();
             
@@ -171,7 +150,8 @@ namespace LedCube.Streamer.SmallUI
             services.AddSingleton<StreamingControlViewModel>();
             services.AddSingleton<StreamingControl>();
             services.AddSingleton<BroadcastSearchDialogViewModel>();
-            
+            services.AddSingleton<SelectAnimationDialogViewModel>();
+            services.AddSingleton<EditAnimationInstanceDialogViewModel>();
 
             services.AddTransient<IUdpCubeCommunication, UdpCubeCubeCommunication>();
             services.AddSingleton<ICubeStreamingStatusMutable, CubeStreamingStatus>();
@@ -182,7 +162,8 @@ namespace LedCube.Streamer.SmallUI
             services.AddHostedService(p => p.GetService<CubeStreamerService>()!);
             services.AddTransient<Func<IUdpCubeCommunication>>(
                 x => () => x.GetService<IUdpCubeCommunication>()!);
-
+            
+            services.AddSingleton<IPlaybackService, PlaybackService>();
             services.AddSingleton<AnimationListViewModel>();
             services.AddSingleton<AnimationList>();
             services.AddSingleton<PlaybackControlViewModel>();
@@ -212,7 +193,7 @@ namespace LedCube.Streamer.SmallUI
 
             return DateTime.MinValue;
         }
-
+        
         public void Receive(OpenSimpleDialogMessage message)
         {
             Log.Information("Showing SimpleDialog");
@@ -226,7 +207,7 @@ namespace LedCube.Streamer.SmallUI
             {
                 DataContext = viewModel
             };
-            this.Dispatcher.Invoke(() => dialog.ShowDialog());
+            Dispatcher.Invoke(() => dialog.ShowDialog());
             message.Result = viewModel.Result;
         }
 
@@ -238,8 +219,33 @@ namespace LedCube.Streamer.SmallUI
             {
                 DataContext = viewModel
             };
-            this.Dispatcher.Invoke(() => window.ShowDialog());
+            Dispatcher.Invoke(() => window.ShowDialog());
             message.DialogResult = viewModel!.DialogResult;
+        }
+
+        public void Receive(OpenSelectAnimationDialogMessage message)
+        {
+            Log.Information("Showing OpenSelectAnimationDialog");
+            var viewModel = _host!.Services.GetService<SelectAnimationDialogViewModel>();
+            var window = new SelectAnimationDialog()
+            {
+                DataContext = viewModel
+            };
+            Dispatcher.Invoke(() => window.ShowDialog());
+            message.Result = viewModel!.DialogResult;
+        }
+        
+        public void Receive(EditAnimationInstanceDialogMessage message)
+        {
+            Log.Information("Showing EditAnimationInstanceDialog");
+            var viewModel = _host!.Services.GetService<EditAnimationInstanceDialogViewModel>();
+            viewModel.Message = message;
+            var window = new EditAnimationInstanceDialog()
+            {
+                DataContext = viewModel
+            };
+            Dispatcher.Invoke(() => window.ShowDialog());
+            message.Result = viewModel!.DialogResult;
         }
     }
 }

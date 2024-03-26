@@ -1,4 +1,4 @@
-﻿namespace LedCube.Core.Common.Model.Cube;
+﻿namespace LedCube.Core.Common.Model;
 
 public enum Orientation2D
 {

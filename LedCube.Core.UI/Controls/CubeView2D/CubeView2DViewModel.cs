@@ -5,15 +5,13 @@ using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using LedCube.Core.Common.Config.Config;
+using LedCube.Core.Common.CubeData.Projections;
+using LedCube.Core.Common.CubeData.Repository;
 using LedCube.Core.Common.Model;
 using LedCube.Core.Common.Model.Cube;
-using LedCube.Core.Config;
-using LedCube.Core.CubeData;
-using LedCube.Core.CubeData.Projections;
-using LedCube.Core.CubeData.Repository;
 using LedCube.Core.UI.Messages;
 using Microsoft.Extensions.Logging;
-using Serilog;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace LedCube.Core.UI.Controls.CubeView2D;
@@ -54,15 +52,15 @@ public partial class CubeView2DViewModel
         _cubeRepository = cubeRepository;
 
         //Init values
-        _cubeProjection = new SimpleRotationCubeProjection(cubeRepository.GetCubeData(), _viewDirection);
-        _planeCubeProjection = new PlaneCubeProjection(_cubeProjection, _selectedPlane);
-        var dimensions = _planeCubeProjection.Size;
-        PlaneData = _planeCubeProjection;
-        UpdatePlaneElements();
-        SelectedPlanes.CollectionChanged += OnSelectedPlanesCollectionChanged;
-        _cubeProjection.CubeChanged += CubeProjection_OnCubeChanged;
-        _planeData.LedChanged += PlaneData_OnLedChanged;
-        _planeData.PlaneChanged += PlaneData_OnPlaneChanged;
+        // _cubeProjection = new SimpleRotationCubeProjection(cubeRepository.GetCubeData() , _viewDirection);
+        // _planeCubeProjection = new PlaneCubeProjection(_cubeProjection, _selectedPlane);
+        // var dimensions = _planeCubeProjection.Size;
+        // PlaneData = _planeCubeProjection;
+        // UpdatePlaneElements();
+        // SelectedPlanes.CollectionChanged += OnSelectedPlanesCollectionChanged;
+        // _cubeProjection.CubeChanged += CubeProjection_OnCubeChanged;
+        // _planeData.LedChanged += PlaneData_OnLedChanged;
+        // _planeData.PlaneChanged += PlaneData_OnPlaneChanged;
 
         //Register Listeners
         WeakReferenceMessenger.Default.Register<CubeConfigChangedMessage>(this, HandleCubeConfigChangedMessage);

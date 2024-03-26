@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace LedCube.Animator.Messages;
+﻿namespace LedCube.Animator.Messages;
 
 public class AppNavigationMessage
 {

@@ -1,23 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text.Json;
-using System.Threading.Tasks;
 using System.Windows;
 using LedCube.Animator.Controls.LogAppender;
 using LedCube.Animator.Settings;
-using LedCube.Core;
-using LedCube.Core.Settings;
+using LedCube.Core.Common;
+using LedCube.Core.Common.Settings;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
-using LogAppenderViewModel = LedCube.Animator.Controls.LogAppender.LogAppenderViewModel;
 
 namespace LedCube.Animator
 {
@@ -62,7 +54,7 @@ namespace LedCube.Animator
             //Initialize UserSettings
             var settingsFile = _configurationRoot.GetValue<string>("SettingsFile") ?? "LedCube.Animator.json";
             var settingsProvider = new SettingsProvider<LedCubeAnimatorSettings>("LedCube", settingsFile);
-            settingsProvider.Load();
+            settingsProvider.Load(LedCubeAnimatorSettings.Default);
 
             var assembly = Assembly.GetExecutingAssembly();
             var appInfo = new AppInfo(

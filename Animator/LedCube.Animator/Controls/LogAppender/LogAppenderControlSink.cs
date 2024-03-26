@@ -2,7 +2,6 @@
 using System.Collections.ObjectModel;
 using System.Windows.Media;
 using System.Windows.Threading;
-using CommunityToolkit.Mvvm.ComponentModel;
 using Serilog.Core;
 using Serilog.Events;
 

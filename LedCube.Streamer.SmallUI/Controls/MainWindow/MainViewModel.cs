@@ -1,22 +1,17 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using LedCube.Core;
-using LedCube.Core.UI.Controls.AnimationList;
+using LedCube.Core.Common;
+using LedCube.Core.UI.Controls.AnimationInstanceList;
 using LedCube.Core.UI.Controls.CubeView2D;
 using LedCube.Core.UI.Controls.LogAppender;
 using LedCube.Core.UI.Controls.PlaybackControl;
-using LedCube.Core.UI.Dialog;
+using LedCube.Core.UI.Controls.StreamingControl;
 using LedCube.Core.UI.Dialog.BroadcastSearchDialog;
-using LedCube.Core.UI.Dialog.SimpleDialog;
 using LedCube.Streamer.SmallUI.Controls.MenuBar;
-using LedCube.Streamer.SmallUI.Controls.StreamingControl;
-using LedCube.Streamer.UdpCom;
 using Microsoft.Extensions.Logging;
-using Serilog;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace LedCube.Streamer.SmallUI.Controls.MainWindow;

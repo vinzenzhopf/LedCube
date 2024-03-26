@@ -1,5 +1,4 @@
-﻿using LedCube.Core.UI.Util;
-using LedCube.Core.Util;
+﻿using LedCube.Core.Common.Util;
 using Xunit.Abstractions;
 
 namespace LedCube.Test.Util;

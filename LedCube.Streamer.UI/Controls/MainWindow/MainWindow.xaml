@@ -8,9 +8,10 @@
                  xmlns:mainWindow="clr-namespace:LedCube.Streamer.UI.Controls.MainWindow"
                  xmlns:menuBar="clr-namespace:LedCube.Streamer.UI.Controls.MenuBar"
                  xmlns:cubeView2D="clr-namespace:LedCube.Core.UI.Controls.CubeView2D;assembly=LedCube.Core.UI"
-                 xmlns:animationList="clr-namespace:LedCube.Core.UI.Controls.AnimationList;assembly=LedCube.Core.UI"
+                 xmlns:animationList="clr-namespace:LedCube.Core.UI.Controls.AnimationInstanceList;assembly=LedCube.Core.UI"
                  xmlns:streamingControl="clr-namespace:LedCube.Core.UI.Controls.StreamingControl;assembly=LedCube.Core.UI"
                  xmlns:playbackControl="clr-namespace:LedCube.Core.UI.Controls.PlaybackControl;assembly=LedCube.Core.UI"
+                 xmlns:animationInstanceList="clr-namespace:LedCube.Core.UI.Controls.AnimationInstanceList;assembly=LedCube.Core.UI"
                  mc:Ignorable="d"
                  Title="{Binding TitleText}" 
                  Height="800" 
@@ -71,7 +72,7 @@
                         Margin="0, 0, 0,5">
                     <streamingControl:StreamingControl DataContext="{Binding StreamingControlViewModel}" />
                 </Border>
-                <animationList:AnimationList DataContext="{Binding AnimationListViewModel}"/>
+                <animationInstanceList:AnimationList DataContext="{Binding AnimationListViewModel}"/>
             </DockPanel>
             <GridSplitter Grid.Column="1" VerticalAlignment="Stretch" ResizeBehavior="BasedOnAlignment"/>
             <DockPanel Grid.Column="2">

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Windows.Controls;
 using MahApps.Metro.Controls;
 
 namespace LedCube.Core.UI.Dialog.SimpleDialog;

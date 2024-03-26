@@ -2,6 +2,7 @@
 using LedCube.Animator.Controls.LogAppender;
 using LedCube.Animator.Controls.MenuBar;
 using LedCube.Core;
+using LedCube.Core.Common;
 
 namespace LedCube.Animator.Controls.MainWindow;
 

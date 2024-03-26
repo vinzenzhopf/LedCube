@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using LedCube.Core.UI.Controls.LogAppender;
 
 namespace LedCube.Streamer.SmallUI.Controls.MenuBar;
 

@@ -6,8 +6,6 @@ namespace LedCube.Streamer.CubeStreamer;
 public interface ICubeStreamer
 {
     StreamerSettings Settings { get; }
-    public IFrameData FrameData { get; set; }
-    public ICubeDataConverter? CubeDataConverter { get; }
     public StreamingState StreamingState { get; }
     
     public Task<bool> ConnectAsync(int localPort, IPAddress localAddress, HostAndPort hostAndPort,

@@ -1,7 +1,6 @@
 using LedCube.Streamer.Datagram;
 using LedCube.Streamer.UdpCom;
 using Microsoft.Extensions.Logging;
-using Serilog;
 using Xunit.Abstractions;
 
 namespace LedCube.Streamer.Test;

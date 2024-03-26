@@ -1,8 +1,9 @@
 ﻿using System.Diagnostics;
 using System.Net;
 using CommunityToolkit.Mvvm.ComponentModel;
-using LedCube.Core.Config;
-using LedCube.Core.CubeData.Repository;
+using LedCube.Core.Common.Config.Config;
+using LedCube.Core.Common.CubeData.Converter;
+using LedCube.Core.Common.CubeData.Repository;
 using LedCube.Streamer.Datagram;
 using LedCube.Streamer.UdpCom;
 using Microsoft.Extensions.Hosting;
@@ -14,8 +15,7 @@ namespace LedCube.Streamer.CubeStreamer;
 [ObservableObject]
 public partial class CubeStreamerService : BackgroundService, ICubeStreamer
 {
-    private ILogger _logger;
-    
+    private readonly ILogger _logger;
     private readonly IUdpCubeCommunication _communication;
     private readonly ICubeConfigRepository _cubeConfigRepository;
     private readonly ICubeRepository _cubeRepository;
@@ -36,12 +36,8 @@ public partial class CubeStreamerService : BackgroundService, ICubeStreamer
     private StreamingState _streamingState;
     
     public string? CurrentAnimation { get; private set; }
-    
     public TimeSpan FrameTime { get; set; } = TimeSpan.FromMilliseconds(200);
     private TimeSpan _activeFrameTime;
-
-    public IFrameData FrameData { get; set; }
-    public ICubeDataConverter? CubeDataConverter { get; private set; }
     
     public ushort FrameCounter => _frameCounter;
 
@@ -197,12 +193,8 @@ public partial class CubeStreamerService : BackgroundService, ICubeStreamer
     
     private async Task SendFrame(CancellationToken token)
     {
-        // if (CubeDataConverter is null)
-        //     return;
-        // var cubeData = CubeDataConverter.GetCubeData();
         var cubeData = new byte[512];
-        cubeData[0] = 255;
-        cubeData[511] = 255;
+        CubeDataConverter.ConvertCubeData(_cubeRepository.GetCubeData(), ref cubeData);
         try
         {
             var result = await _communication.SendFrameAsync(++_frameCounter, 

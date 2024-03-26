@@ -1,10 +1,8 @@
-﻿using System;
-using System.Windows.Threading;
-using System.Xml.Linq;
+﻿using System.Windows.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using LedCube.Core;
-using LedCube.Core.UI.Controls.AnimationList;
+using LedCube.Core.Common;
+using LedCube.Core.UI.Controls.AnimationInstanceList;
 using LedCube.Core.UI.Controls.CubeView2D;
 using LedCube.Core.UI.Controls.LogAppender;
 using LedCube.Core.UI.Controls.PlaybackControl;

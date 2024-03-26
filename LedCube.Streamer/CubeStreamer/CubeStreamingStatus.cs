@@ -1,8 +1,6 @@
 ﻿using System.Diagnostics;
-using CommunityToolkit.Mvvm.ComponentModel;
-using LedCube.Core.Util;
+using LedCube.Core.Common.Util;
 using LedCube.Streamer.Datagram;
-using MathNet.Numerics.Statistics;
 using Microsoft.Extensions.Logging;
 
 namespace LedCube.Streamer.CubeStreamer;
@@ -40,9 +38,9 @@ public class CubeStreamingStatus : ICubeStreamingStatusMutable
     public bool ConnectionStable { get; set; }
     
 
-    private StatisticList _frameTimeStatsMs = new StatisticList(100);
+    private StatisticList _frameTimeStatsMs = new(100);
     
-    private StatisticList _pingStatsMs = new StatisticList(100);
+    private StatisticList _pingStatsMs = new(100);
     
     public CubeStreamingStatus(ILoggerFactory loggerFactory)
     {

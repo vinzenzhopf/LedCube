@@ -1,6 +1,4 @@
-﻿using System;
-using System.ComponentModel;
-using System.Windows;
+﻿using System.ComponentModel;
 using MahApps.Metro.Controls;
 
 namespace LedCube.Animator.Controls.SettingsWindow;

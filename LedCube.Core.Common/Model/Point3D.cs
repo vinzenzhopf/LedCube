@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 
 namespace LedCube.Core.Common.Model;
@@ -73,7 +72,13 @@ public readonly struct Point3D : IEquatable<Point3D>
     public static Point3D Add(Point3D pt, int sz) => new Point3D(unchecked(pt.X + sz), unchecked(pt.Y + sz), unchecked(pt.Z + sz));
     public static Point3D Subtract(Point3D pt, Point3D sz) => new Point3D(unchecked(pt.X - sz.X), unchecked(pt.Y - sz.Y), unchecked(pt.Z - sz.Z));
     public static Point3D Subtract(Point3D pt, int sz) => new Point3D(unchecked(pt.X - sz), unchecked(pt.Y - sz), unchecked(pt.Z - sz));
-
+    public static Point3D CoordinateFromIndex(Point3D size, int index) => new(
+        index % size.X, (index / size.X) % size.Y, (index / (size.X * size.Y)) % size.Z
+    );
+    
+    public static int IndexFromCoordinate(Point3D size, Point3D p) => 
+        p.X + p.Y * size.X + p.Z * size.X * size.Y;
+    
     public readonly override bool Equals([NotNullWhen(true)] object? obj)
     {
         return obj is Point3D && Equals((Point3D) obj);

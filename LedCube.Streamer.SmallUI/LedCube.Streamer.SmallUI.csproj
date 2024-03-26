@@ -31,11 +31,11 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\LedCube.Core\LedCube.Core.csproj" />
         <ProjectReference Include="..\LedCube.Core.UI\LedCube.Core.UI.csproj" />
         <ProjectReference Include="..\LedCube.Streamer\LedCube.Streamer.csproj" />
         <ProjectReference Include="..\FrameGenerators\LedCube.PluginHost\LedCube.PluginHost.csproj" />
         <ProjectReference Include="..\LedCube.Streamer.UI\LedCube.Streamer.UI.csproj" />
+        <ProjectReference Include="..\Plugin\LedCube.PluginHost\LedCube.PluginHost.csproj" />
     </ItemGroup>
 
     <ItemGroup>
@@ -45,11 +45,6 @@
         <SubType>Designer</SubType>
       </Page>
       <Page Update="Controls\MenuBar\MenuBar.xaml">
-        <Generator>MSBuild:Compile</Generator>
-        <XamlRuntime>Wpf</XamlRuntime>
-        <SubType>Designer</SubType>
-      </Page>
-      <Page Update="Controls\StreamingControl\StreamingControl.xaml">
         <Generator>MSBuild:Compile</Generator>
         <XamlRuntime>Wpf</XamlRuntime>
         <SubType>Designer</SubType>

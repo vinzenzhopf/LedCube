@@ -1,5 +1,4 @@
-﻿using LedCube.Core.Common.Model.Cube;
-using LedCube.Streamer.CubeStreamer;
+﻿using LedCube.Core.Common.Model;
 
 namespace LedCube.Streamer;
 

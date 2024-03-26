@@ -1,6 +1,6 @@
-﻿using LedCube.Core.Common.Model;
+﻿using LedCube.Core.Common.CubeData.Projections;
+using LedCube.Core.Common.Model;
 using LedCube.Core.Common.Model.Cube;
-using LedCube.Core.CubeData.Projections;
 using Xunit.Abstractions;
 
 namespace LedCube.Test.Core.ProjectionTests;

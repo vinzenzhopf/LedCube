@@ -7,7 +7,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using LedCube.Core.Common.Model;
 using LedCube.Core.Common.Model.Cube;
-using LedCube.Core.CubeData;
 using Serilog;
 using Point = System.Windows.Point;
 using Rectangle = System.Windows.Shapes.Rectangle;

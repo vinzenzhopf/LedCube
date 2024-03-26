@@ -1,8 +1,6 @@
 ﻿using System.Collections.ObjectModel;
-using System.Reflection;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Serilog;
 
 namespace LedCube.Animator.Controls.LogAppender;
 

@@ -1,7 +1,4 @@
-﻿using LedCube.Core.Common.Model.Cube;
-using Xunit;
-
-namespace LedCube.Test;
+﻿namespace LedCube.Test;
 
 public class GeneralTests
 {

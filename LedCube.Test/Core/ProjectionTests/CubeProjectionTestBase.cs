@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using LedCube.Core.Common.Model;
+﻿using LedCube.Core.Common.Model;
 using LedCube.Core.Common.Model.Cube;
-using LedCube.Core.CubeData;
 using Microsoft.Extensions.Logging;
-using Serilog;
-using Xunit;
 using Xunit.Abstractions;
 
 namespace LedCube.Test.Core.ProjectionTests;

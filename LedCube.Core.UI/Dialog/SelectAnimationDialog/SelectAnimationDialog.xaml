@@ -1,0 +1,142 @@
+﻿<mah:MetroWindow x:Class="LedCube.Core.UI.Dialog.SelectAnimationDialog.SelectAnimationDialog"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+                 xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+                 xmlns:local="clr-namespace:LedCube.Core.UI.Dialog.SelectAnimationDialog"
+                 xmlns:animationInstanceList="clr-namespace:LedCube.Core.UI.Controls.AnimationInstanceList"
+                 mc:Ignorable="d"
+                 d:DataContext="{d:DesignInstance local:SelectAnimationDialogViewModel, IsDesignTimeCreatable=True}"
+                 Height="400"
+                 Width="350"
+                 Title="Select Animation"
+                 x:Name="DialogWindow">
+    <b:Interaction.Triggers>
+        <b:EventTrigger EventName="Loaded">
+            <b:InvokeCommandAction Command="{Binding Path=LoadedCommand}" />
+        </b:EventTrigger>
+        <b:EventTrigger EventName="Closed">
+            <b:InvokeCommandAction Command="{Binding Path=ClosedCommand}" />
+        </b:EventTrigger>
+    </b:Interaction.Triggers>
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <Style x:Key="DialogButton"
+               TargetType="{x:Type Button}"
+               BasedOn="{StaticResource MahApps.Styles.Button}">
+            <Style.Setters>
+                <Setter Property="Margin" Value="5,0,0,0" />
+                <Setter Property="Padding" Value="8" />
+                <Setter Property="MinWidth" Value="50" />
+            </Style.Setters>
+        </Style>
+        <Style x:Key="DialogButtonAccent"
+               TargetType="{x:Type Button}"
+               BasedOn="{StaticResource DialogButton}">
+            <Style.Setters>
+                <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Accent}" />
+                <Setter Property="Foreground" Value="{StaticResource MahApps.Brushes.Dialog.Foreground.Accent}" />
+            </Style.Setters>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{StaticResource MahApps.Brushes.Accent3}" />
+                    <Setter Property="Foreground"
+                            Value="{StaticResource MahApps.Brushes.Button.AccentedSquare.Foreground.MouseOver}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    <DockPanel
+        Margin="20">
+        <StackPanel DockPanel.Dock="Bottom"
+                    Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Style="{StaticResource DialogButton}"
+                    Content="Cancel"
+                    Command="{Binding CancelCommand}"
+                    IsDefault="false" />
+            <Button Style="{StaticResource DialogButtonAccent}"
+                    Content="Add"
+                    Command="{Binding AddCommand}"
+                    CommandParameter="{Binding ElementName=DialogWindow}"
+                    IsDefault="true" />
+        </StackPanel>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition />
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <StackPanel Grid.Row="0"
+                        Margin="0, 2">
+                <TextBlock
+                    FontSize="9"
+                    Foreground="DimGray"
+                    Text="Filter:" />
+                <TextBox
+                    Text="{Binding SearchText}" />
+            </StackPanel>
+            <ListBox
+                Grid.Row="1"
+                VerticalContentAlignment="Stretch"
+                HorizontalContentAlignment="Stretch"
+                ItemsSource="{Binding Path=FilteredAnimations}"
+                ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                <ListBox.SelectedItem>
+                    <Binding Mode="TwoWay" Path="SelectedAnimation" />
+                </ListBox.SelectedItem>
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="ListBoxItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        <Setter Property="BorderBrush" Value="DimGray" />
+                        <Setter Property="BorderThickness" Value="0,0,0,1.1" />
+                    </Style>
+                </ListBox.ItemContainerStyle>
+                <ListBox.ItemTemplate>
+                    <DataTemplate DataType="{x:Type animationInstanceList:AnimationViewModel}">
+                        <Border>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <TextBlock
+                                    Grid.Row="0" Grid.Column="0"
+                                    FontSize="10"
+                                    Foreground="DimGray"
+                                    Text="Name:" />
+                                <TextBlock
+                                    Grid.Row="1" Grid.Column="0"
+                                    FontSize="10"
+                                    Foreground="DimGray"
+                                    Text="Name:" />
+                                <TextBlock
+                                    Grid.Row="0" Grid.Column="1"
+                                    FontSize="10"
+                                    Text="{Binding Path=Name}" />
+                                <TextBlock
+                                    Grid.Row="1" Grid.Column="1"
+                                    FontSize="10"
+                                    Text="{Binding Path=Description}" />
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <StackPanel Grid.Row="2"
+                        Margin="0, 2">
+                <TextBlock
+                    FontSize="9"
+                    Foreground="DimGray"
+                    Text="Name:" />
+                <TextBox
+                    Text="{Binding AnimationInstanceName}" />
+            </StackPanel>
+        </Grid>
+    </DockPanel>
+</mah:MetroWindow>

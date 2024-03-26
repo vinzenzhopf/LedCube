@@ -45,20 +45,39 @@
       <Page Update="Controls\AnimationList\AnimationList.xaml">
         <Generator>MSBuild:Compile</Generator>
       </Page>
-      <Page Update="Controls\AnimationList\AnimationListEntry.xaml">
-        <Generator>MSBuild:Compile</Generator>
-      </Page>
-      <Page Update="Controls\StreamingControl\StreamingControl.xaml">
+      <Page Update="Controls\AnimationList\AnimationInstanceListEntry.xaml">
         <Generator>MSBuild:Compile</Generator>
       </Page>
       <Page Update="Controls\PlaybackControl\PlaybackControl.xaml">
         <Generator>MSBuild:Compile</Generator>
       </Page>
+      <Page Update="Dialog\SelectAnimationDialog\SelectAnimationDialog.xaml">
+        <Generator>MSBuild:Compile</Generator>
+        <XamlRuntime>Wpf</XamlRuntime>
+        <SubType>Designer</SubType>
+      </Page>
+      <Page Update="Dialog\EditAnimationInstanceDialog\EditAnimationInstanceDialog.xaml">
+        <Generator>MSBuild:Compile</Generator>
+        <XamlRuntime>Wpf</XamlRuntime>
+        <SubType>Designer</SubType>
+      </Page>
+      <Page Update="Controls\AnimationTest\AnimationTest.xaml">
+        <Generator>MSBuild:Compile</Generator>
+        <XamlRuntime>Wpf</XamlRuntime>
+        <SubType>Designer</SubType>
+      </Page>
+      <Page Update="Controls\StreamingControl\StreamingControl.xaml">
+        <Generator>MSBuild:Compile</Generator>
+        <XamlRuntime>Wpf</XamlRuntime>
+        <SubType>Designer</SubType>
+      </Page>
     </ItemGroup>
     
     <ItemGroup>
-      <ProjectReference Include="..\LedCube.Core\LedCube.Core.csproj" />
+      <ProjectReference Include="..\FrameGenerators\LedCube.PluginHost\LedCube.PluginHost.csproj" />
+      <ProjectReference Include="..\LedCube.Core.Common\LedCube.Core.Common.csproj" />
       <ProjectReference Include="..\LedCube.Streamer\LedCube.Streamer.csproj" />
+      <ProjectReference Include="..\Plugin\LedCube.PluginHost\LedCube.PluginHost.csproj" />
     </ItemGroup>
     
     

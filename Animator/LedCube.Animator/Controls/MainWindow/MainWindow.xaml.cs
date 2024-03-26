@@ -1,6 +1,4 @@
-﻿using System.Windows;
-using CommunityToolkit.Mvvm.ComponentModel;
-using MahApps.Metro.Controls;
+﻿using MahApps.Metro.Controls;
 
 namespace LedCube.Animator.Controls.MainWindow
 {

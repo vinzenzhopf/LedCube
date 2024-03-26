@@ -4,13 +4,12 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
-             xmlns:udpCom="clr-namespace:LedCube.Streamer.UdpCom;assembly=LedCube.Streamer"
-             xmlns:local="clr-namespace:LedCube.Core.UI.Controls.StreamingControl"
-             xmlns:converters="clr-namespace:LedCube.Core.UI.Converters"
              xmlns:cubeView2D="clr-namespace:LedCube.Core.UI.Controls.CubeView2D"
+             xmlns:converters="clr-namespace:LedCube.Core.UI.Converters"
+             xmlns:streamingControl="clr-namespace:LedCube.Core.UI.Controls.StreamingControl"
              mc:Ignorable="d"
              d:DesignWidth="350"
-             d:DataContext="{d:DesignInstance local:StreamingControlViewModel, IsDesignTimeCreatable=True}">
+             d:DataContext="{d:DesignInstance streamingControl:StreamingControlViewModel, IsDesignTimeCreatable=True}">
     <UserControl.Resources>
         <converters:EnumToStringConverter x:Key="EnumToStringConverter" />
         <converters:TimeSpanToTotalTimeConverter x:Key="TimeSpanToTotalTimeConverter" />
@@ -107,241 +106,332 @@
     
     
     <StackPanel>
-        <DockPanel>
-            <Grid DockPanel.Dock="Right" 
-                  Margin="2" 
-                  VerticalAlignment="Center">
-                <Button Command="{Binding SearchDevicesCommand}">
-                    <Button.Style>
-                        <Style BasedOn="{StaticResource PlaybackButton}" TargetType="{x:Type ButtonBase}">
-                            <Style.Setters>
-                                <Setter Property="Visibility" Value="Visible" />
-                            </Style.Setters>
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsConnected}" Value="True">
-                                    <Setter Property="Visibility" Value="Collapsed" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Button.Style>
-                    <iconPacks:PackIconMaterial Kind="HomeSearchOutline" Height="20" Width="20" />
-                </Button>
-            </Grid>
-            <StackPanel Margin="2, 2, 2, 10">
-                <TextBlock Text="Device connection:" />
-                <ComboBox ItemsSource="{Binding Connections}" 
-                          SelectedItem="{Binding SelectedConnection}">
-                    <ComboBox.ItemTemplate>
-                        <DataTemplate DataType="{x:Type udpCom:HostAndPort}">
-                            <TextBlock>
-                                <Run Text="{Binding Path=Hostname}" />
-                                <Run Text=":" />
-                                <Run Text="{Binding Path=Port}" />
-                            </TextBlock>
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>
-                </ComboBox>
-            </StackPanel>
-        </DockPanel>
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="2*"/>
-            </Grid.ColumnDefinitions>
-            <StackPanel Grid.Column="0">
-                <Grid Margin="2" HorizontalAlignment="Center">
-                    <Button Command="{Binding ConnectCommand}">
-                        <Button.Style>
-                            <Style BasedOn="{StaticResource PlaybackButton}" TargetType="{x:Type ButtonBase}">
-                                <Style.Setters>
-                                    <Setter Property="Visibility" Value="Visible" />
-                                </Style.Setters>
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsConnected}" Value="True">
-                                        <Setter Property="Visibility" Value="Collapsed" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Button.Style>
-                        <iconPacks:PackIconModern Kind="Connect" />
+        <GroupBox Header="Connection">
+            <StackPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="3*" />
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Host:" VerticalAlignment="Bottom" Margin="2,0"/>
+                    <TextBlock Grid.Row="0" Grid.Column="1" Text="Port:" VerticalAlignment="Bottom" Margin="2,0"/>
+                    <TextBox Grid.Row="1" Grid.Column="0" Margin="2,0,2,5" 
+                             IsEnabled="{Binding HostEditingEnabled}"
+                             Text="{Binding Host}"/>
+                    <TextBox Grid.Row="1" Grid.Column="1" Margin="2,0,2,5" 
+                             IsEnabled="{Binding HostEditingEnabled}"
+                             Text="{Binding Port}"/>
+                    <Button Grid.Column="3" Grid.Row="0" Grid.RowSpan="2" 
+                                           Style="{StaticResource PlaybackButton}"
+                                           IsEnabled="{Binding HostEditingEnabled}"
+                                           Command="{Binding OpenBroadcastSearchCommand}" ToolTip="Broadcast search..."
+                                           Margin="6">
+                        <iconPacks:PackIconMaterial Kind="HomeSearchOutline" Height="20" Width="20" />
                     </Button>
-                    <Button>
-                        <Button.Style>
-                            <Style BasedOn="{StaticResource PlaybackButton}" TargetType="{x:Type ButtonBase}">
-                                <Style.Setters>
-                                    <Setter Property="Visibility" Value="Collapsed" />
-                                </Style.Setters>
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsConnected}" Value="True">
-                                        <Setter Property="Visibility" Value="Visible" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Button.Style>
-                        <iconPacks:PackIconModern Kind="Disconnect" />
-                    </Button>
-                </Grid>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                    <cubeView2D:Led IsChecked="{Binding IsConnected, Mode=OneWay}" Size="16" />
-                    <TextBlock VerticalAlignment="Center" HorizontalAlignment="Stretch">
-                        <Run Text="{Binding ConnectionState, Converter={StaticResource EnumToStringConverter}}">
-                            <Run.Style>
-                                <Style TargetType="Run">
+                    <Grid Grid.Column="4" Grid.RowSpan="2" Grid.Row="0" Margin="2" HorizontalAlignment="Center">
+                        <Button Command="{Binding ConnectCommand}">
+                            <Button.Style>
+                                <Style BasedOn="{StaticResource PlaybackButton}" TargetType="{x:Type ButtonBase}">
                                     <Style.Setters>
-                                        <Setter Property="Foreground" Value="Gray" />
+                                        <Setter Property="Visibility" Value="Visible" />
                                     </Style.Setters>
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding ConnectionState}" Value="{x:Static local:ConnectionState.Connected}">
-                                            <Setter Property="Foreground" Value="{StaticResource CubeGreenBrush}" />
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding ConnectionState}" Value="{x:Static local:ConnectionState.Connecting}">
-                                            <Setter Property="Foreground" Value="{StaticResource CubeYellowBrush}" />
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding ConnectionState}" Value="{x:Static local:ConnectionState.OutOfSync}">
-                                            <Setter Property="Foreground" Value="{StaticResource CubeRedBrush}" />
+                                        <DataTrigger Binding="{Binding IsConnected}" Value="True">
+                                            <Setter Property="Visibility" Value="Collapsed" />
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
-                            </Run.Style>
-                        </Run>
-                    </TextBlock>
-                </StackPanel>
-            </StackPanel>
-            <StackPanel Style="{StaticResource StatBlock}" Grid.Column="1" Margin="5,0,5,0">
-                <DockPanel>
-                    <TextBlock Text="Version:"/>
-                    <Grid>
-                        <TextBlock>
-                            <Run Text="{Binding CubeVersion}" />
-                        </TextBlock>
-                    </Grid>
-                </DockPanel>
-                <DockPanel>
-                    <TextBlock Text="CubeStatus:"/>
-                    <Grid>
-                        <TextBlock>
-                            <Run Text="{Binding CubeStatus}" />
-                        </TextBlock>
-                    </Grid>
-                </DockPanel>
-                <DockPanel>
-                    <TextBlock Text="ErrorCode:"/>
-                    <Grid>
-                        <TextBlock>
-                            <Run Text="{Binding CubeErrorCode}" />
-                        </TextBlock>
-                    </Grid>
-                </DockPanel>
-                <DockPanel>
-                    <TextBlock Text="MeanFrameTime:"/>
-                    <Grid>
-                        <TextBlock>
-                            <Run Text="{Binding MeanFrameTime}" />
-                            <Run Text="ms" />
-                        </TextBlock>
-                    </Grid>
-                </DockPanel>
-            </StackPanel>
-        </Grid>
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="2*"/>
-            </Grid.ColumnDefinitions>
-            <Grid Grid.Column="0">
-                <Grid>
-                    <Button>
-                        <Button.Style>
-                            <Style BasedOn="{StaticResource PlaybackButton}" TargetType="{x:Type ButtonBase}">
-                                <Style.Setters>
-                                    <Setter Property="Visibility" Value="Visible" />
-                                </Style.Setters>
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsConnected}" Value="True">
+                            </Button.Style>
+                            <iconPacks:PackIconModern Kind="Connect" />
+                        </Button>
+                        <Button Command="{Binding DisconnectCommand}">
+                            <Button.Style>
+                                <Style BasedOn="{StaticResource PlaybackButton}" TargetType="{x:Type ButtonBase}">
+                                    <Style.Setters>
                                         <Setter Property="Visibility" Value="Collapsed" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Button.Style>
-                        <iconPacks:PackIconModern Kind="ControlPlay" Padding="3,0,0,0"/>
-                    </Button>
-                    <Button>
-                        <Button.Style>
-                            <Style BasedOn="{StaticResource PlaybackButton}" TargetType="{x:Type ButtonBase}">
-                                <Style.Setters>
-                                    <Setter Property="Visibility" Value="Collapsed" />
-                                </Style.Setters>
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsConnected}" Value="True">
-                                        <Setter Property="Visibility" Value="Visible" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Button.Style>
-                        <iconPacks:PackIconModern Kind="ControlStop" />
-                    </Button>
+                                    </Style.Setters>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsConnected}" Value="True">
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                            <iconPacks:PackIconModern Kind="Disconnect" />
+                        </Button>
+                    </Grid>
+                    <StackPanel Grid.Column="2" Grid.RowSpan="2" Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom"
+                                Margin="0,0,0,3" >
+                        <cubeView2D:Led IsChecked="{Binding IsConnected, Mode=OneWay}" Size="25" />
+                        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Stretch">
+                            <Run Text="{Binding ConnectionState, Converter={StaticResource EnumToStringConverter}}">
+                                <Run.Style>
+                                    <Style TargetType="Run">
+                                        <Style.Setters>
+                                            <Setter Property="Foreground" Value="Gray" />
+                                        </Style.Setters>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding ConnectionState}" Value="{x:Static streamingControl:ConnectionState.Connected}">
+                                                <Setter Property="Foreground" Value="{StaticResource CubeGreenBrush}" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding ConnectionState}" Value="{x:Static streamingControl:ConnectionState.Connecting}">
+                                                <Setter Property="Foreground" Value="{StaticResource CubeYellowBrush}" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding ConnectionState}" Value="{x:Static streamingControl:ConnectionState.NotResponding}">
+                                                <Setter Property="Foreground" Value="{StaticResource CubeRedBrush}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Run.Style>
+                            </Run>
+                        </TextBlock>
+                    </StackPanel>
                 </Grid>
-            </Grid>
-            <StackPanel Grid.Column="1" 
-                        Style="{StaticResource StatBlock}" 
-                        Margin="5,0,5,0">
-                <DockPanel>
-                    <TextBlock Text="Ping:"/>
-                    <Grid>
-                        <TextBlock>
-                            <Run Text="{Binding Ping,
-                                        StringFormat={}{0:F2},
-                                        Converter={StaticResource TimeSpanToTotalTimeConverter},
-                                        ConverterParameter='ms'}" />
-                            <Run Text="ms" />
-                        </TextBlock>
-                    </Grid>
-                </DockPanel>
-                <DockPanel>
-                    <TextBlock Text="Frame Count:"/>
-                    <Grid>
-                        <TextBlock>
-                            <Run Text="{Binding FrameCount}" />
-                        </TextBlock>
-                    </Grid>
-                </DockPanel>
-                <DockPanel>
-                    <TextBlock Text="FrameCount:"/>
-                    <Grid>
-                        <TextBlock>
-                            <Run Text="{Binding FrameCount}" />
-                        </TextBlock>
-                    </Grid>
-                </DockPanel>
-                <DockPanel>
-                    <TextBlock Text="Mean FrameTime:"/>
-                    <Grid>
-                        <TextBlock>
-                            <Run Text="{Binding MeanFrameTime,
-                                        StringFormat={}{0:F2},
-                                        Converter={StaticResource TimeSpanToTotalTimeConverter},
-                                        ConverterParameter='ms'}" />
-                            <Run Text="ms" />
-                        </TextBlock>
-                    </Grid>
-                </DockPanel>
-                <DockPanel>
-                    <TextBlock Text="Mean FPS:"/>
-                    <Grid>
-                        <TextBlock>
-                            <Run Text="{Binding MeanFrequency}" />
-                        </TextBlock>
-                    </Grid>
-                </DockPanel>
-                <DockPanel>
-                    <TextBlock Text="Mean FPS 95%:"/>
-                    <Grid>
-                        <TextBlock>
-                            <Run Text="tbd." />
-                        </TextBlock>
-                    </Grid>
-                </DockPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="1*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <!-- <Grid Grid.Column="0" Grid.Row="0" Grid.RowSpan="4"> -->
+                        <Button Grid.Column="0" Grid.Row="0" Grid.RowSpan="2"
+                                Command="{Binding StartStreamingCommand}">
+                            <Button.Style>
+                                <Style BasedOn="{StaticResource PlaybackButton}" TargetType="{x:Type ButtonBase}">
+                                <!--     <Style.Setters> -->
+                                <!--         <Setter Property="Visibility" Value="Visible" /> -->
+                                <!--     </Style.Setters> -->
+                                <!--     <Style.Triggers> -->
+                                <!--         <DataTrigger Binding="{Binding IsStreamActive}" Value="False"> -->
+                                <!--             <Setter Property="Visibility" Value="Collapsed" /> -->
+                                <!--         </DataTrigger> -->
+                                <!--     </Style.Triggers> -->
+                                </Style>
+                            </Button.Style>
+                            <iconPacks:PackIconModern Kind="ControlPlay" Padding="3,0,0,0"/>
+                        </Button>
+                        <Button Grid.Column="0" Grid.Row="2" Grid.RowSpan="2"
+                                Command="{Binding StopStreamingCommand}"
+                                IsEnabled="{Binding IsStreamActive}">
+                            <Button.Style>
+                                <Style BasedOn="{StaticResource PlaybackButton}" TargetType="{x:Type ButtonBase}">
+                                <!--     <Style.Setters> -->
+                                <!--         <Setter Property="Visibility" Value="Collapsed" /> -->
+                                <!--     </Style.Setters> -->
+                                <!--     <Style.Triggers> -->
+                                <!--         <DataTrigger Binding="{Binding IsStreamActive}" Value="False"> -->
+                                <!--             <Setter Property="Visibility" Value="Visible" /> -->
+                                <!--         </DataTrigger> -->
+                                <!--     </Style.Triggers> -->
+                                </Style>
+                            </Button.Style>
+                            <iconPacks:PackIconModern Kind="ControlStop" />
+                        </Button>
+                    <!-- </Grid> -->
+                    <TextBlock Grid.Row="0" Grid.Column="1" Text="AnimationName:" VerticalAlignment="Bottom" Margin="2,0"/>
+                    <TextBox Grid.Row="1" Grid.Column="1" Margin="2,0,2,5" 
+                             Text="{Binding AnimationName}"/>
+                    <TextBlock Grid.Row="0" Grid.Column="2" Text="FrameTime Ms:" VerticalAlignment="Bottom" Margin="2,0"/>
+                    <TextBox Grid.Row="1" Grid.Column="2" Margin="2,0,2,5" 
+                             Text="{Binding FrameTimeMs}"/>
+                    <!-- <TextBlock Grid.Row="2" Grid.Column="1" Text="Host:" VerticalAlignment="Bottom" Margin="2,0"/> -->
+                    <!-- <TextBlock Grid.Row="2" Grid.Column="2" Text="Port:" VerticalAlignment="Bottom" Margin="2,0"/> -->
+                    <!-- <TextBox Grid.Row="3" Grid.Column="1" Margin="2,0,2,5"  -->
+                    <!--          IsEnabled="{Binding HostEditingEnabled}" -->
+                    <!--          Text="{Binding Host}"/> -->
+                    <!-- <TextBox Grid.Row="3" Grid.Column="2" Margin="2,0,2,5"  -->
+                    <!--          IsEnabled="{Binding HostEditingEnabled}" -->
+                    <!--          Text="{Binding Port}"/> -->
+                </Grid>
+                
             </StackPanel>
-        </Grid>
+        </GroupBox>
+        <GroupBox Header="Connection Stats">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Style="{StaticResource StatBlock}" Grid.Column="0" Margin="5,0,5,0">
+                    <DockPanel>
+                        <TextBlock Text="Cube Version:"/>
+                        <Grid>
+                            <TextBlock>
+                                <Run Text="{Binding StreamingStatusViewModel.CubeVersion}" />
+                            </TextBlock>
+                        </Grid>
+                    </DockPanel>
+                    <DockPanel>
+                        <TextBlock Text="Streamer Version:"/>
+                        <Grid>
+                            <TextBlock>
+                                <Run Text="{Binding StreamingStatusViewModel.StreamerVersion}" />
+                            </TextBlock>
+                        </Grid>
+                    </DockPanel>
+                    <DockPanel>
+                        <TextBlock Text="ErrorCode:"/>
+                        <Grid>
+                            <TextBlock>
+                                <Run Text="{Binding StreamingStatusViewModel.CubeErrorCode}" />
+                            </TextBlock>
+                        </Grid>
+                    </DockPanel>
+                    <DockPanel>
+                        <TextBlock Text="Ping:"/>
+                        <Grid>
+                            <TextBlock>
+                                <Run Text="{Binding StreamingStatusViewModel.Ping,
+                                            StringFormat={}{0:F2},
+                                            Converter={StaticResource TimeSpanToTotalTimeConverter},
+                                            ConverterParameter='ms'}" />
+                                <Run Text="ms" />
+                            </TextBlock>
+                        </Grid>
+                    </DockPanel>
+                    <DockPanel>
+                        <TextBlock Text="Ping Mean:"/>
+                        <Grid>
+                            <TextBlock>
+                                <Run Text="{Binding StreamingStatusViewModel.PingMean,
+                                            StringFormat={}{0:F2},
+                                            Converter={StaticResource TimeSpanToTotalTimeConverter},
+                                            ConverterParameter='ms'}" />
+                                <Run Text="ms" />
+                            </TextBlock>
+                        </Grid>
+                    </DockPanel>
+                    <DockPanel>
+                        <TextBlock Text="CurrentTicks:"/>
+                        <Grid>
+                            <TextBlock>
+                                <Run Text="{Binding StreamingStatusViewModel.CurrentTicks}" />
+                            </TextBlock>
+                        </Grid>
+                    </DockPanel>
+                    <DockPanel>
+                        <TextBlock Text="ConnectionStable:"/>
+                        <Grid>
+                            <TextBlock>
+                                <Run Text="{Binding StreamingStatusViewModel.ConnectionStable}" />
+                            </TextBlock>
+                        </Grid>
+                    </DockPanel>
+                    <DockPanel>
+                        <TextBlock Text="StreamingState:"/>
+                        <Grid>
+                            <TextBlock>
+                                <Run Text="{Binding CubeStreamer.StreamingState}" />
+                            </TextBlock>
+                        </Grid>
+                    </DockPanel>
+                </StackPanel>
+                <StackPanel Grid.Column="1" 
+                            Style="{StaticResource StatBlock}" 
+                            Margin="5,0,5,0">
+                    <DockPanel>
+                        <TextBlock Text="AnimationStatus:"/>
+                        <Grid>
+                            <TextBlock>
+                                <Run Text="{Binding StreamingStatusViewModel.AnimationStatus}" />
+                            </TextBlock>
+                        </Grid>
+                    </DockPanel>
+                    <DockPanel>
+                        <TextBlock Text="CurrentAnimation:"/>
+                        <Grid>
+                            <TextBlock>
+                                <Run Text="{Binding StreamingStatusViewModel.CurrentAnimation}" />
+                            </TextBlock>
+                        </Grid>
+                    </DockPanel>
+                    <DockPanel>
+                        <TextBlock Text="FrameCount:"/>
+                        <Grid>
+                            <TextBlock>
+                                <Run Text="{Binding StreamingStatusViewModel.FrameNumber}" />
+                            </TextBlock>
+                        </Grid>
+                    </DockPanel>
+                    <DockPanel>
+                        <TextBlock Text="FPS Mean:"/>
+                        <Grid>
+                            <TextBlock>
+                                <Run Text="{Binding StreamingStatusViewModel.FpsMean, StringFormat={}{0:F2}, Mode=OneWay}" />
+                            </TextBlock>
+                        </Grid>
+                    </DockPanel>
+                    <DockPanel>
+                        <TextBlock Text="FPS Current:"/>
+                        <Grid>
+                            <TextBlock>
+                                <Run Text="{Binding StreamingStatusViewModel.FpsCurrent, Mode=OneWay}" />
+                            </TextBlock>
+                        </Grid>
+                    </DockPanel>
+                    <DockPanel>
+                        <TextBlock Text="FrameTime Mean:"/>
+                        <Grid>
+                            <TextBlock>
+                                <Run Text="{Binding StreamingStatusViewModel.FrameTimeMean,
+                                            StringFormat={}{0:F2},
+                                            Converter={StaticResource TimeSpanToTotalTimeConverter},
+                                            ConverterParameter='ms'}" />
+                                <Run Text="ms" />
+                            </TextBlock>
+                        </Grid>
+                    </DockPanel>
+                    <DockPanel>
+                        <TextBlock Text="FrameTime Current:"/>
+                        <Grid>
+                            <TextBlock>
+                                <Run Text="{Binding StreamingStatusViewModel.FrameTimeCurrent,
+                                            StringFormat={}{0:F2},
+                                            Converter={StaticResource TimeSpanToTotalTimeConverter},
+                                            ConverterParameter='ms'}" />
+                                <Run Text="ms" />
+                            </TextBlock>
+                        </Grid>
+                    </DockPanel>
+                    <DockPanel>
+                        <TextBlock Text="FrameTime 95%:"/>
+                        <Grid>
+                            <TextBlock>
+                                <Run Text="{Binding StreamingStatusViewModel.FrameTime95Pct,
+                                            StringFormat={}{0:F2},
+                                            Converter={StaticResource TimeSpanToTotalTimeConverter},
+                                            ConverterParameter='ms'}" />
+                                <Run Text="ms" />
+                            </TextBlock>
+                        </Grid>
+                    </DockPanel>
+                    <DockPanel>
+                        <TextBlock Text="FrameTime 5%:"/>
+                        <Grid>
+                            <TextBlock>
+                                <Run Text="{Binding StreamingStatusViewModel.FrameTime05Pct,
+                                            StringFormat={}{0:F2},
+                                            Converter={StaticResource TimeSpanToTotalTimeConverter},
+                                            ConverterParameter='ms'}" />
+                                <Run Text="ms" />
+                            </TextBlock>
+                        </Grid>
+                    </DockPanel>
+                </StackPanel>
+            </Grid>
+        </GroupBox>
     </StackPanel>
 </UserControl>

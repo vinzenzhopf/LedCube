@@ -60,11 +60,10 @@ public sealed class LogAppenderControlSink : ILogEventSink
 		    _startupEntries.Add(entry);
 		    return;
 	    }
-	    System.Windows.Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background,
-		    (Action) (() =>
-		    {
-			    AddLogEntry(entry);
-		    }));
+
+	    //When Application Exits, Current is null :/
+	    System.Windows.Application.Current?.Dispatcher?.BeginInvoke(DispatcherPriority.Background,
+		    (Action) (() => { AddLogEntry(entry); }));
     }
 
     private void AddLogEntry(LogEntry entry)

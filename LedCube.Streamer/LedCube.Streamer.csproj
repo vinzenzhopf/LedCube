@@ -16,11 +16,6 @@
 
 
     <ItemGroup>
-      <ProjectReference Include="..\LedCube.Core\LedCube.Core.csproj" />
-    </ItemGroup>
-
-
-    <ItemGroup>
       <Reference Include="LedCube.Streamer">
         <HintPath>..\LedCube.Streamer.Test\bin\Debug\net7.0\LedCube.Streamer.dll</HintPath>
       </Reference>
@@ -30,6 +25,11 @@
 
     <ItemGroup>
       <Folder Include="Styles\" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <ProjectReference Include="..\LedCube.Core.Common\LedCube.Core.Common.csproj" />
     </ItemGroup>
 
 </Project>

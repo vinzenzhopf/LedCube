@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              xmlns:local="clr-namespace:LedCube.Core.UI.Controls.PlaybackControl"
+             xmlns:services="clr-namespace:LedCube.Core.UI.Services"
              mc:Ignorable="d"
              d:DesignWidth="600"
              d:DataContext="{d:DesignInstance local:PlaybackControlViewModel, IsDesignTimeCreatable=True}">
@@ -55,10 +56,10 @@
         <Grid>
             <Slider Margin="5"
                     Height="40"
-                    Maximum="{Binding ActiveAnimation.FrameCount}"
+                    Maximum="{Binding PlaybackService.Animation.FrameCount}"
                     Minimum="1"
                     Orientation="Horizontal"
-                    LargeChange="{Binding ActiveAnimation.FrameFrequency}"
+                    LargeChange="{Binding PlaybackService.Animation.FrameFrequency}"
                     SmallChange="1"
                     IsSelectionRangeEnabled="False"
                     IsSnapToTickEnabled="True"
@@ -101,25 +102,19 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <TextBlock Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" 
-                               Text="{Binding ActiveAnimation.Name}" FontWeight="Bold" />
+                               Text="{Binding PlaybackService.Animation.Name}" FontWeight="Bold" />
                     <TextBlock Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="4" 
-                               Text="{Binding ActiveAnimation.Description}"/>
-                    <WrapPanel Grid.Column="2" Grid.Row="0" 
-                               HorizontalAlignment="Right">
-                        <TextBlock Text="#" Foreground="Gray" />
-                        <TextBlock Text="{Binding ActiveAnimation.Index}" 
-                                   Foreground="Gray"/>
-                    </WrapPanel>
+                               Text="{Binding PlaybackService.Animation.Description}"/>
                     <WrapPanel Grid.Column="0" Grid.Row="2">
                         <TextBlock Text="Frames: " 
                                    Foreground="Gray" />
-                        <TextBlock Text="{Binding ActiveAnimation.FrameCount}" 
+                        <TextBlock Text="{Binding PlaybackService.Animation.FrameCount}" 
                                    Foreground="Gray"/>
                     </WrapPanel>
                     <WrapPanel Grid.Column="1" Grid.Row="2">
                         <TextBlock Text="FPS: " 
                                    Foreground="Gray" />
-                        <TextBlock Text="{Binding ActiveAnimation.FrameFrequency}" 
+                        <TextBlock Text="{Binding PlaybackService.Animation.FrameFrequency}" 
                                    Foreground="Gray"/>
                     </WrapPanel>
                     <WrapPanel Grid.Column="2" Grid.Row="2" 
@@ -131,7 +126,7 @@
                             Width="12" 
                             VerticalAlignment="Center" 
                             Margin="0,0,2,0"/>
-                        <TextBlock Text="{Binding ActiveAnimation.AnimationLength}"
+                        <TextBlock Text="{Binding PlaybackService.Animation.AnimationLength}"
                                    Foreground="Gray"/>
                     </WrapPanel>
                 </Grid>
@@ -158,14 +153,16 @@
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         Margin="5">
-                <Button Style="{StaticResource PlaybackButton}">
+                <Button Style="{StaticResource PlaybackButton}"
+                        Command="{Binding BackwardCommand}">
                     <iconPacks:PackIconModern Kind="ControlRewind" />
                 </Button>
-                <Button Style="{StaticResource PlaybackButton}">
+                <Button Style="{StaticResource PlaybackButton}"
+                        Command="{Binding RestartCommand}">
                     <iconPacks:PackIconModern Kind="ControlResume" />
                 </Button>
                 <Grid>
-                    <Button>
+                    <Button Command="{Binding PlayContinueCommand}">
                         <Button.Style>
                             <Style BasedOn="{StaticResource PlaybackButtonLarge}" TargetType="{x:Type ButtonBase}">
                                 <Style.Setters>
@@ -173,7 +170,7 @@
                                 </Style.Setters>
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding PlaybackState}" 
-                                                 Value="{x:Static local:PlaybackState.Playing}">
+                                                 Value="{x:Static services:PlaybackState.Playing}">
                                         <Setter Property="Visibility" Value="Collapsed" />
                                     </DataTrigger>
                                 </Style.Triggers>
@@ -181,7 +178,7 @@
                         </Button.Style>
                         <iconPacks:PackIconModern Kind="ControlPlay" Padding="3,0,0,0"/>
                     </Button>
-                    <Button>
+                    <Button Command="{Binding PauseCommand}">
                         <Button.Style>
                             <Style BasedOn="{StaticResource PlaybackButtonLarge}" TargetType="{x:Type ButtonBase}">
                                 <Style.Setters>
@@ -189,7 +186,7 @@
                                 </Style.Setters>
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding PlaybackState}" 
-                                                 Value="{x:Static local:PlaybackState.Playing}">
+                                                 Value="{x:Static services:PlaybackState.Playing}">
                                         <Setter Property="Visibility" Value="Visible" />
                                     </DataTrigger>
                                 </Style.Triggers>
@@ -198,10 +195,12 @@
                         <iconPacks:PackIconModern Kind="ControlPause" />
                     </Button>
                 </Grid>
-                <Button Style="{StaticResource PlaybackButton}">
+                <Button Style="{StaticResource PlaybackButton}"
+                        Command="{Binding StopCommand}">
                     <iconPacks:PackIconModern Kind="ControlStop" />
                 </Button>
-                <Button Style="{StaticResource PlaybackButton}">
+                <Button Style="{StaticResource PlaybackButton}"
+                        Command="{Binding ForwardCommand}">
                     <iconPacks:PackIconModern Kind="ControlFastforward" />
                 </Button>
             </StackPanel>
