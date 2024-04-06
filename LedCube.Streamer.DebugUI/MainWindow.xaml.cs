@@ -46,13 +46,12 @@ namespace LedCube.Streamer.DebugUI
                     var result = await _udpClient.ReceiveAsync(token);
                     var datagram = result.Buffer;
 
-                    var header = CubeDatagramHeader.ReadFromSpan(datagram.AsSpan().Slice(0, CubeDatagramHeader.Size));
+                    CubeDatagramHeader header = default;
+                    CubeDatagramHeader.ReadFrom(datagram.AsSpan()[..CubeDatagramHeader.Size], ref header);
 
-                    var headerStr = string.Format("Header{{ Type:{0}, Count:{1} }}", header.PayloadType.ToString(),
-                        header.PacketCount);
-
+                    var headerStr = $"Header{{ Type:{header.PayloadType.ToString()}, Count:{header.PacketCount} }}";
                     var payloadStr = GetPayloadString(header.PayloadType, 
-                        datagram.AsSpan().Slice(CubeDatagramHeader.Size));
+                        datagram.AsSpan()[CubeDatagramHeader.Size..]);
 
                     Application.Current.Dispatcher.Invoke(() =>
                     {
@@ -72,27 +71,27 @@ namespace LedCube.Streamer.DebugUI
             switch (type)
             {
                 case DatagramType.Discovery:
-                    var discoveryPayload = InfoResponsePayload.ReadFromSpan(payloadSpan);
+                    var discoveryPayload = DatagramExtensions.Read<InfoResponsePayload>(payloadSpan);
                     payloadStr = discoveryPayload.ToString(); 
                     break;
                 case DatagramType.InfoResponse:
-                    var infoPayload = InfoResponsePayload.ReadFromSpan(payloadSpan);
+                    var infoPayload = DatagramExtensions.Read<InfoResponsePayload>(payloadSpan);
                     payloadStr = infoPayload.ToString();
                     break;
                 case DatagramType.ErrorResponse:
-                    var errorPayload = InfoResponsePayload.ReadFromSpan(payloadSpan);
+                    var errorPayload = DatagramExtensions.Read<InfoResponsePayload>(payloadSpan);
                     payloadStr = errorPayload.ToString();
                     break;
                 case DatagramType.AnimationStartAck:
-                    var animStartPayload = AnimationStartResponsePayload.ReadFromSpan(payloadSpan);
+                    var animStartPayload = DatagramExtensions.Read<AnimationStartResponsePayload>(payloadSpan);
                     payloadStr = animStartPayload.ToString();
                     break;
                 case DatagramType.AnimationEndAck:
-                    var animEndPayload = AnimationEndResponsePayload.ReadFromSpan(payloadSpan);
+                    var animEndPayload = DatagramExtensions.Read<AnimationEndResponsePayload>(payloadSpan);
                     payloadStr = animEndPayload.ToString();
                     break;
                 case DatagramType.FrameDataAck:
-                    var frameDataAck = FrameResponsePayload.ReadFromSpan(payloadSpan);
+                    var frameDataAck = DatagramExtensions.Read<FrameResponsePayload>(payloadSpan);
                     payloadStr = frameDataAck.ToString();
                     break;
             }
@@ -112,7 +111,7 @@ namespace LedCube.Streamer.DebugUI
             {
                 Version = StreamerInfo.DataVersion
             };
-            SendDatagram(DatagramType.Info, InfoPayload.WriteToSpan(payload));
+            SendDatagram(DatagramType.Info, payload);
         }
         
         private void ButtonSendAnimationStart_OnClick(object sender, RoutedEventArgs args)
@@ -122,7 +121,7 @@ namespace LedCube.Streamer.DebugUI
                 FrameTimeUs = 16667,
                 AnimationName = "TestAnimation"
             };
-            SendDatagram(DatagramType.AnimationStart, AnimationStartPayload.WriteToSpan(payload));
+            SendDatagram(DatagramType.AnimationStart, payload);
         }
         
         private void ButtonSendAnimationEnd_OnClick(object sender, RoutedEventArgs args)
@@ -139,13 +138,13 @@ namespace LedCube.Streamer.DebugUI
                 {
                     FrameNumber = 42,
                     FrameTimeUs = 2000,
-                    Data = new byte[512]
+                    Data = default
                 };
                 for (var i = 0; i < 32; i++)
                 {
-                    payload.Data.Span[i] = 0xff;        
+                    payload.Data[i] = 0xff;        
                 }
-                SendDatagram(DatagramType.FrameData, FramePayload.WriteToSpan(payload));
+                SendDatagram(DatagramType.FrameData, payload);
             }
             catch (Exception e)
             {
@@ -161,13 +160,13 @@ namespace LedCube.Streamer.DebugUI
                 {
                     FrameNumber = 42,
                     FrameTimeUs = 200000,
-                    Data = new byte[512]
+                    Data = default
                 };
                 for (var i = 0; i < 16; i++)
                 {
-                    payload.Data.Span[i+(32)] = 0xff;        
+                    payload.Data[i+(32)] = 0xff;        
                 }
-                SendDatagram(DatagramType.FrameData, FramePayload.WriteToSpan(payload));
+                SendDatagram(DatagramType.FrameData, payload);
             }
             catch (Exception e)
             {
@@ -195,47 +194,52 @@ namespace LedCube.Streamer.DebugUI
             
         }
         
-        public static byte[] HexStringToByteArray(ReadOnlySpan<char> hexStr)
-        {
-            if (hexStr.Length % 2 == 1)
-                throw new Exception("The binary key cannot have an odd number of digits");
-            var arr = new byte[hexStr.Length >> 1];
-            for (var i = 0; i < hexStr.Length >> 1; i++)
-            {
-                arr[i] = (byte)((GetHexVal(hexStr[i << 1]) << 4) + (GetHexVal(hexStr[(i << 1) + 1])));
-            }
-            return arr;
-        }
-
-        private static int GetHexVal(char hex) {
-            var val = (int)hex;
-            //For uppercase A-F letters:
-            //return val - (val < 58 ? 48 : 55);
-            //For lowercase a-f letters:
-            //return val - (val < 58 ? 48 : 87);
-            //Or the two combined, but a bit slower:
-            return val - (val < 58 ? 48 : (val < 97 ? 55 : 87));
-        }
-
+        public static byte[] HexStringToByteArray(ReadOnlySpan<char> hexStr) 
+            => Convert.FromHexString(hexStr);
+        
         private static void SendDatagram(UdpClient client, ushort packetCount, DatagramType type, ReadOnlySpan<byte> dataSpan)
         {
+            Span<byte> buffer = new byte[CubeDatagramHeader.Size + dataSpan.Length];
             var header = new CubeDatagramHeader()
             {
                 PacketCount = packetCount,
                 PayloadType = type
             };
-            var headerSpan = CubeDatagramHeader.WriteToSpan(header);
-
-            var buffer = new byte[1024].AsSpan();
-            headerSpan.CopyTo(buffer);
-            dataSpan.CopyTo(buffer[headerSpan.Length..]);
-
-            var totalLength = headerSpan.Length + dataSpan.Length;
-            var messageSlice = buffer[..totalLength];
-        
-            client.Send(messageSlice);
+            CubeDatagramHeader.WriteTo(buffer, in header);
+            dataSpan.CopyTo(buffer[CubeDatagramHeader.Size..]);
+            client.Send(buffer);
         }
 
+        private void SendDatagram<TDatagram>(DatagramType type, in TDatagram datagram) where TDatagram : IWritableDatagram<TDatagram>
+        {
+            try
+            {
+                Span<byte> buffer = new byte[TDatagram.Size];
+                TDatagram.WriteTo(buffer, in datagram);
+                _udpClient.Connect(RemoteHost.Text, int.Parse(Port.Text));
+                // Sends a message to the host to which you have connected.
+                ushort.TryParse(Counter.Text, out var packetCount);
+                Counter.Text = $"{packetCount+1}";
+                SendDatagram(_udpClient, packetCount, type, buffer);
+            }
+            catch (Exception e) {
+                Console.WriteLine(e);
+            }
+        }
+        
+        private static void SendDatagram<TDatagram>(UdpClient client, ushort packetCount, DatagramType type, in TDatagram datagram) where TDatagram : IWritableDatagram<TDatagram>
+        {
+            Span<byte> buffer = new byte[CubeDatagramHeader.Size + TDatagram.Size];
+            var header = new CubeDatagramHeader()
+            {
+                PacketCount = packetCount,
+                PayloadType = type
+            };
+            CubeDatagramHeader.WriteTo(buffer, in header);
+            TDatagram.WriteTo(buffer[CubeDatagramHeader.Size..], in datagram);
+            client.Send(buffer);
+        }
+        
         private void SendDatagram(DatagramType type, ReadOnlySpan<byte> dataSpan)
         {
             try
@@ -271,7 +275,7 @@ namespace LedCube.Streamer.DebugUI
                 FrameTimeUs = timerCycleTime,
                 AnimationName = "TestTimerAnim"
             };
-            SendDatagram(_udpClient, GetAndUpdatePacketCount(), DatagramType.AnimationStart, AnimationStartPayload.WriteToSpan(payload));
+            SendDatagram(_udpClient, GetAndUpdatePacketCount(), DatagramType.AnimationStart, payload);
             var ts = TimeSpan.FromMicroseconds(timerCycleTime);
             _timer = new Timer(Timer_Tick, timerCycleTime, ts, ts);
             TimerIsRunning.IsChecked = true;
@@ -308,15 +312,15 @@ namespace LedCube.Streamer.DebugUI
                 {
                     FrameNumber = _frameNumber++,
                     FrameTimeUs = timerCycleTime,
-                    Data = new byte[512]
+                    Data = default
                 };
                 var index = _activeLed / 8;
                 var bit = (byte)(_activeLed % 8);
-                payload.Data.Span[unchecked((int) index)] = (byte) (1 << bit);
+                payload.Data[unchecked((int) index)] = (byte) (1 << bit);
 
                 _activeLed = (_activeLed + 1) % 4096;
                 
-                SendDatagram(_udpClient, GetAndUpdatePacketCount(), DatagramType.FrameData, FramePayload.WriteToSpan(payload));
+                SendDatagram(_udpClient, GetAndUpdatePacketCount(), DatagramType.FrameData, payload);
             }
             catch (Exception e)
             {

@@ -2,36 +2,28 @@
 
 namespace LedCube.Streamer.Datagram;
 
-public struct InfoPayload
+public struct InfoPayload : IWritableDatagram<InfoPayload>, IReadableDatagram<InfoPayload>
 {
+    public static int Size => VersionLength;
+    private const int VersionLength = 32;
+    
     /**
      * String size 32
      */
     public string Version;
-    
-    public const int Size = VersionLength;
-    public const int VersionLength = 32;
-    
-    public static InfoPayload ReadFromSpan(ReadOnlySpan<byte> span)
+
+    public static void WriteTo(Span<byte> target, in InfoPayload source)
     {
-        return new InfoPayload()
-        {
-            Version = Encoding.ASCII.GetString(span[0..32])
-        };
+        Encoding.ASCII.TryGetBytes(source.Version, target, out _);
     }
 
-    public static ReadOnlyMemory<byte> WriteToMemory(InfoPayload data)
+    public static void ReadFrom(ReadOnlySpan<byte> source, ref InfoPayload target)
     {
-        var buffer = new byte[Size].AsMemory();
-        Encoding.ASCII.GetBytes(data.Version).AsSpan().CopyTo(buffer.Span[0..]);
-        return buffer;
+        target.Version = Encoding.ASCII.GetString(source[0..32]);
     }
-
-    public static ReadOnlySpan<byte> WriteToSpan(InfoPayload data)
-        => WriteToMemory(data).Span;
-    
     public override string ToString()
     {
         return $"{nameof(Version)}: {Version}";
     }
-};
+    
+}

@@ -2,40 +2,31 @@
 
 namespace LedCube.Streamer.Datagram;
 
-public struct FramePayload
+public struct FramePayload : IWritableDatagram<FramePayload>, IReadableDatagram<FramePayload>
 {
+    public static int Size => sizeof(UInt32) * 3 + FramePayloadData.Size;
+
     public UInt32 FrameNumber;
     public UInt32 FrameTimeUs;
     public UInt32 CurrentTicks;
     //Lenght: 512 bytes
-    public Memory<byte> Data;
-    
-    public const int Size = sizeof(UInt32) * 3 + DataSize;
-    public const int DataSize = 512;
-    
-    public static FramePayload ReadFromSpan(ReadOnlySpan<byte> span)
+    public FramePayloadData Data;
+
+    public static void WriteTo(Span<byte> target, in FramePayload source)
     {
-        return new FramePayload()
-        {
-            FrameNumber = MemoryMarshal.Read<UInt32>(span[0..]),
-            FrameTimeUs = MemoryMarshal.Read<UInt32>(span[4..]),
-            CurrentTicks = MemoryMarshal.Read<UInt32>(span[8..]),
-            Data = span.Slice(12, DataSize).ToArray(),
-        };
+        MemoryMarshal.Write(target[0..], in source.FrameNumber);
+        MemoryMarshal.Write(target[4..], in source.FrameTimeUs);
+        MemoryMarshal.Write(target[8..], in source.CurrentTicks);
+        ((ReadOnlySpan<byte>) source.Data).CopyTo(target[12..]);
     }
 
-    public static ReadOnlyMemory<byte> WriteToMemory(FramePayload data)
-    {   
-        var buffer = new byte[Size].AsMemory();
-        MemoryMarshal.Write(buffer.Span[0..], in data.FrameNumber);
-        MemoryMarshal.Write(buffer.Span[4..], in data.FrameTimeUs);
-        MemoryMarshal.Write(buffer.Span[8..], in data.CurrentTicks);
-        data.Data.Span[0..DataSize].CopyTo(buffer.Span[12..]);
-        return buffer;
+    public static void ReadFrom(ReadOnlySpan<byte> source, ref FramePayload target)
+    {
+        target.FrameNumber = MemoryMarshal.Read<UInt32>(source[0..]);
+        target.FrameTimeUs = MemoryMarshal.Read<UInt32>(source[4..]);
+        target.CurrentTicks = MemoryMarshal.Read<UInt32>(source[8..]);
+        source.Slice(12, FramePayloadData.Size).CopyTo(target.Data);
     }
-
-    public static ReadOnlySpan<byte> WriteToSpan(FramePayload data)
-        => WriteToMemory(data).Span;
 
     public override string ToString()
     {

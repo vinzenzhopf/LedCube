@@ -1,4 +1,5 @@
-﻿using LedCube.Streamer.Datagram;
+﻿using System.Runtime.CompilerServices;
+using LedCube.Streamer.Datagram;
 using Microsoft.Extensions.Logging;
 
 namespace LedCube.Streamer.UdpCom;
@@ -14,14 +15,14 @@ public class UdpCubeCubeCommunication : UdpCommunication, IUdpCubeCommunication
         Logger = loggerFactory.CreateLogger(GetType());
     }
     
-    public async IAsyncEnumerable<HostAndPort> SendBroadcastSearch(string version, int port, TimeSpan timeout, CancellationToken cts)
+    public async IAsyncEnumerable<HostAndPort> SendBroadcastSearch(string version, int port, TimeSpan timeout, [EnumeratorCancellation] CancellationToken cts)
     {
         var payload = new InfoPayload()
         {
             Version = version
         };
         var responses = SendAndReceiveDatagramMultipleAsync(DatagramType.Discovery,
-            InfoPayload.WriteToMemory(payload), new HostAndPort("255.255.255.255", port),
+             DatagramExtensions.ToMemory(in payload), new HostAndPort("255.255.255.255", port),
             timeout, cts).ConfigureAwait(false);
         await foreach (var x in responses)
         {
@@ -36,8 +37,7 @@ public class UdpCubeCubeCommunication : UdpCommunication, IUdpCubeCommunication
         {
             Version = version
         };
-        return await SendAndReceiveDatagramAsync(DatagramType.Info, InfoPayload.WriteToMemory(payload),
-            timeout, cts).ConfigureAwait(false);
+        return await SendAndReceiveDatagramAsync(DatagramType.Info, payload, timeout, cts).ConfigureAwait(false);
     }
     
     public async Task<ReceivedDatagram?> SendStartAnimationAsync(uint frameTimeUs, string animationName, TimeSpan timeout,
@@ -48,8 +48,7 @@ public class UdpCubeCubeCommunication : UdpCommunication, IUdpCubeCommunication
             FrameTimeUs = frameTimeUs,
             AnimationName = animationName
         };
-        return await SendAndReceiveDatagramAsync(DatagramType.AnimationStart, AnimationStartPayload.WriteToMemory(payload),
-            timeout, cts).ConfigureAwait(false);
+        return await SendAndReceiveDatagramAsync(DatagramType.AnimationStart, payload, timeout, cts).ConfigureAwait(false);
     }
 
     public async Task<ReceivedDatagram?> SendEndAnimationAsync(uint currentTicks, TimeSpan timeout,
@@ -58,12 +57,11 @@ public class UdpCubeCubeCommunication : UdpCommunication, IUdpCubeCommunication
         var payload = new AnimationEndPayload()
         {
             CurrentTicks = currentTicks
-        };
-        return await SendAndReceiveDatagramAsync(DatagramType.AnimationEnd, AnimationEndPayload.WriteToMemory(payload),
-            timeout, cts).ConfigureAwait(false);
+        }; 
+        return await SendAndReceiveDatagramAsync(DatagramType.AnimationEnd,  payload, timeout, cts).ConfigureAwait(false);
     }
 
-    public async Task<ReceivedDatagram?> SendFrameAsync(uint frameNumber, uint frameTimeUs, Memory<byte> frameData, 
+    public async Task<ReceivedDatagram?> SendFrameAsync(uint frameNumber, uint frameTimeUs, FramePayloadData frameData, 
         TimeSpan timeout, CancellationToken cts)
     {
         var payload = new FramePayload()
@@ -72,7 +70,6 @@ public class UdpCubeCubeCommunication : UdpCommunication, IUdpCubeCommunication
             FrameTimeUs = frameTimeUs,
             Data = frameData
         };
-        return await SendAndReceiveDatagramAsync(DatagramType.FrameData, FramePayload.WriteToMemory(payload),
-            timeout, cts).ConfigureAwait(false);
+        return await SendAndReceiveDatagramAsync(DatagramType.FrameData, payload, timeout, cts).ConfigureAwait(false);
     }
 }

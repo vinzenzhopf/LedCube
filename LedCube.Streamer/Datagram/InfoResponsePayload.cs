@@ -3,8 +3,12 @@ using System.Text;
 
 namespace LedCube.Streamer.Datagram;
 
-public struct InfoResponsePayload
+public struct InfoResponsePayload : IWritableDatagram<InfoResponsePayload>, IReadableDatagram<InfoResponsePayload>
 {
+
+    public static int Size => sizeof(UInt32) * 2 + VersionLength + sizeof(CubeErrorCode) + sizeof(AnimationStatus);
+    private const int VersionLength = 32;
+    
     /**
      * String size 32
      */
@@ -14,35 +18,23 @@ public struct InfoResponsePayload
     public CubeErrorCode ErrorCode;
     public AnimationStatus Status;
     
-    public const int Size = sizeof(UInt32) * 2 + VersionLength + sizeof(CubeErrorCode) + sizeof(AnimationStatus);
-    public const int VersionLength = 32;
-    
-    public static InfoResponsePayload ReadFromSpan(ReadOnlySpan<byte> span)
+    public static void WriteTo(Span<byte> target, in InfoResponsePayload source)
     {
-        return new InfoResponsePayload()
-        {
-            Version = Encoding.ASCII.GetString(span[0..32]),
-            LastFrameTimeUs = MemoryMarshal.Read<UInt32>(span[32..]),
-            CurrentTicks = MemoryMarshal.Read<UInt32>(span[36..]),
-            ErrorCode = MemoryMarshal.Read<CubeErrorCode>(span[40..]),
-            Status = MemoryMarshal.Read<AnimationStatus>(span[42..]),
-        };
+        Encoding.ASCII.TryGetBytes(source.Version, target[0..32], out _);
+        MemoryMarshal.Write(target[32..], in source.LastFrameTimeUs);
+        MemoryMarshal.Write(target[36..], in source.CurrentTicks);
+        MemoryMarshal.Write(target[40..], in source.ErrorCode);
+        MemoryMarshal.Write(target[42..], in source.Status);
     }
 
-    public static ReadOnlyMemory<byte> WriteToMemory(InfoResponsePayload data)
+    public static void ReadFrom(ReadOnlySpan<byte> source, ref InfoResponsePayload target)
     {
-        Memory<byte> buffer = new byte[42];
-        Encoding.ASCII.GetBytes(data.Version).AsSpan().CopyTo(buffer.Span[0..]);
-        MemoryMarshal.Write(buffer.Span[32..], in data.LastFrameTimeUs);
-        MemoryMarshal.Write(buffer.Span[36..], in data.CurrentTicks);
-        MemoryMarshal.Write(buffer.Span[40..], in data.ErrorCode);
-        MemoryMarshal.Write(buffer.Span[42..], in data.Status);
-        return buffer;
+        target.Version = Encoding.ASCII.GetString(source[0..32]);
+        target.LastFrameTimeUs = MemoryMarshal.Read<UInt32>(source[32..]);
+        target.CurrentTicks = MemoryMarshal.Read<UInt32>(source[36..]);
+        target.ErrorCode = MemoryMarshal.Read<CubeErrorCode>(source[40..]);
+        target.Status = MemoryMarshal.Read<AnimationStatus>(source[42..]);
     }
-
-    public static ReadOnlySpan<byte> WriteToSpan(InfoResponsePayload data)
-        => WriteToMemory(data).Span;
-
     public override string ToString()
     {
         return $"{nameof(Version)}: {Version}, {nameof(LastFrameTimeUs)}: {LastFrameTimeUs}, {nameof(CurrentTicks)}: {CurrentTicks}, {nameof(ErrorCode)}: {ErrorCode}, {nameof(Status)}: {Status}";

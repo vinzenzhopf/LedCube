@@ -2,29 +2,21 @@
 
 namespace LedCube.Streamer.Datagram;
 
-public struct AnimationEndPayload
+public struct AnimationEndPayload : IWritableDatagram<AnimationEndPayload>, IReadableDatagram<AnimationEndPayload>
 {
+    public static int Size => sizeof(UInt32);
+    
     public UInt32 CurrentTicks;
 
-    public const int Size = sizeof(UInt32);
-    
-    public static AnimationEndPayload ReadFromSpan(ReadOnlySpan<byte> span)
+    public static void WriteTo(Span<byte> target, in AnimationEndPayload source)
     {
-        return new AnimationEndPayload()
-        {
-            CurrentTicks = MemoryMarshal.Read<UInt32>(span[0..]),
-        };
+        MemoryMarshal.Write(target[0..], in source.CurrentTicks);
     }
 
-    public static ReadOnlyMemory<byte> WriteToMemory(AnimationEndPayload data)
-    {   
-        Memory<byte> buffer = new byte[Size];
-        MemoryMarshal.Write(buffer.Span[0..], in data.CurrentTicks);
-        return buffer;
+    public static void ReadFrom(ReadOnlySpan<byte> source, ref AnimationEndPayload target)
+    {
+        target.CurrentTicks = MemoryMarshal.Read<UInt32>(source[0..]);
     }
-
-    public static ReadOnlySpan<byte> WriteToSpan(AnimationEndPayload data)
-        => WriteToMemory(data).Span;
 
     public override string ToString()
     {

@@ -8,23 +8,24 @@ public static class CubeDatagramUtils
     public static ReceivedDatagram ResolveDatagramContent(UdpReceiveResult result)
     {
         var datagram = result.Buffer.AsSpan();
-        
-        var header = CubeDatagramHeader.ReadFromSpan(datagram[..CubeDatagramHeader.Size]);
+
+        var header = new CubeDatagramHeader();
+        CubeDatagramHeader.ReadFrom(datagram[..CubeDatagramHeader.Size], ref header);
         var data = ParsePayloadData(header.PayloadType, datagram[CubeDatagramHeader.Size..]);
         
         return new ReceivedDatagram(result.RemoteEndPoint, header, data);
     }
     
-    public static object? ParsePayloadData(DatagramType type, ReadOnlySpan<byte> payloadSpan)
+    private static object? ParsePayloadData(DatagramType type, ReadOnlySpan<byte> payloadSpan)
     {
         return type switch
         {
-            DatagramType.Discovery => InfoResponsePayload.ReadFromSpan(payloadSpan),
-            DatagramType.InfoResponse => InfoResponsePayload.ReadFromSpan(payloadSpan),
-            DatagramType.ErrorResponse => InfoResponsePayload.ReadFromSpan(payloadSpan),
-            DatagramType.AnimationStartAck => AnimationStartResponsePayload.ReadFromSpan(payloadSpan),
-            DatagramType.AnimationEndAck => AnimationEndResponsePayload.ReadFromSpan(payloadSpan),
-            DatagramType.FrameDataAck => FrameResponsePayload.ReadFromSpan(payloadSpan),
+            DatagramType.Discovery => DatagramExtensions.Read<InfoResponsePayload>(payloadSpan),
+            DatagramType.InfoResponse => DatagramExtensions.Read<InfoResponsePayload>(payloadSpan),
+            DatagramType.ErrorResponse => DatagramExtensions.Read<InfoResponsePayload>(payloadSpan),
+            DatagramType.AnimationStartAck => DatagramExtensions.Read<AnimationStartResponsePayload>(payloadSpan),
+            DatagramType.AnimationEndAck => DatagramExtensions.Read<AnimationEndResponsePayload>(payloadSpan),
+            DatagramType.FrameDataAck => DatagramExtensions.Read<FrameResponsePayload>(payloadSpan),
             _ => null
         };
     }

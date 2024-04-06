@@ -1,4 +1,6 @@
-﻿namespace LedCube.Streamer.UdpCom;
+﻿using LedCube.Streamer.Datagram;
+
+namespace LedCube.Streamer.UdpCom;
 
 public interface IUdpCubeCommunication : IUdpCommunication
 {
@@ -53,9 +55,9 @@ public interface IUdpCubeCommunication : IUdpCommunication
     /// </summary>
     /// <para name="updateTimeUs">The interval in which the frame data is sent.</para>
     /// <returns>When the sending started and the first acknowledge is returned, this method returns true</returns>
-    Task<ReceivedDatagram?> SendFrameAsync(uint frameNumber, uint frameTimeUs, Memory<byte> frameData,
+    Task<ReceivedDatagram?> SendFrameAsync(uint frameNumber, uint frameTimeUs, FramePayloadData frameData,
         TimeSpan timeout, CancellationToken cts);
 
-    Task<ReceivedDatagram?> SendFrameAsync(uint frameNumber, uint frameTimeUs, Memory<byte> frameData,
+    Task<ReceivedDatagram?> SendFrameAsync(uint frameNumber, uint frameTimeUs, FramePayloadData frameData,
         CancellationToken cts) => SendFrameAsync(frameNumber, frameTimeUs, frameData, ReceiveTimeout, cts);
 }

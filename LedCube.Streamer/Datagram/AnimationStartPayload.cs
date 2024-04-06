@@ -3,8 +3,12 @@ using System.Text;
 
 namespace LedCube.Streamer.Datagram;
 
-public struct AnimationStartPayload
+public struct AnimationStartPayload : IWritableDatagram<AnimationStartPayload>, IReadableDatagram<AnimationStartPayload>
 {
+    private const int AnimationNameLength = 64;
+    public static int Size => sizeof(UInt32) * 2 + AnimationNameLength;
+    
+    
     public UInt32 FrameTimeUs;
     /**
      * String length of 63
@@ -12,30 +16,18 @@ public struct AnimationStartPayload
     public string AnimationName;
     public UInt32 CurrentTicks;
     
-    public const int Size = sizeof(UInt32) * 2 + AnimationNameLength;
-    public const int AnimationNameLength = 64;
-    
-    public static AnimationStartPayload ReadFromSpan(ReadOnlySpan<byte> span)
+    public static void WriteTo(Span<byte> target, in AnimationStartPayload source)
     {
-        return new AnimationStartPayload()
-        {
-            FrameTimeUs = MemoryMarshal.Read<UInt32>(span[0..]),
-            AnimationName = Encoding.ASCII.GetString(span.Slice(4, 64)),
-            CurrentTicks = MemoryMarshal.Read<UInt32>(span[68..]),
-        };
+        MemoryMarshal.Write(target[0..], in source.FrameTimeUs);
+        Encoding.ASCII.TryGetBytes(source.AnimationName, target.Slice(4,64), out _);
+        MemoryMarshal.Write(target[68..], in source.CurrentTicks);
     }
 
-    public static ReadOnlySpan<byte> WriteToSpan(AnimationStartPayload data) => 
-            WriteToMemory(data).Span;
-
-    public static ReadOnlyMemory<byte> WriteToMemory(AnimationStartPayload data)
+    public static void ReadFrom(ReadOnlySpan<byte> source, ref AnimationStartPayload target)
     {
-        Memory<byte> buffer = new byte[Size];
-        MemoryMarshal.Write(buffer.Span[0..], in data.FrameTimeUs);
-        Encoding.ASCII.GetBytes(data.AnimationName).AsSpan()
-            .CopyTo(buffer.Span.Slice(4,64));
-        MemoryMarshal.Write(buffer.Span[68..], in data.CurrentTicks);
-        return buffer;
+        target.FrameTimeUs = MemoryMarshal.Read<UInt32>(source[0..]);
+        target.AnimationName = Encoding.ASCII.GetString(source.Slice(4, 64));
+        target.CurrentTicks = MemoryMarshal.Read<UInt32>(source[68..]);
     }
 
     public override string ToString()

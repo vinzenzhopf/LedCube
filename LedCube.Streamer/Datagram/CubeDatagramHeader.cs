@@ -2,32 +2,25 @@
 
 namespace LedCube.Streamer.Datagram;
 
-public struct CubeDatagramHeader
+public struct CubeDatagramHeader : IWritableDatagram<CubeDatagramHeader>, IReadableDatagram<CubeDatagramHeader>
 {
+
+    public static int Size => sizeof(DatagramType) + sizeof(UInt16);
+
     public DatagramType PayloadType;
     public UInt16 PacketCount;
 
-    public static int Size => sizeof(DatagramType) + sizeof(UInt16);
-    
-    public static CubeDatagramHeader ReadFromSpan(ReadOnlySpan<byte> span)
+    public static void WriteTo(Span<byte> target, in CubeDatagramHeader source)
     {
-        return new CubeDatagramHeader()
-        {
-            PayloadType = MemoryMarshal.Read<DatagramType>(span[0..]),
-            PacketCount = MemoryMarshal.Read<UInt16>(span[2..]),
-        };
+        MemoryMarshal.Write(target[0..], in source.PayloadType);
+        MemoryMarshal.Write(target[2..], in source.PacketCount);
     }
 
-    public static ReadOnlyMemory<byte> WriteToMemory(CubeDatagramHeader cubeDatagramHeader)
+    public static void ReadFrom(ReadOnlySpan<byte> source, ref CubeDatagramHeader target)
     {
-        Memory<byte> buffer = new byte[Size];
-        MemoryMarshal.Write(buffer.Span[0..], in cubeDatagramHeader.PayloadType);
-        MemoryMarshal.Write(buffer.Span[2..], in cubeDatagramHeader.PacketCount);
-        return buffer;
+        target.PayloadType = MemoryMarshal.Read<DatagramType>(source[0..]);
+        target.PacketCount = MemoryMarshal.Read<UInt16>(source[2..]);
     }
-    
-    public static ReadOnlySpan<byte> WriteToSpan(CubeDatagramHeader cubeDatagramHeader)
-        => WriteToMemory(cubeDatagramHeader).Span;
 
     public override string ToString()
     {

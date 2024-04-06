@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.CompilerServices;
 using LedCube.Streamer.Datagram;
 using Microsoft.Extensions.Logging;
 
@@ -185,18 +186,17 @@ public class UdpCommunication : IUdpCommunication
 
     private ReadOnlyMemory<byte> BuildOutputBuffer(ushort packetCount, DatagramType type, ReadOnlySpan<byte> dataSpan)
     {
+        var totalLength = CubeDatagramHeader.Size + dataSpan.Length;
+        Memory<byte> buffer = new byte[totalLength];
+        
         var header = new CubeDatagramHeader()
         {
             PacketCount = packetCount,
             PayloadType = type
         };
-        var headerSpan = CubeDatagramHeader.WriteToSpan(header);
-        
-        var totalLength = headerSpan.Length + dataSpan.Length;
-        var buffer = new byte[totalLength].AsMemory();
-        headerSpan.CopyTo(buffer.Span);
-        dataSpan.CopyTo(buffer.Span[headerSpan.Length..]);
-        return buffer[..totalLength];
+        CubeDatagramHeader.WriteTo(buffer.Span, in header);
+        dataSpan.CopyTo(buffer.Span[CubeDatagramHeader.Size..]);
+        return buffer;
     }
 
     /// <summary>
@@ -265,6 +265,32 @@ public class UdpCommunication : IUdpCommunication
         TimeSpan timeout, CancellationToken cts)
         => SendAndReceiveDatagramAsync(type, dataSpan, RemoteHost, timeout, cts);
     
+    /// <summary>
+    /// Sends the provided datagram and waits for a response.
+    /// </summary>
+    /// <param name="type">The type of the datagram.</param>
+    /// <param name="dataSpan">The data to be sent in the datagram.</param>
+    /// <param name="timeout">The time span to wait for a response before timeout.</param>
+    /// <param name="cts">Cancellation token source to cancel the operation.</param>
+    /// <returns>The received datagram, or null if the request timeouts or an error occurs.</returns>
+    /// <remarks>
+    /// This async function firstly checks if the connection exists. If the connection does not exist, it throws an exception.
+    /// Then, builds the message and sends it to the server asyncronously.
+    /// It waits for the response until the specified timeout.
+    /// If the response is not received within the timeout, it throws a timeout exception.
+    /// If a message could be received it records the ticks when the datagram was sent and received.
+    /// Finally, it returns the data of received datagram for further processing.
+    /// </remarks>
+    /// <exception cref="Exception">Thrown when the connection does not exist.</exception>
+    /// <exception cref="TimeoutException">Thrown when the request timeouts and no response is received within the specified time span.</exception>
+    public Task<ReceivedDatagram?> SendAndReceiveDatagramAsync<TDatagram>(DatagramType type, TDatagram datagram,
+        TimeSpan timeout, CancellationToken cts) where TDatagram : IWritableDatagram<TDatagram>
+    {
+        Memory<byte> dataSpan = new byte[TDatagram.Size];
+        TDatagram.WriteTo(dataSpan.Span, in datagram);
+        return SendAndReceiveDatagramAsync(type, dataSpan, RemoteHost, timeout, cts);
+    }
+
     /// <summary>
     /// Sends the provided datagram and waits for a response.
     /// </summary>
@@ -343,7 +369,7 @@ public class UdpCommunication : IUdpCommunication
     /// Any responses received are added to the response list and are returned, after the timeout occures.
     /// </remarks>
     public async IAsyncEnumerable<ReceivedDatagram> SendAndReceiveDatagramMultipleAsync(DatagramType type, ReadOnlyMemory<byte> dataSpan,
-        HostAndPort host, TimeSpan timeout, CancellationToken cts)
+        HostAndPort host, TimeSpan timeout, [EnumeratorCancellation] CancellationToken cts)
     {
         var packetCount = GetAndIncrementPacketCount();
         var responses = new ConcurrentQueue<ReceivedDatagram>();
