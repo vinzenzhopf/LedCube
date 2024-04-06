@@ -63,7 +63,7 @@ public class UdpCubeCubeCommunication : UdpCommunication, IUdpCubeCommunication
             timeout, cts).ConfigureAwait(false);
     }
 
-    public async Task<ReceivedDatagram?> SendFrameAsync(uint frameNumber, uint frameTimeUs, byte[] frameData, 
+    public async Task<ReceivedDatagram?> SendFrameAsync(uint frameNumber, uint frameTimeUs, Memory<byte> frameData, 
         TimeSpan timeout, CancellationToken cts)
     {
         var payload = new FramePayload()

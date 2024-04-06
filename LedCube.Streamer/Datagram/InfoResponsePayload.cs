@@ -31,12 +31,12 @@ public struct InfoResponsePayload
 
     public static ReadOnlyMemory<byte> WriteToMemory(InfoResponsePayload data)
     {
-        var buffer = new byte[42].AsMemory();
+        Memory<byte> buffer = new byte[42];
         Encoding.ASCII.GetBytes(data.Version).AsSpan().CopyTo(buffer.Span[0..]);
-        MemoryMarshal.Write(buffer.Span[32..], ref data.LastFrameTimeUs);
-        MemoryMarshal.Write(buffer.Span[36..], ref data.CurrentTicks);
-        MemoryMarshal.Write(buffer.Span[40..], ref data.ErrorCode);
-        MemoryMarshal.Write(buffer.Span[42..], ref data.Status);
+        MemoryMarshal.Write(buffer.Span[32..], in data.LastFrameTimeUs);
+        MemoryMarshal.Write(buffer.Span[36..], in data.CurrentTicks);
+        MemoryMarshal.Write(buffer.Span[40..], in data.ErrorCode);
+        MemoryMarshal.Write(buffer.Span[42..], in data.Status);
         return buffer;
     }
 

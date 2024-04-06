@@ -143,7 +143,7 @@ namespace LedCube.Streamer.DebugUI
                 };
                 for (var i = 0; i < 32; i++)
                 {
-                    payload.Data[i] = 0xff;        
+                    payload.Data.Span[i] = 0xff;        
                 }
                 SendDatagram(DatagramType.FrameData, FramePayload.WriteToSpan(payload));
             }
@@ -165,7 +165,7 @@ namespace LedCube.Streamer.DebugUI
                 };
                 for (var i = 0; i < 16; i++)
                 {
-                    payload.Data[i+(32)] = 0xff;        
+                    payload.Data.Span[i+(32)] = 0xff;        
                 }
                 SendDatagram(DatagramType.FrameData, FramePayload.WriteToSpan(payload));
             }
@@ -312,7 +312,7 @@ namespace LedCube.Streamer.DebugUI
                 };
                 var index = _activeLed / 8;
                 var bit = (byte)(_activeLed % 8);
-                payload.Data[index] = (byte) (1 << bit);
+                payload.Data.Span[unchecked((int) index)] = (byte) (1 << bit);
 
                 _activeLed = (_activeLed + 1) % 4096;
                 

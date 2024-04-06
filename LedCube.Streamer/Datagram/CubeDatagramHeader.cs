@@ -20,9 +20,9 @@ public struct CubeDatagramHeader
 
     public static ReadOnlyMemory<byte> WriteToMemory(CubeDatagramHeader cubeDatagramHeader)
     {
-        var buffer = new byte[Size].AsMemory();
-        MemoryMarshal.Write(buffer.Span[0..], ref cubeDatagramHeader.PayloadType);
-        MemoryMarshal.Write(buffer.Span[2..], ref cubeDatagramHeader.PacketCount);
+        Memory<byte> buffer = new byte[Size];
+        MemoryMarshal.Write(buffer.Span[0..], in cubeDatagramHeader.PayloadType);
+        MemoryMarshal.Write(buffer.Span[2..], in cubeDatagramHeader.PacketCount);
         return buffer;
     }
     

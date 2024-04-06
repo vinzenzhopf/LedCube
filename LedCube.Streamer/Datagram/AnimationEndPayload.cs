@@ -18,8 +18,8 @@ public struct AnimationEndPayload
 
     public static ReadOnlyMemory<byte> WriteToMemory(AnimationEndPayload data)
     {   
-        var buffer = new byte[Size].AsMemory();
-        MemoryMarshal.Write(buffer.Span[0..], ref data.CurrentTicks);
+        Memory<byte> buffer = new byte[Size];
+        MemoryMarshal.Write(buffer.Span[0..], in data.CurrentTicks);
         return buffer;
     }
 

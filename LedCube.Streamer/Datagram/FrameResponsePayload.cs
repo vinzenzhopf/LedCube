@@ -26,12 +26,12 @@ public struct FrameResponsePayload
 
     public static ReadOnlyMemory<byte> WriteToMemory(FrameResponsePayload data)
     {   
-        var buffer = new byte[Size].AsMemory();
-        MemoryMarshal.Write(buffer.Span[0..], ref data.FrameNumber);
-        MemoryMarshal.Write(buffer.Span[4..], ref data.LastFrameTimeUs);
-        MemoryMarshal.Write(buffer.Span[8..], ref data.CurrentTicks);
-        MemoryMarshal.Write(buffer.Span[12..], ref data.ReceivedTicks);
-        MemoryMarshal.Write(buffer.Span[16..], ref data.Status);
+        Memory<byte> buffer = new byte[Size];
+        MemoryMarshal.Write(buffer.Span[0..], in data.FrameNumber);
+        MemoryMarshal.Write(buffer.Span[4..], in data.LastFrameTimeUs);
+        MemoryMarshal.Write(buffer.Span[8..], in data.CurrentTicks);
+        MemoryMarshal.Write(buffer.Span[12..], in data.ReceivedTicks);
+        MemoryMarshal.Write(buffer.Span[16..], in data.Status);
         return buffer;
     }
 

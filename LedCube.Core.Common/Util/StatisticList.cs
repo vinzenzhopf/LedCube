@@ -64,7 +64,7 @@ public class StatisticList
 
     private void UpdateStats()
     {
-        var ordered = Data.Take(_currentSamples).Order().ToArray();
+        Span<double> ordered = Data.Take(_currentSamples).Order().ToArray();
         var sum = 0.0;
         var min = double.MaxValue;
         var max = double.MinValue;
@@ -89,13 +89,13 @@ public class StatisticList
         Mean = mean;
         StdDev = stdDev;
         StdErr = stdErr;
-        Median = Percentile(0.5, ref ordered);
-        Pct99 = Percentile(0.99, ref ordered);
-        Pct95 = Percentile(0.95, ref ordered);
-        Pct05 = Percentile(0.05, ref ordered);
+        Median = Percentile(0.5, ordered);
+        Pct99 = Percentile(0.99, ordered);
+        Pct95 = Percentile(0.95, ordered);
+        Pct05 = Percentile(0.05, ordered);
     }
 
-    public static double Percentile(double d, ref double[] arr)
+    public static double Percentile(double d, Span<double> arr)
     {
         if (d is >= 1 or <= 0)
             throw new ArgumentException($"{nameof(d)} is out of range!");

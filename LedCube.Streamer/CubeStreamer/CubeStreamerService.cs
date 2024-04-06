@@ -193,8 +193,8 @@ public partial class CubeStreamerService : BackgroundService, ICubeStreamer
     
     private async Task SendFrame(CancellationToken token)
     {
-        var cubeData = new byte[512];
-        CubeDataConverter.ConvertCubeData(_cubeRepository.GetCubeData(), ref cubeData);
+        Memory<byte> cubeData = new byte[512];
+        CubeDataConverter.ConvertCubeData(_cubeRepository.GetCubeData(), cubeData.Span);
         try
         {
             var result = await _communication.SendFrameAsync(++_frameCounter, 

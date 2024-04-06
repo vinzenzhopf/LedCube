@@ -30,11 +30,11 @@ public struct AnimationStartPayload
 
     public static ReadOnlyMemory<byte> WriteToMemory(AnimationStartPayload data)
     {
-        var buffer = new byte[Size].AsMemory();
-        MemoryMarshal.Write(buffer.Span[0..], ref data.FrameTimeUs);
+        Memory<byte> buffer = new byte[Size];
+        MemoryMarshal.Write(buffer.Span[0..], in data.FrameTimeUs);
         Encoding.ASCII.GetBytes(data.AnimationName).AsSpan()
             .CopyTo(buffer.Span.Slice(4,64));
-        MemoryMarshal.Write(buffer.Span[68..], ref data.CurrentTicks);
+        MemoryMarshal.Write(buffer.Span[68..], in data.CurrentTicks);
         return buffer;
     }
 

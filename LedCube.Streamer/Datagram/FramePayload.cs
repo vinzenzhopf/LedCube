@@ -8,7 +8,7 @@ public struct FramePayload
     public UInt32 FrameTimeUs;
     public UInt32 CurrentTicks;
     //Lenght: 512 bytes
-    public byte[] Data;
+    public Memory<byte> Data;
     
     public const int Size = sizeof(UInt32) * 3 + DataSize;
     public const int DataSize = 512;
@@ -27,10 +27,10 @@ public struct FramePayload
     public static ReadOnlyMemory<byte> WriteToMemory(FramePayload data)
     {   
         var buffer = new byte[Size].AsMemory();
-        MemoryMarshal.Write(buffer.Span[0..], ref data.FrameNumber);
-        MemoryMarshal.Write(buffer.Span[4..], ref data.FrameTimeUs);
-        MemoryMarshal.Write(buffer.Span[8..], ref data.CurrentTicks);
-        data.Data.AsSpan()[0..DataSize].CopyTo(buffer.Span[12..]);
+        MemoryMarshal.Write(buffer.Span[0..], in data.FrameNumber);
+        MemoryMarshal.Write(buffer.Span[4..], in data.FrameTimeUs);
+        MemoryMarshal.Write(buffer.Span[8..], in data.CurrentTicks);
+        data.Data.Span[0..DataSize].CopyTo(buffer.Span[12..]);
         return buffer;
     }
 

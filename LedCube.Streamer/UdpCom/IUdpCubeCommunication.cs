@@ -53,9 +53,9 @@ public interface IUdpCubeCommunication : IUdpCommunication
     /// </summary>
     /// <para name="updateTimeUs">The interval in which the frame data is sent.</para>
     /// <returns>When the sending started and the first acknowledge is returned, this method returns true</returns>
-    Task<ReceivedDatagram?> SendFrameAsync(uint frameNumber, uint frameTimeUs, byte[] frameData,
+    Task<ReceivedDatagram?> SendFrameAsync(uint frameNumber, uint frameTimeUs, Memory<byte> frameData,
         TimeSpan timeout, CancellationToken cts);
 
-    Task<ReceivedDatagram?> SendFrameAsync(uint frameNumber, uint frameTimeUs, byte[] frameData,
+    Task<ReceivedDatagram?> SendFrameAsync(uint frameNumber, uint frameTimeUs, Memory<byte> frameData,
         CancellationToken cts) => SendFrameAsync(frameNumber, frameTimeUs, frameData, ReceiveTimeout, cts);
 }

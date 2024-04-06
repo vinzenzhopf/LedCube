@@ -5,7 +5,7 @@ namespace LedCube.Core.Common.CubeData.Converter;
 
 public static class CubeDataConverter
 {
-    public static void ConvertCubeData(ICubeData cubeData, ref byte[] data)
+    public static void ConvertCubeData(ICubeData cubeData, Span<byte> data)
     {
         for (var i = 0; i < cubeData.Size.ElementProduct; i++)
         {

@@ -103,7 +103,6 @@ public class UdpCommunication : IUdpCommunication
         try
         {
             // Stop any ongoing listening task
-            _listenerCancellationTokenSource?.Cancel();
             Interlocked.Exchange(ref _listenerCancellationTokenSource, tks)?.Cancel();
             if (_listeningTask is not null)
             {

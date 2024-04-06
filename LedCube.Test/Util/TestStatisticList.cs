@@ -12,13 +12,13 @@ public class TestUtils : TestWithLoggingBase
     [Fact]
     public void TestPercentile()
     {
-        double[] data = new double[] {5, 7, 8, 9};
-        Assert.Equal(7.5, StatisticList.Percentile(0.5, ref data));
-        Assert.Equal(8.5, StatisticList.Percentile(0.75, ref data));
-        Assert.Equal(6, StatisticList.Percentile(0.25, ref data));
-        Assert.Equal(7, StatisticList.Percentile(2.0/5.0, ref data));
-        Assert.Equal(9, StatisticList.Percentile(0.99, ref data));
-        Assert.Equal(5, StatisticList.Percentile(0.11, ref data));
+        Span<double> data = new double[] {5, 7, 8, 9};
+        Assert.Equal(7.5, StatisticList.Percentile(0.5, data));
+        Assert.Equal(8.5, StatisticList.Percentile(0.75, data));
+        Assert.Equal(6, StatisticList.Percentile(0.25, data));
+        Assert.Equal(7, StatisticList.Percentile(2.0/5.0, data));
+        Assert.Equal(9, StatisticList.Percentile(0.99, data));
+        Assert.Equal(5, StatisticList.Percentile(0.11, data));
     }
 
     [Fact]
