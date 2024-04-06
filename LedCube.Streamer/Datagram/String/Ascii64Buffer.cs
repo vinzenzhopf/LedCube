@@ -6,8 +6,6 @@ namespace LedCube.Streamer.Datagram.String;
 public struct Ascii64Buffer : IStringBuffer<Ascii64Buffer>
 {
     private byte _element0;
-
     public static Span<byte> GetBuffer(ref Ascii64Buffer self) => self;
-
     public static ReadOnlySpan<byte> GetReadOnlyBuffer(in Ascii64Buffer self) => self;
 }

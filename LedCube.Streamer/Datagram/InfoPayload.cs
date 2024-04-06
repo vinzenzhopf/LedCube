@@ -1,25 +1,22 @@
 ﻿using System.Text;
+using LedCube.Streamer.Datagram.String;
 
 namespace LedCube.Streamer.Datagram;
 
 public struct InfoPayload : IWritableDatagram<InfoPayload>, IReadableDatagram<InfoPayload>
 {
-    public static int Size => VersionLength;
-    private const int VersionLength = 32;
+    public static int Size => 32;
     
-    /**
-     * String size 32
-     */
-    public string Version;
+    public CString<Ascii32Buffer> Version;
 
     public static void WriteTo(Span<byte> target, in InfoPayload source)
     {
-        Encoding.ASCII.TryGetBytes(source.Version, target, out _);
+        source.Version.CopyTo(target);
     }
 
     public static void ReadFrom(ReadOnlySpan<byte> source, ref InfoPayload target)
     {
-        target.Version = Encoding.ASCII.GetString(source[0..32]);
+        target.Version.CopyFrom(source[0..32]);
     }
     public override string ToString()
     {
