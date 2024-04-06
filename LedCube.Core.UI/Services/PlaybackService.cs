@@ -5,13 +5,11 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using LedCube.Core.Common.CubeData.Repository;
 using LedCube.Core.Common.Extensions;
-using LedCube.Core.Common.Model;
 using LedCube.Core.Common.Model.Cube;
+using LedCube.Core.Common.Model.Cube.Buffer;
 using LedCube.Core.UI.Controls.AnimationInstanceList;
-using LedCube.Core.UI.Controls.PlaybackControl;
 using LedCube.PluginBase;
 using LedCube.PluginHost;
-using LedCube.Streamer.CubeStreamer;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
@@ -36,7 +34,7 @@ public partial class PlaybackService : BackgroundService, IPlaybackService
 
     private readonly Stopwatch _stopwatch = new Stopwatch();
     private IFrameGenerator? _frameGenerator;
-    private CubeData? _cubeData;
+    private ICubeData? _cubeData;
     private PeriodicTimer? _updateTimer;
 
     private TimeSpan _frameTime = TimeSpan.Zero;
@@ -71,7 +69,7 @@ public partial class PlaybackService : BackgroundService, IPlaybackService
         _frameTicks = 0;
         
         _frameGenerator = _pluginManager.GetFrameGenerator(FrameGeneratorEntry);
-        _cubeData = new CubeData(new Point3D(16, 16, 16));
+        _cubeData = new CubeData<CubeDataBuffer16>();
         _cubeRepository.SetCubeData(_cubeData);
 
         _frameTime = _frameGenerator.FrameTime ?? TimeSpan.FromMilliseconds(1);

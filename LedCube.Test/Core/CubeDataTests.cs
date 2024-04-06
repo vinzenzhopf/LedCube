@@ -1,4 +1,5 @@
-﻿using LedCube.Core.Common.Model;
+﻿using LedCube.Core.Common.Model.Cube.Buffer;
+using LedCube.Test.WeirdBuffers;
 using Xunit.Abstractions;
 
 namespace LedCube.Test.Core;
@@ -8,44 +9,10 @@ public class CubeDataTests : TestWithLoggingBase
     public CubeDataTests(ITestOutputHelper output) : base(output)
     {
     }
-    
-    public class Bool4CubeDataTests : CubeDataTestsBase
-    {
-        public Bool4CubeDataTests(ITestOutputHelper output) : 
-            base(output, new Point3D(4, 4, 4))
-        {
-        }
-    }
 
-    public class Bool16CubeDataTests : CubeDataTestsBase
-    {
-        public Bool16CubeDataTests(ITestOutputHelper output) : 
-            base(output, new Point3D(16, 16, 16))
-        {
-        }
-    }
-
-    public class BoolUnequalLongXCubeDataTests : CubeDataTestsBase
-    {
-        public BoolUnequalLongXCubeDataTests(ITestOutputHelper output) : 
-            base(output, new Point3D(4, 7, 35))
-        {
-        }
-    }
-
-    public class BoolUnequalLongYCubeDataTests : CubeDataTestsBase
-    {
-        public BoolUnequalLongYCubeDataTests(ITestOutputHelper output) : 
-            base(output, new Point3D(4, 100, 8))
-        {
-        }
-    }
-
-    public class BoolUnequalLongZCubeDataTests : CubeDataTestsBase
-    {
-        public BoolUnequalLongZCubeDataTests(ITestOutputHelper output) : 
-            base(output, new Point3D(66, 42, 12))
-        {
-        }
-    }
+    public class Bool4CubeDataTests(ITestOutputHelper output) : CubeDataTestsBase<CubeDataBuffer4>(output);
+    public class Bool16CubeDataTests(ITestOutputHelper output)  : CubeDataTestsBase<CubeDataBuffer4>(output);
+    public class BoolUnequalLongXCubeDataTests(ITestOutputHelper output) : CubeDataTestsBase<CubeDataBuffer4x7x35>(output);
+    public class BoolUnequalLongYCubeDataTests(ITestOutputHelper output) : CubeDataTestsBase<CubeDataBuffer4x100x8>(output);
+    public class BoolUnequalLongZCubeDataTests(ITestOutputHelper output) : CubeDataTestsBase<CubeDataBuffer4x7x35>(output);
 }

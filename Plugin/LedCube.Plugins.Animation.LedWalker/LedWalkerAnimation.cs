@@ -1,4 +1,6 @@
-﻿using LedCube.PluginBase;
+﻿using LedCube.Core.Common.CubeData.Generator;
+using LedCube.Core.Common.Model;
+using LedCube.PluginBase;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
@@ -13,7 +15,7 @@ public class LedWalkerAnimation : IFrameGenerator
 
     public TimeSpan? FrameTime { get; } = null;
     
-    private int _activeLedPos;
+    private IEnumerator<Point3D>? _activeLedPos;
     private double _lastMove;
     private double _walkingSpeedMs;
     private GeneratorCubeConfiguration? _config = null;
@@ -33,9 +35,10 @@ public class LedWalkerAnimation : IFrameGenerator
 
     public void Start(AnimationContext animationContext)
     {
-        _activeLedPos = 0;
         _lastMove = animationContext.ElapsedTimeUs / 1000;
         animationContext.CubeData.Clear();
+        _activeLedPos?.Dispose();
+        _activeLedPos = new PositionGenerator(animationContext.CubeData.Size).GetEnumerator();
     }
 
     public void DrawFrame(FrameContext frameContext)
@@ -46,15 +49,18 @@ public class LedWalkerAnimation : IFrameGenerator
         {
             return;
         }
-        
-        frameContext.Buffer.SetLed(_activeLedPos, !frameContext.Buffer.GetLed(_activeLedPos));
-        _lastMove = elapsedTimeMs;
-        _activeLedPos = (_activeLedPos + 1) % frameContext.Buffer.Length;
-        // _logger.LogDebug("LedMove {0}ms", _lastMove);
+
+        if (_activeLedPos?.MoveNext() is true)
+        {
+            frameContext.Buffer.SetLed(_activeLedPos.Current, !frameContext.Buffer.GetLed(_activeLedPos.Current));
+            _lastMove = elapsedTimeMs;
+        }
     }
 
     public void End(AnimationContext animationContext)
     {
+        _activeLedPos?.Dispose();
+        _activeLedPos = null;
     }
 
     public void Pause(AnimationContext animationContext)

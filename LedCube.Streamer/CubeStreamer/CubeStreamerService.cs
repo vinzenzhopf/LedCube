@@ -2,7 +2,6 @@
 using System.Net;
 using CommunityToolkit.Mvvm.ComponentModel;
 using LedCube.Core.Common.Config.Config;
-using LedCube.Core.Common.CubeData.Converter;
 using LedCube.Core.Common.CubeData.Repository;
 using LedCube.Streamer.Datagram;
 using LedCube.Streamer.UdpCom;
@@ -194,7 +193,7 @@ public partial class CubeStreamerService : BackgroundService, ICubeStreamer
     private async Task SendFrame(CancellationToken token)
     {
         var cubeData = new FramePayloadData();
-        CubeDataConverter.ConvertCubeData(_cubeRepository.GetCubeData(), cubeData);
+        _cubeRepository.GetCubeData().Serialize(cubeData);
         try
         {
             var result = await _communication.SendFrameAsync(++_frameCounter, 

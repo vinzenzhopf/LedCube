@@ -1,25 +1,15 @@
+using LedCube.Core.Common.Model.Cube.Event;
+
 namespace LedCube.Core.Common.Model.Cube;
-
-public delegate void LedChangedArgs(Point3D p, bool value);
-
-public delegate void CubeChangedArgs(ICubeData cubeData);
 
 public interface ICubeData
 {
-    public Point3D Size { get; }
-    
-    public event CubeChangedArgs? CubeChanged;
-    public event LedChangedArgs? LedChanged;
-
-    public bool GetLed(Point3D p);
-
-    public void SetLed(Point3D p, bool value);
-
-    public void Clear();
-    
-    protected static Point3D IndexToCoordinates(Point3D size, int index) => new(
-        index % size.X,
-        (index / size.X) % size.Y,
-        (index / (size.X * size.Y)) % size.Z
-    );
+    Point3D Size { get; }
+    int Length { get; }
+    bool GetLed(Point3D p);
+    void SetLed(Point3D p, bool value);
+    void Clear();
+    event CubeChangedEventHandler? CubeChanged;
+    event LedChangedEventHandler<Point3D>? LedChanged;
+    void Serialize(Span<byte> target);
 }

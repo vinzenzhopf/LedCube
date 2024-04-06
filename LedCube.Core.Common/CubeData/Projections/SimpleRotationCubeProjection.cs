@@ -1,12 +1,13 @@
+using System.Diagnostics;
 using LedCube.Core.Common.Model;
 using LedCube.Core.Common.Model.Cube;
+using LedCube.Core.Common.Model.Cube.Event;
 
 namespace LedCube.Core.Common.CubeData.Projections;
 
-public class SimpleRotationCubeProjection : ICubeData
+public sealed class SimpleRotationCubeProjection : ICubeData, IDisposable
 {
     private Orientation3D _rotation;
-    
     public ICubeData Data { get; }
 
     public Orientation3D Rotation
@@ -15,13 +16,14 @@ public class SimpleRotationCubeProjection : ICubeData
         set
         {
             _rotation = value;
-            OnCubeChanged(this);
+            OnCubeChanged(this, EventArgs.Empty);
         }
     }
+    public void Serialize(Span<byte> target) => Data.Serialize(target);
     public Point3D Size => ProjectSize(Data.Size);
-    
-    public event LedChangedArgs? LedChanged;
-    public event CubeChangedArgs? CubeChanged;
+    public int Length => Data.Length;
+    public event LedChangedEventHandler<Point3D>? LedChanged;
+    public event CubeChangedEventHandler? CubeChanged;
     
     public SimpleRotationCubeProjection(ICubeData cubeData, Orientation3D rotation)
     {
@@ -30,25 +32,33 @@ public class SimpleRotationCubeProjection : ICubeData
         Data.CubeChanged += OnDataCubeChangeTriggered;
         Rotation = rotation;
     }
+    
+    
 
-    private void OnDataLedChangeTriggered(Point3D p, bool value)
+    private void OnDataLedChangeTriggered(object? sender, LegChangedEventArgs<Point3D> args)
     {
-        OnLedChanged(ProjectBackPoint(p), value);
+        OnLedChanged(sender, new(ProjectBackPoint(args.Position), args.Value));
     }
 
-    private void OnDataCubeChangeTriggered(ICubeData cubeData)
+    private void OnDataCubeChangeTriggered(object? sender, EventArgs args)
     {
-        OnCubeChanged(this);
+        OnCubeChanged(sender, args);
     }
     
-    protected virtual void OnLedChanged(Point3D p, bool value)
+    private void OnLedChanged(object? sender, LegChangedEventArgs<Point3D> args)
     {
-        LedChanged?.Invoke(p, value);
+        LedChanged?.Invoke(sender, args);
     }
     
-    protected virtual void OnCubeChanged(ICubeData cubeData)
+    private void OnCubeChanged(object? sender, EventArgs args)
     {
-        CubeChanged?.Invoke(cubeData);
+        CubeChanged?.Invoke(sender, args);
+    }
+
+    public void Dispose()
+    {
+        Data.CubeChanged -= OnDataCubeChangeTriggered;
+        Data.LedChanged -= OnDataLedChangeTriggered;
     }
 
     public bool GetLed(Point3D p)
@@ -111,7 +121,7 @@ public class SimpleRotationCubeProjection : ICubeData
             case Orientation3D.Left:
                 return new Point3D(p.Y, p.X, p.Z);
             default:
-                throw new ArgumentException("Undefined Orientation", nameof(Rotation));
+                throw new UnreachableException($"Undefined Orientation: {Rotation}");
         };
     }
 }

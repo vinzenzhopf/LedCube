@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Windows.Media;
@@ -10,6 +11,7 @@ using LedCube.Core.Common.CubeData.Projections;
 using LedCube.Core.Common.CubeData.Repository;
 using LedCube.Core.Common.Model;
 using LedCube.Core.Common.Model.Cube;
+using LedCube.Core.Common.Model.Cube.Event;
 using LedCube.Core.UI.Messages;
 using Microsoft.Extensions.Logging;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
@@ -70,20 +72,20 @@ public partial class CubeStreamerViewModel
 
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        Logger.LogTrace("PropertyChanged on {property}, {sender}", e.PropertyName, sender);
+        Logger.LogTrace("PropertyChanged on {Property}, {Sender}", e.PropertyName, sender);
     }
 
-    private void CubeProjection_OnCubeChanged(ICubeData cubedata)
+    private void CubeProjection_OnCubeChanged(object? sender, EventArgs args)
     {
         Logger.LogDebug("CubeProjection_OnCubeChanged");
     }
 
-    private void PlaneData_OnLedChanged(Point2D p, bool value)
+    private void PlaneData_OnLedChanged(object? sender, LegChangedEventArgs<Point2D> legChangedEventArgs)
     {
         Logger.LogDebug("PlaneData_OnLedChanged");
     }
     
-    private void PlaneData_OnPlaneChanged(IPlaneData plane)
+    private void PlaneData_OnPlaneChanged(object? sender, EventArgs args)
     {
         Logger.LogDebug("PlaneData_OnPlaneChanged");
     }

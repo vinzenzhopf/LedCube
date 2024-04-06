@@ -1,31 +1,36 @@
 ﻿using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using System.Numerics;
+using System.Runtime.InteropServices;
 
 namespace LedCube.Core.Common.Model;
 
 public readonly struct Point2D : IEquatable<Point2D>
 {
-    public static readonly Point2D Empty = new();
+    public static readonly Point2D Empty = default;
 
-    public int X { get; }
-
-    public int Y { get; }
+    public readonly int X;
+    public readonly int Y;
     
     public Point2D(int x, int y)
     {
-        this.X = x;
-        this.Y = y;
+        X = x;
+        Y = y;
     }
-    
-    public Point2D(Point2D sz)
+
+    public void Deconstruct(out int x, out int y)
     {
-        X = sz.X;
-        Y = sz.Y;
+        x = X;
+        y = Y;
     }
     
     [Browsable(false)]
-    public readonly bool IsEmpty => X == 0 && Y == 0;
-
+    public bool IsEmpty => X is 0 && Y is 0;
+    public ReadOnlySpan<int> AsSpan() => MemoryMarshal.CreateReadOnlySpan(in X, 3);
+    
+    public static explicit operator Point2D(Vector2 vector) => new Point2D((int) vector.X, (int) vector.Y);
+    public static implicit operator Vector2(Point2D point) => new Vector2(point.X, point.Y);
+    
     public static Point2D operator +(Point2D pt, Point2D sz) => Add(pt, sz);
     
     public static Point2D operator -(Point2D pt, Point2D sz) => Subtract(pt, sz);
@@ -39,7 +44,7 @@ public readonly struct Point2D : IEquatable<Point2D>
 
     public readonly override bool Equals([NotNullWhen(true)] object? obj)
     {
-        return obj is Point2D && Equals((Point2D) obj);
+        return obj is Point2D point && Equals(point);
     }
 
     public readonly bool Equals(Point2D other) => this == other;

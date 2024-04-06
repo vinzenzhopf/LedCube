@@ -1,15 +1,13 @@
-﻿namespace LedCube.Core.Common.Model.Cube;
+﻿using LedCube.Core.Common.Model.Cube.Event;
 
-public delegate void PlaneLedChangedArgs(Point2D p, bool value);
-public delegate void PlaneChangedArgs(IPlaneData plane);
+namespace LedCube.Core.Common.Model.Cube;
 
 public interface IPlaneData
 {
     public Point2D Size { get; }
     
-    public event PlaneLedChangedArgs? LedChanged;
-    
-    public event PlaneChangedArgs? PlaneChanged;
+    public event LedChangedEventHandler<Point2D>? LedChanged;
+    public event PlaneChangedEventHandler? PlaneChanged;
 
     public bool GetLed(Point2D p);
 

@@ -1,5 +1,6 @@
 ﻿using LedCube.Core.Common.Model;
 using LedCube.Core.Common.Model.Cube;
+using LedCube.Core.Common.Model.Cube.Event;
 
 namespace LedCube.Core.Common.CubeData.Projections;
 
@@ -15,12 +16,12 @@ public class PlaneCubeProjection : IPlaneData
         set
         {
             _z = value;
-            OnPlaneChanged(this);
+            OnPlaneChanged(this, EventArgs.Empty);
         }
     }
 
-    public event PlaneLedChangedArgs? LedChanged;
-    public event PlaneChangedArgs? PlaneChanged;
+    public event LedChangedEventHandler<Point2D>? LedChanged;
+    public event PlaneChangedEventHandler? PlaneChanged;
     
     public PlaneCubeProjection(ICubeData data, int z = 0)
     {
@@ -30,26 +31,28 @@ public class PlaneCubeProjection : IPlaneData
         Z = z;
     }
     
-    private void OnDataLedChangeTriggered(Point3D p, bool value)
+    private void OnDataLedChangeTriggered(object? sender, LegChangedEventArgs<Point3D> args)
     {
-        if (p.Z != Z) 
+        if (args.Position.Z != Z)
+        {
             return;
-        OnLedChanged(ProjectPoint(p), value);
+        }
+        OnLedChanged(sender, new(ProjectPoint(args.Position), args.Value));
     }
     
-    protected virtual void OnDataCubeChangeTriggered(ICubeData cubeData)
+    protected virtual void OnDataCubeChangeTriggered(object? sender, EventArgs args)
     {
-        OnPlaneChanged(this);
+        OnPlaneChanged(this, args);
     }
     
-    protected virtual void OnPlaneChanged(IPlaneData plane)
+    protected virtual void OnPlaneChanged(object? sender, EventArgs args)
     {
-        PlaneChanged?.Invoke(plane);
+        PlaneChanged?.Invoke(sender, args);
     }
 
-    protected virtual void OnLedChanged(Point2D p, bool value)
+    protected virtual void OnLedChanged(object? sender, LegChangedEventArgs<Point2D> args)
     {
-        LedChanged?.Invoke(p, value);
+        LedChanged?.Invoke(sender, args);
     }
     
     public bool GetLed(Point2D p)

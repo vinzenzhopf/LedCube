@@ -6,5 +6,5 @@ namespace LedCube.PluginBase;
 public record AnimationContext(
     TimeSpan TargetFrameTime,
     double ElapsedTimeUs,
-    ICubeDataBuffer CubeData
+    ICubeData CubeData
 );

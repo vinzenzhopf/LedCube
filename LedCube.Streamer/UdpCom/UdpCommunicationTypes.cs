@@ -29,4 +29,4 @@ public record DatagramResponse()
 
 public record UnlistedMessageArgs(ReceivedDatagram Data);
 
-public delegate void UnlistedMessageReceived(object sender, UnlistedMessageArgs args);
+public delegate void UnlistedMessageReceived(object? sender, UnlistedMessageArgs args);

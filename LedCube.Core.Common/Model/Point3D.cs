@@ -1,38 +1,44 @@
 ﻿using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using System.Numerics;
+using System.Runtime.InteropServices;
 
 namespace LedCube.Core.Common.Model;
 
 public readonly struct Point3D : IEquatable<Point3D>
 {
-    public static readonly Point3D Empty;
-    
-    public int X { get; }
-    public int Y { get; }
-    public int Z { get; }
+    public static readonly Point3D Empty = default;
+
+    public readonly int X;
+    public readonly int Y;
+    public readonly int Z;
     
     public Point3D(int x, int y, int z)
     {
-        this.X = x;
-        this.Y = y;
-        this.Z = z;
+        X = x;
+        Y = y;
+        Z = z;
     }
-    
-    public Point3D(Point3D sz)
+
+    public void Deconstruct(out int x, out int y, out int z)
     {
-        X = sz.X;
-        Y = sz.Y;
-        Z = sz.Z;
+        x = X;
+        y = Y;
+        z = Z;
     }
-    
+
     [Browsable(false)]
-    public bool IsEmpty => X == 0 && Y == 0 && Z == 0;
+    public bool IsEmpty => X is 0 && Y is 0 && Z is 0;
+    public ReadOnlySpan<int> AsSpan() => MemoryMarshal.CreateReadOnlySpan(in X, 3);
 
     /// <summary>
     /// Returns the Product of all the points Elements.
     /// </summary>
     public int ElementProduct => X * Y * Z;
 
+    public static explicit operator Point3D(Vector3 vector) => new Point3D((int) vector.X, (int) vector.Y, (int) vector.Z);
+    public static implicit operator Vector3(Point3D point) => new Vector3(point.X, point.Y, point.Z);
+    
     public static Point3D operator +(Point3D pt, Point3D sz) => Add(pt, sz);
     public static Point3D operator +(Point3D pt, int sz) => Add(pt, sz);
     
@@ -79,14 +85,15 @@ public readonly struct Point3D : IEquatable<Point3D>
     public static int IndexFromCoordinate(Point3D size, Point3D p) => 
         p.X + p.Y * size.X + p.Z * size.X * size.Y;
     
-    public readonly override bool Equals([NotNullWhen(true)] object? obj)
+    public override bool Equals([NotNullWhen(true)] object? obj)
     {
-        return obj is Point3D && Equals((Point3D) obj);
+        return obj is Point3D point && Equals(point);
     }
 
-    public readonly bool Equals(Point3D other) => this == other;
+    public bool Equals(Point3D other) => this == other;
 
-    public readonly override int GetHashCode() => HashCode.Combine(X, Y, Z);
+    public override int GetHashCode() => HashCode.Combine(X, Y, Z);
 
-    public readonly override string ToString() => $"{{X={X},Y={Y},Z={Z}}}";
+    public override string ToString() => $"{{X={X},Y={Y},Z={Z}}}";
+    
 }

@@ -1,24 +1,28 @@
-﻿using LedCube.Core.Common.Model;
+﻿using System.Numerics;
+using LedCube.Core.Common.Model;
 using LedCube.Core.Common.Model.Cube;
-using MathNet.Numerics.LinearAlgebra;
+using LedCube.Core.Common.Model.Cube.Event;
 
 namespace LedCube.Core.Common.CubeData.Projections;
 
 public class MatrixCubeProjection : ICubeData
 {
-    public Matrix<double> RotationMatrix { get; }
+    public Matrix4x4 RotationMatrix { get; }
     public Point3D ProjectionSize { get; }
     public ICubeData Data { get; }
     public Point3D Size => ProjectPoint(Data.Size);
+    public int Length => Data.Length;
 
-    public event LedChangedArgs? LedChanged;
-    public event CubeChangedArgs? CubeChanged
+    public event LedChangedEventHandler<Point3D>? LedChanged;
+    public void Serialize(Span<byte> target) => Data.Serialize(target);
+
+    public event CubeChangedEventHandler? CubeChanged
     {
         add => Data.CubeChanged += value;
         remove => Data.CubeChanged -= value;
     }
 
-    public MatrixCubeProjection(ICubeData cubeData, Matrix<double> rotationMatrix)
+    public MatrixCubeProjection(ICubeData cubeData, Matrix4x4 rotationMatrix)
     {
         Data = cubeData;
         Data.LedChanged += OnDataLedChangeTriggered;
@@ -31,12 +35,12 @@ public class MatrixCubeProjection : ICubeData
     {
     }
     
-    public MatrixCubeProjection(ICubeData cubeData, double angleX, double angleY, double angleZ) : 
+    public MatrixCubeProjection(ICubeData cubeData, float angleX, float angleY, float angleZ) : 
         this(cubeData, CreateRotationMatrix(angleX, angleY, angleZ))
     {
     }
     
-    public MatrixCubeProjection(ICubeData cubeData, Point3D projectionSize, Matrix<double> rotationMatrix) :
+    public MatrixCubeProjection(ICubeData cubeData, Point3D projectionSize, Matrix4x4 rotationMatrix) :
         this(cubeData, rotationMatrix)
     {
         ProjectionSize = projectionSize;
@@ -47,46 +51,36 @@ public class MatrixCubeProjection : ICubeData
     {
     }
 
-    public MatrixCubeProjection(ICubeData cubeData, Point3D projectionSize, double angleX, double angleY, double angleZ) : 
+    public MatrixCubeProjection(ICubeData cubeData, Point3D projectionSize, float angleX, float angleY, float angleZ) : 
         this(cubeData, projectionSize, CreateRotationMatrix(angleX, angleY, angleZ))
     {
     }
 
-    private void OnDataLedChangeTriggered(Point3D p, bool value)
+    private void OnDataLedChangeTriggered(object? sender, LegChangedEventArgs<Point3D> args)
     {
-        OnLedChanged(ProjectPoint(p), value);   
+        OnLedChanged(sender, new(ProjectPoint(args.Position), args.Value));   
     }
 
-    protected virtual void OnLedChanged(Point3D p, bool value)
+    protected virtual void OnLedChanged(object? sender, LegChangedEventArgs<Point3D> args)
     {
-        LedChanged?.Invoke(p, value);
+        LedChanged?.Invoke(sender, args);
     }
     
-    public bool GetLed(Point3D p)
-    {
-        return Data.GetLed(ProjectPoint(p));
-    }
+    public bool GetLed(Point3D p) => Data.GetLed(ProjectPoint(p));
 
-    public void SetLed(Point3D p, bool value)
-    {
-        Data.SetLed(ProjectPoint(p), value);
-    }
+    public void SetLed(Point3D p, bool value) => Data.SetLed(ProjectPoint(p), value);
 
-    public void Clear()
-    {
-        Data.Clear();
-    }
-    
+    public void Clear() => Data.Clear();
+
     private Point3D ProjectPoint(Point3D p)
     {
         // Apply rotation transformation
-        var pointVector = Vector<double>.Build.DenseOfArray(new double[] { p.X, p.Y, p.Z, 1 });
-        var rotatedPoint = RotationMatrix.Multiply(pointVector).SubVector(0, 3);
+        var rotatedPoint = Vector3.Transform(p, RotationMatrix);
 
         // Perform projection based on the rotated coordinates and projection size
-        var scaleX = ProjectionSize.X / (double)Data.Size.X;
-        var scaleY = ProjectionSize.Y / (double)Data.Size.Y;
-        var scaleZ = ProjectionSize.Z / (double)Data.Size.Z;
+        var scaleX = ProjectionSize.X / (float)Data.Size.X;
+        var scaleY = ProjectionSize.Y / (float)Data.Size.Y;
+        var scaleZ = ProjectionSize.Z / (float)Data.Size.Z;
 
         var projectedX = (int)(rotatedPoint[0] * scaleX);
         var projectedY = (int)(rotatedPoint[1] * scaleY);
@@ -95,60 +89,24 @@ public class MatrixCubeProjection : ICubeData
         return new Point3D(projectedX, projectedY, projectedZ);
     }
     
-    public static Matrix<double> CreateRotationMatrix(Orientation3D rotation)
+    public static Matrix4x4 CreateRotationMatrix(Orientation3D rotation)
     {
         return rotation switch
         {
-            Orientation3D.Right => CreateRotationMatrix(0, Math.PI / 2, 0), // Rotate around Y-axis by 90 degrees
-            Orientation3D.Top => CreateRotationMatrix(-Math.PI / 2, 0, 0), // Rotate around X-axis by -90 degrees
-            Orientation3D.Back => CreateRotationMatrix(0, Math.PI, 0), // Rotate around Y-axis by 180 degrees
-            Orientation3D.Left => CreateRotationMatrix(0, -Math.PI / 2, 0), // Rotate around Y-axis by -90 degrees
-            Orientation3D.Bottom => CreateRotationMatrix(Math.PI / 2, 0, 0), // Rotate around X-axis by 90 degrees
-            _ => CreateIdentiyMatrix()
+            Orientation3D.Right => Matrix4x4.CreateRotationY(MathF.PI / 2), // Rotate around Y-axis by 90 degrees
+            Orientation3D.Top => Matrix4x4.CreateRotationX(-MathF.PI / 2), // Rotate around X-axis by -90 degrees
+            Orientation3D.Back => Matrix4x4.CreateRotationY(MathF.PI), // Rotate around Y-axis by 180 degrees
+            Orientation3D.Left => Matrix4x4.CreateRotationY(-MathF.PI / 2), // Rotate around Y-axis by -90 degrees
+            Orientation3D.Bottom => Matrix4x4.CreateRotationX(MathF.PI / 2), // Rotate around X-axis by 90 degrees
+            _ => Matrix4x4.Identity
         };
     }
 
-    public static Matrix<double> CreateIdentiyMatrix() => 
-        Matrix<double>.Build.DenseIdentity(4, 4);
-
-    public static Matrix<double> CreateRotationMatrix(double angleX, double angleY, double angleZ)
+    private static Matrix4x4 CreateRotationMatrix(float angleX, float angleY, float angleZ)
     {
-        var rotationX = CreateRotationMatrixX(angleX);
-        var rotationY = CreateRotationMatrixY(angleY);
-        var rotationZ = CreateRotationMatrixZ(angleZ);
-        return rotationZ.Multiply(rotationX).Multiply(rotationY);
-    }
-
-    public static Matrix<double> CreateRotationMatrixX(double angle)
-    {
-        return Matrix<double>.Build.DenseOfArray(new double[,]
-        {
-            {1, 0, 0, 0},
-            {0, Math.Cos(angle), -Math.Sin(angle), 0},
-            {0, Math.Sin(angle), Math.Cos(angle), 0},
-            {0, 0, 0, 1}
-        });
-    }
-
-    public static Matrix<double> CreateRotationMatrixY(double angle)
-    {
-        return Matrix<double>.Build.DenseOfArray(new double[,]
-        {
-            {Math.Cos(angle), 0, Math.Sin(angle), 0},
-            {0, 1, 0, 0},
-            {-Math.Sin(angle), 0, Math.Cos(angle), 0},
-            {0, 0, 0, 1}
-        });
-    }
-
-    public static Matrix<double> CreateRotationMatrixZ(double angle)
-    {
-        return Matrix<double>.Build.DenseOfArray(new double[,]
-        {
-            {Math.Cos(angle), -Math.Sin(angle), 0, 0},
-            {Math.Sin(angle), Math.Cos(angle), 0, 0},
-            {0, 0, 1, 0},
-            {0, 0, 0, 1}
-        });
+        var rotationX = Matrix4x4.CreateRotationX(angleX);
+        var rotationY = Matrix4x4.CreateRotationY(angleY);
+        var rotationZ = Matrix4x4.CreateRotationZ(angleZ);
+        return  Matrix4x4.Multiply(rotationZ, Matrix4x4.Multiply(rotationX, rotationY));
     }
 }

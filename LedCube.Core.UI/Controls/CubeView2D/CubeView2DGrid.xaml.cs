@@ -7,6 +7,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using LedCube.Core.Common.Model;
 using LedCube.Core.Common.Model.Cube;
+using LedCube.Core.Common.Model.Cube.Event;
 using Serilog;
 using Point = System.Windows.Point;
 using Rectangle = System.Windows.Shapes.Rectangle;
@@ -253,18 +254,21 @@ public partial class CubeView2DGrid : UserControl
         }
     }
 
-    private void OnDataLedChanged(Point2D led, bool value)
+    private void OnDataLedChanged(object? sender, LegChangedEventArgs<Point2D> args)
     {
-        var index = led.Y * GridSize.X + led.X;
+        var index = args.Position.Y * GridSize.X + args.Position.X;
         Application.Current.Dispatcher.Invoke(() =>
         {
-            _leds[index].IsChecked = value;
+            _leds[index].IsChecked = args.Value;
         });
     }
 
-    private void OnDataPlaneChanged(IPlaneData data)
+    private void OnDataPlaneChanged(object? sender, EventArgs args)
     {
-        GridSize = data.Size;
+        if (sender is IPlaneData data)
+        {
+            GridSize = data.Size;   
+        }
         UpdateLedStatus();
     }
 

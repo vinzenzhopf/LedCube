@@ -1,6 +1,8 @@
 ﻿using LedCube.Core.Common.CubeData.Projections;
 using LedCube.Core.Common.Model;
 using LedCube.Core.Common.Model.Cube;
+using LedCube.Core.Common.Model.Cube.Buffer;
+using LedCube.Core.Common.Model.Cube.Event;
 using Xunit.Abstractions;
 
 namespace LedCube.Test.Core.ProjectionTests;
@@ -47,21 +49,23 @@ public class SpecificSimpleRotationProjectionTests : TestWithLoggingBase
         var projectedPoint = new Point3D(projX, projY, projZ);
         var basePoint = new Point3D(baseX, baseY, baseZ);
 
-        var cubeData = new CubeData(new Point3D(Size, Size, Size));
+        var cubeData = new CubeData<CubeDataBuffer16>();
         var projection = new SimpleRotationCubeProjection(cubeData, o);
         var sut = (ICubeData) projection;
         
         var eventTriggered = false;
-        void OnLocalChange(Point3D p, bool value)
-        {
-            Assert.Equal(basePoint, p);
-            eventTriggered = true;
-        }
         cubeData.LedChanged += OnLocalChange;
 
         sut.SetLed(projectedPoint, true);
         Assert.True(cubeData.GetLed(basePoint));
         Assert.True(eventTriggered);
+        
+        return;
+        void OnLocalChange(object? sender, LegChangedEventArgs<Point3D> args)
+        {
+            Assert.Equal(basePoint, args.Position);
+            eventTriggered = true;
+        }
     }
 
     [Theory]
@@ -97,20 +101,22 @@ public class SpecificSimpleRotationProjectionTests : TestWithLoggingBase
         var projectedPoint = new Point3D(projX, projY, projZ);
         var basePoint = new Point3D(baseX, baseY, baseZ);
 
-        var cubeData = new CubeData(new Point3D(Size, Size, Size));
+        var cubeData = new CubeData<CubeDataBuffer16>();
         var eventTriggered = false;
 
         var projection = new SimpleRotationCubeProjection(cubeData, o);
         var sut = (ICubeData) projection;
-        void OnLocalChange(Point3D p, bool value)
-        {
-            Assert.Equal(projectedPoint, p);
-            eventTriggered = true;
-        }
         sut.LedChanged += OnLocalChange;
 
         cubeData.SetLed(basePoint, true);
         Assert.True(eventTriggered);
+        
+        return;
+        void OnLocalChange(object? sender, LegChangedEventArgs<Point3D> args)
+        {
+            Assert.Equal(projectedPoint, args.Position);
+            eventTriggered = true;
+        }
     }
     
     [Theory]
@@ -147,20 +153,22 @@ public class SpecificSimpleRotationProjectionTests : TestWithLoggingBase
         var projectedPoint = new Point3D(projX, projY, projZ);
         var basePoint = new Point3D(baseX, baseY, baseZ);
 
-        var cubeData = new CubeData(new Point3D(Size, Size, Size));
+        var cubeData = new CubeData<CubeDataBuffer16>();
         var projection = new SimpleRotationCubeProjection(cubeData, o);
         var sut = (ICubeData) projection;
         
         var eventTriggered = false;
-        void OnLocalChange(Point3D p, bool value)
-        {
-            Assert.Equal(projectedPoint, p);
-            eventTriggered = true;
-        }
         sut.LedChanged += OnLocalChange;
         
         sut.SetLed(projectedPoint, true);
         Assert.True(eventTriggered);
+        
+        return;
+        void OnLocalChange(object? sender, LegChangedEventArgs<Point3D> args)
+        {
+            Assert.Equal(projectedPoint, args.Position);
+            eventTriggered = true;
+        }
     }
 
     [Theory]
@@ -172,7 +180,7 @@ public class SpecificSimpleRotationProjectionTests : TestWithLoggingBase
     [InlineData(Orientation3D.Bottom)]
     public void CheckAllPointsTwoWayProjection(Orientation3D o)
     {
-        var cubeData = new CubeData(new Point3D(Size, Size, Size));
+        var cubeData = new CubeData<CubeDataBuffer16>();
         var projection = new SimpleRotationCubeProjection(cubeData, o);
         var sut = (ICubeData) projection;
         
@@ -182,15 +190,17 @@ public class SpecificSimpleRotationProjectionTests : TestWithLoggingBase
         {
             var projectedPoint = new Point3D(x, y, z);
             var eventTriggered = false;
-            void OnLocalChange(Point3D p, bool value)
-            {
-                Assert.Equal(projectedPoint, p);
-                eventTriggered = true;
-            }
             sut.LedChanged += OnLocalChange;
             sut.SetLed(projectedPoint, true);
             Assert.True(eventTriggered);
             sut.LedChanged -= OnLocalChange;
+            
+            continue;
+            void OnLocalChange(object? sender, LegChangedEventArgs<Point3D> args)
+            {
+                Assert.Equal(projectedPoint, args.Position);
+                eventTriggered = true;
+            }
         }
     }
     
@@ -203,7 +213,7 @@ public class SpecificSimpleRotationProjectionTests : TestWithLoggingBase
     [InlineData(Orientation3D.Bottom)]
     public void CheckAllPointsAreSet(Orientation3D o)
     {
-        var cubeData = new CubeData(new Point3D(Size, Size, Size));
+        var cubeData = new CubeData<CubeDataBuffer16>();
         var projection = new SimpleRotationCubeProjection(cubeData, o);
         var sut = (ICubeData) projection;
         

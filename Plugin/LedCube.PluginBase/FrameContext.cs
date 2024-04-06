@@ -7,5 +7,5 @@ public record FrameContext(
     TimeSpan TargetFrameTime,
     TimeSpan LastFrameTime,
     ulong ElapsedTimeUs,
-    ICubeDataBuffer Buffer
+    ICubeData Buffer
 );
