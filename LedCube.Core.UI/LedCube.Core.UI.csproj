@@ -74,7 +74,6 @@
     </ItemGroup>
     
     <ItemGroup>
-      <ProjectReference Include="..\FrameGenerators\LedCube.PluginHost\LedCube.PluginHost.csproj" />
       <ProjectReference Include="..\LedCube.Core.Common\LedCube.Core.Common.csproj" />
       <ProjectReference Include="..\LedCube.Streamer\LedCube.Streamer.csproj" />
       <ProjectReference Include="..\Plugin\LedCube.PluginHost\LedCube.PluginHost.csproj" />

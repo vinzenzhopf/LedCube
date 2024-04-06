@@ -23,7 +23,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\LedCube.PluginBase\LedCube.PluginBase.csproj" />
         <ProjectReference Include="..\LedCube.PluginBase\LedCube.PluginBase.csproj" />
         <ProjectReference Include="..\LedCube.Plugins.Animation.LedWalker\LedCube.Plugins.Animation.LedWalker.csproj"/>
     </ItemGroup>
