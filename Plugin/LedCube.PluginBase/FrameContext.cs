@@ -6,6 +6,6 @@ namespace LedCube.PluginBase;
 public record FrameContext(
     TimeSpan TargetFrameTime,
     TimeSpan LastFrameTime,
-    double ElapsedTimeUs,
+    ulong ElapsedTimeUs,
     ICubeDataBuffer Buffer
 );

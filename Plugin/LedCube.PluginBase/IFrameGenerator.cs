@@ -10,9 +10,15 @@ public interface IFrameGenerator : IDisposable
 
     void Initialize(GeneratorCubeConfiguration config);
 
-    void AnimationStart(AnimationContext animationContext);
-
     void DrawFrame(FrameContext frameContext);
 
-    void AnimationEnd(AnimationContext animationContext);
+    void Start(AnimationContext animationContext);
+    
+    void End(AnimationContext animationContext);
+    
+    void Pause(AnimationContext animationContext);
+    
+    void Continue(AnimationContext animationContext);
+    
+    void ChangeTime(AnimationContext animationContext);
 }

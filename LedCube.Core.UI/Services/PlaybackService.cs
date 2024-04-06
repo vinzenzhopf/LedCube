@@ -84,6 +84,12 @@ public partial class PlaybackService : BackgroundService, IPlaybackService
         _elapsedTicksUntilPause = 0;
         _updateTimer = new PeriodicTimer(_frameTime);
         _stopwatch.Restart();
+        
+        if (_cubeData is not null && _frameGenerator is not null)
+        {
+            var context = new AnimationContext(_frameTime, _stopwatch.ElapsedTicks + _elapsedTicksUntilPause, _cubeData);
+            _frameGenerator.Start(context);
+        }
     }
 
     public void ContinuePlayback()
@@ -91,6 +97,12 @@ public partial class PlaybackService : BackgroundService, IPlaybackService
         PlaybackState = PlaybackState.Playing;
         _updateTimer = new PeriodicTimer(_frameTime);
         _stopwatch.Restart();
+        
+        if (_cubeData is not null && _frameGenerator is not null)
+        {
+            var context = new AnimationContext(_frameTime, _stopwatch.ElapsedTicks + _elapsedTicksUntilPause, _cubeData);
+            _frameGenerator.Continue(context);
+        }
     }
     
     public void StopPlayback()
@@ -100,6 +112,12 @@ public partial class PlaybackService : BackgroundService, IPlaybackService
         _updateTimer = null;
         _stopwatch.Stop();
         _elapsedTicksUntilPause = 0;
+        
+        if (_cubeData is not null && _frameGenerator is not null)
+        {
+            var context = new AnimationContext(_frameTime, _stopwatch.ElapsedTicks + _elapsedTicksUntilPause, _cubeData);
+            _frameGenerator.End(context);
+        }
     }
 
     public void PausePlayback()
@@ -109,6 +127,12 @@ public partial class PlaybackService : BackgroundService, IPlaybackService
         _updateTimer = null;
         _stopwatch.Stop();
         _elapsedTicksUntilPause += _stopwatch.ElapsedTicks;
+        
+        if (_cubeData is not null && _frameGenerator is not null)
+        {
+            var context = new AnimationContext(_frameTime, _stopwatch.ElapsedTicks + _elapsedTicksUntilPause, _cubeData);
+            _frameGenerator.Pause(context);
+        }
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -139,7 +163,7 @@ public partial class PlaybackService : BackgroundService, IPlaybackService
                     }
                     _elapsedTicks = _stopwatch.ElapsedTicks + _elapsedTicksUntilPause;
                     var context = new FrameContext(_frameTime, _lastFrameTime, 
-                        StopwatchUtil.TicksToMicroseconds(_elapsedTicks), _cubeData);
+                        (ulong)StopwatchUtil.TicksToMicroseconds(_elapsedTicks), _cubeData);
                     _frameGenerator.DrawFrame(context);
                     await _updateTimer.WaitForNextTickAsync(stoppingToken).ConfigureAwait(false);
                 }
