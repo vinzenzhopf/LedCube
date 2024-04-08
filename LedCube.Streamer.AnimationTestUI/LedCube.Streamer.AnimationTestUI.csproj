@@ -36,6 +36,7 @@
         <ProjectReference Include="..\LedCube.Streamer\LedCube.Streamer.csproj" />
         <ProjectReference Include="..\LedCube.Streamer.UI\LedCube.Streamer.UI.csproj" />
         <ProjectReference Include="..\Plugin\LedCube.PluginHost\LedCube.PluginHost.csproj" />
+        <ProjectReference Include="..\Plugin\LedCube.Plugins.Animation.SdfTest\LedCube.Plugins.Animation.SdfTest.csproj" />
     </ItemGroup>
 
     <ItemGroup>

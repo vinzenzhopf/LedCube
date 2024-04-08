@@ -68,17 +68,17 @@ public class StatisticList
         var sum = 0.0;
         var min = double.MaxValue;
         var max = double.MinValue;
-        for (var i = 0; i < _currentSamples; i++)
+        foreach (var t in ordered)
         {
-            sum += ordered[i];
-            if (min > ordered[i]) min = ordered[i];
-            if (max < ordered[i]) max = ordered[i];
+            sum += t;
+            if (min > t) min = t;
+            if (max < t) max = t;
         }
         var mean = sum / _currentSamples;
         var varianceSum = 0.0;
-        for (var i = 0; i < _currentSamples; i++)
+        foreach (var t in ordered)
         {
-            varianceSum += Math.Pow(ordered[i] - mean, 2);
+            varianceSum += Math.Pow(t - mean, 2);
         }
         var variance = varianceSum / _currentSamples;
         var stdDev = Math.Sqrt(variance);

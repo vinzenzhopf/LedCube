@@ -24,6 +24,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\LedCube.Core.UI\LedCube.Core.UI.csproj" />
+      <ProjectReference Include="..\LedCube.Sdf.Core\LedCube.Sdf.Core.csproj" />
     </ItemGroup>
 
 </Project>

@@ -1,0 +1,19 @@
+﻿using LedCube.PluginBase;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace LedCube.Plugins.Animation.SdfTest;
+
+public class LedWalkerPlugin : IPlugin
+{
+    public string Name => "Led Walker Animation";
+    public string Description => "Walks one led through the cube.";
+    
+    public void ConfigureAppConfiguration(IConfigurationBuilder configurationBuilder)
+    {
+    }
+
+    public void ConfigureServices(IServiceCollection serviceCollection)
+    {
+    }
+}
