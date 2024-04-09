@@ -38,9 +38,9 @@ public class LedWalkerAnimation : IFrameGenerator
 
     private Sdf3D SetupSdf()
     {
-        var box = Sdf.Core.Sdf.BoxFrame(new Vector3(8, 8, 8), 1);
+        var box = Sdf.Core.Sdf.BoxFrame(new Vector3(5, 5, 5), 0.25f);
         var sphere = Sdf.Core.Sdf.Sphere(4);
-        var boxDriver = Driver.ConstantAngularVelotcity(box, Vector3.UnitZ,MathF.Tau);
+        var boxDriver = Driver.ConstantAngularVelotcity(box, Vector3.UnitZ,MathF.Tau / 4);
         
         return Sdf.Core.Sdf.Union(sphere, boxDriver);
     }

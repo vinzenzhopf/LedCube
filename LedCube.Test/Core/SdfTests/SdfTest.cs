@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Drawing;
 using System.Numerics;
 using System.Text;
 using LedCube.Core.Common.CubeData.Generator;
@@ -6,6 +7,7 @@ using LedCube.Core.Common.Model;
 using LedCube.Core.Common.Model.Cube;
 using LedCube.Core.Common.Model.Cube.Buffer;
 using LedCube.Sdf.Core;
+using Pastel;
 using Xunit.Abstractions;
 
 namespace LedCube.Test.Core.SdfTests;
@@ -48,78 +50,79 @@ public class SdfTest
         var time = sw.Elapsed;
         _testOutputHelper.WriteLine("Elapsed Time: {0}", time);
     }
-    
+
     [Fact]
     public void TestSdfFrame()
     {
-        ICubeData buffer = new CubeData<CubeDataBuffer16>();
-        buffer.Clear();
+        const float margin = 0.49f;
+        var size = new Point3D(16, 16, 16);
+        var sdf = Sdf.Core.Sdf.BoxFrame(new Vector3(4, 4, 4), 0.5f);
         
-        var sut = Sdf.Core.Sdf.BoxFrame(new Vector3(4, 4, 4), 0.25f);
+    
+        Vector3 center = size - 1;
+        center /= 2;
+        sdf = Sdf.Core.Sdf.Translate(sdf, center);
         
-        
-        buffer.Render(sut, 0, new SdfRenderOptions(){Centered = true, Margin = 0.499f});
         var sb = new StringBuilder();
-        sb.AppendCubeData(buffer);
+        sb.AppendSdfPlot(size, sdf, margin, 0);
         _testOutputHelper.WriteLine(sb.ToString());
     }
 }
 
 public static class SdfTestOutputExtensions
 {
-    public static StringBuilder AppendCubeData(this StringBuilder sb, ICubeData cubeData)
+    public static StringBuilder AppendSdfPlot(this StringBuilder sb, Point3D size, Sdf3D sdf, float margin, float time)
     {
         const int stackCount = 4;
-        for (var z = 0; z < cubeData.Size.Z; z+=stackCount)
+        for (var z = 0; z < size.Z; z += stackCount)
         {
-            sb.AppendStackedPlaneData(cubeData, z, stackCount);
-        }
-        return sb;
-    }
-
-    public static StringBuilder AppendStackedPlaneData(this StringBuilder sb, ICubeData cubeData, int planeIndex, int planeCount = 1)
-    {
-        //Header
-        for (var i = 0; i < planeCount; i++)
-        {
-            sb.Append($"Plane {planeIndex+i:D2} Data:");
-            var missing = 3 + 2 * cubeData.Size.X - 14;
-            for (var s = 0; s < missing; s++)
+            //Header
+            for (var i = 0; i < stackCount; i++)
             {
-                sb.Append(' ');
-            }
-            sb.Append("\t\t");
-        }
-        sb.Append(" \n");
-        for (var i = 0; i < planeCount; i++)
-        {
-            sb.AppendPlaneHeader(cubeData.Size.X);
-        }
-        sb.Append(" \n");
-        
-        
-        for (var y = 0; y < cubeData.Size.Y; y++)
-        {
-            for (var i = 0; i < planeCount; i++)
-            {
-                sb.Append(NumberToSingleChar(y));
-                for (var x = 0; x < cubeData.Size.X; x++)
+                sb.Append($"Plane {z+i:D2} Data:");
+                var missing = 3 + 2 * size.X - 14;
+                for (var s = 0; s < missing; s++)
                 {
-                    sb.Append(' ').Append(cubeData.GetLed(new Point3D(x, y, planeIndex + i)) ? 'X' : ' ');
+                    sb.Append(' ');
                 }
-                sb.Append(' ');
-                sb.Append(NumberToSingleChar(y));
-                sb.Append("\t\t");    
+                sb.Append("\t\t");
             }
-            sb.Append('\n');
-        }
+            sb.Append(" \n");
+            for (var i = 0; i < stackCount; i++)
+            {
+                sb.AppendPlaneHeader(size.X);
+            }
+            sb.Append(" \n");
         
-        //Footer Row
-        for (var i = 0; i < planeCount; i++)
-        {
-            sb.AppendPlaneHeader(cubeData.Size.X);
+            //Rows
+            for (var y = 0; y < size.Y; y++)
+            {
+                for (var i = 0; i < stackCount; i++)
+                {
+                    //One Plane Row
+                    sb.Append(NumberToSingleChar(y));
+                    for (var x = 0; x < size.X; x++)
+                    {
+                        //Each LED
+                        var result = sdf(new Point3D(x, y, z + i), time);
+                        var ledState = result <= margin;
+                        sb.Append((" "+(ledState ? "X" : " "))
+                            .PastelBg(MapColorToValue(result, margin)));
+                    }
+                    sb.Append(' ');
+                    sb.Append(NumberToSingleChar(y));
+                    sb.Append("\t\t");    
+                }
+                sb.Append('\n');
+            }
+        
+            //Footer Row
+            for (var i = 0; i < stackCount; i++)
+            {
+                sb.AppendPlaneHeader(size.X);
+            }
+            sb.Append(" \n");
         }
-        sb.Append(" \n");
         return sb;
     }
 
@@ -139,5 +142,25 @@ public static class SdfTestOutputExtensions
     {
         const string map = "0123456789ABCDEFGHIJKLMNOPQRSTUV";
         return (index < 0 || index > map.Length) ? '-' : map[index];
-    } 
+    }
+    
+    private static Color MapColorToValue(float value, float margin)
+    {
+        var v = value - margin;
+        v /= 5;
+        v = (v > 1) ? 1 : (v < -1) ? -1 : v;
+        return v > 0 ? 
+            Color.White.Lerp(Color.DarkBlue, v) : 
+            Color.Gold.Lerp(Color.White, v*-1);
+    }
+    
+    public static Color Lerp(this Color s, Color t, float k)
+    {
+        var bk = (1 - k);
+        var a = s.A * bk + t.A * k;
+        var r = s.R * bk + t.R * k;
+        var g = s.G * bk + t.G * k;
+        var b = s.B * bk + t.B * k;
+        return Color.FromArgb((int) a, (int) r, (int) g, (int) b);
+    }
 }
