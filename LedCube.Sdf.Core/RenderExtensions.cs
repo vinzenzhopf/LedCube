@@ -14,7 +14,7 @@ public static class RenderExtensions
 
         if (options.Centered)
         {
-            Vector3 center = cubeData.Size;
+            Vector3 center = cubeData.Size - 1;
             center /= 2;
             sdf = Sdf.Translate(sdf, center);
         }
