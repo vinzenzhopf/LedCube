@@ -38,7 +38,7 @@ public class LedWalkerAnimation : IFrameGenerator
         _lastMove = animationContext.ElapsedTimeUs / 1000;
         animationContext.CubeData.Clear();
         _activeLedPos?.Dispose();
-        _activeLedPos = new PositionGenerator(animationContext.CubeData.Size, true).GetEnumerator();
+        _activeLedPos = new PositionGenerator3D(animationContext.CubeData.Size, true).GetEnumerator();
     }
 
     public void DrawFrame(FrameContext frameContext)

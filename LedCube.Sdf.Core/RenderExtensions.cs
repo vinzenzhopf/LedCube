@@ -19,7 +19,7 @@ public static class RenderExtensions
             sdf = Sdf.Translate(sdf, center);
         }
         
-        foreach (var point in new PositionGenerator(cubeData.Size))
+        foreach (var point in new PositionGenerator3D(cubeData.Size))
         {
             var value = sdf(point, time);
             cubeData.SetLed(point, value <= options.Margin);

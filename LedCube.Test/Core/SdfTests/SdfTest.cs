@@ -37,7 +37,7 @@ public class SdfTest
         var sut = Sdf.Core.Sdf.Translate(Sdf.Core.Sdf.Sphere(3), new Vector3(8, 8, 8));
         
         var sw = Stopwatch.StartNew();
-        using var pos = new PositionGenerator(buffer.Size).GetEnumerator();
+        using var pos = new PositionGenerator3D(buffer.Size).GetEnumerator();
         while(pos.MoveNext())
         {
             buffer.SetLed(pos.Current, sut(pos.Current, 0) < 0);

@@ -3,7 +3,7 @@ using LedCube.Core.Common.Model;
 
 namespace LedCube.Core.Common.CubeData.Generator;
 
-public sealed class PositionGenerator(Point3D dimensions, bool infiniteRollover = false) : IEnumerable<Point3D>
+public sealed class PositionGenerator3D(Point3D dimensions, bool infiniteRollover = false) : IEnumerable<Point3D>
 {
     public IEnumerator<Point3D> GetEnumerator()
     {
