@@ -1,7 +1,4 @@
 ﻿using System.Numerics;
-using System.Timers;
-using LedCube.Core.Common.CubeData.Generator;
-using LedCube.Core.Common.Model;
 using LedCube.PluginBase;
 using LedCube.Sdf.Core;
 using Microsoft.Extensions.Configuration;
@@ -19,12 +16,13 @@ public class LedWalkerAnimation : IFrameGenerator
     public TimeSpan? FrameTime { get; } = TimeSpan.FromMilliseconds(20);
     
     private GeneratorCubeConfiguration? _config = null;
-    private Sdf3D? _sdf;
+    private Sdf3D _sdf;
 
     public LedWalkerAnimation(IConfiguration configuration, ILogger<LedWalkerAnimation> logger)
     {
         _configuration = configuration;
         _logger = logger;
+        _sdf = Sdf.Core.Sdf.Void();
     }
 
     public void Initialize(GeneratorCubeConfiguration config)
@@ -35,36 +33,23 @@ public class LedWalkerAnimation : IFrameGenerator
     public void Start(AnimationContext animationContext)
     {
         animationContext.CubeData.Clear();
-        SetupSdf();
+        _sdf = SetupSdf();
     }
 
-    private void SetupSdf()
+    private Sdf3D SetupSdf()
     {
         var box = Sdf.Core.Sdf.BoxFrame(new Vector3(8, 8, 8), 1);
         var sphere = Sdf.Core.Sdf.Sphere(4);
-
-        _sdf = Sdf.Core.Sdf.Union(sphere, RotateTime(box));
-        return;
-
-        Sdf3D RotateTime(Sdf3D sdf)
-        {
-            return (position, time) => sdf(
-                Vector3.Transform(position, 
-                    Quaternion.Inverse(new Quaternion(Vector3.UnitZ, (time)%1.0f))), time);
-        }
+        var boxDriver = Driver.ConstantAngularVelotcity(box, Vector3.UnitZ,MathF.Tau);
+        
+        return Sdf.Core.Sdf.Union(sphere, boxDriver);
     }
     
-    public static Sdf3D Rotate(Sdf3D sdf, Quaternion rotation)
-    {
-        var inverseRotation = Quaternion.Inverse(rotation);
-        return (position, time) => sdf(Vector3.Transform(position, inverseRotation), time);
-    }
 
     public void DrawFrame(FrameContext frameContext)
     {
-        if (_sdf is null) return;
-        var elapsedTimeS = (float) frameContext.ElapsedTimeUs / 1000000;  
-        frameContext.Buffer.Render(_sdf, elapsedTimeS, new SdfRenderOptions(){Centered = true, Margin = 0.49f});
+        var elapsedTimeS = (float) frameContext.ElapsedTimeUs / 1_000_000;  
+        frameContext.Buffer.Render(_sdf, elapsedTimeS, new SdfRenderOptions{Centered = true, Margin = 0.49f});
     }
 
     public void End(AnimationContext animationContext)

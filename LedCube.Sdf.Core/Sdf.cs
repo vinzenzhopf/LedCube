@@ -8,6 +8,7 @@ public static class Sdf
     public static Sdf3D Sphere(float radius)
         => (position, _) => position.Length() - radius;
 
+    public static Sdf3D Void() => (_, _) => 1E6F;
 
     public static Sdf3D Box(Vector3 dimensions)
         => (position, _) =>
