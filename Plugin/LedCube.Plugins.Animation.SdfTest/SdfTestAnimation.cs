@@ -43,14 +43,14 @@ public class LedWalkerAnimation : IFrameGenerator
         var box = Sdf.Core.Sdf.BoxFrame(new Vector3(8, 8, 8), 1);
         var sphere = Sdf.Core.Sdf.Sphere(4);
 
-        _sdf = Sdf.Core.Sdf.Union(sphere, box);//RotateTime(box));
+        _sdf = Sdf.Core.Sdf.Union(sphere, RotateTime(box));
         return;
 
         Sdf3D RotateTime(Sdf3D sdf)
         {
             return (position, time) => sdf(
                 Vector3.Transform(position, 
-                    Quaternion.Inverse(new Quaternion(Vector3.Zero, (time / 1000)%1.0f))), time);
+                    Quaternion.Inverse(new Quaternion(Vector3.UnitZ, (time)%1.0f))), time);
         }
     }
     
