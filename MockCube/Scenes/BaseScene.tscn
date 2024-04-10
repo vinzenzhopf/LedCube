@@ -1,0 +1,51 @@
+[gd_scene load_steps=9 format=3 uid="uid://du3vjwjwnmbds"]
+
+[ext_resource type="Script" path="res://Scripts/UdpServer.cs" id="1_4e0s5"]
+[ext_resource type="Script" path="res://Scripts/CubeBuilder.cs" id="1_5x340"]
+[ext_resource type="Environment" uid="uid://daf10lmp12gmo" path="res://default_env.tres" id="1_wmsrl"]
+[ext_resource type="PackedScene" uid="uid://bmc2vlb3tjhh4" path="res://Scenes/LedTemplate.tscn" id="4_4npvf"]
+[ext_resource type="Script" path="res://Scripts/CameraController.cs" id="6_2khvr"]
+[ext_resource type="Material" uid="uid://0xl8q18eura7" path="res://Materials/LedMaterialOn.tres" id="6_b7its"]
+[ext_resource type="Material" uid="uid://be4t78xvbjvt6" path="res://Materials/LedMaterialOff.tres" id="7_8vsyj"]
+
+[sub_resource type="Environment" id="Environment_8df7b"]
+
+[node name="BaseScene" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = ExtResource("1_wmsrl")
+
+[node name="CameraController" type="Node3D" parent="."]
+
+[node name="RotateY" type="Node3D" parent="CameraController"]
+
+[node name="RotateX" type="Node3D" parent="CameraController/RotateY"]
+transform = Transform3D(1, 0, 0, 0, 0.819152, 0.573576, 0, -0.573576, 0.819152, 0, 0, 0)
+
+[node name="Distance" type="Node3D" parent="CameraController/RotateY/RotateX"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 10)
+
+[node name="Camera3D" type="Camera3D" parent="CameraController/RotateY/RotateX/Distance"]
+environment = SubResource("Environment_8df7b")
+near = 0.001
+far = 100.0
+
+[node name="Controller" type="Node" parent="CameraController" node_paths=PackedStringArray("RotateY", "RotateX", "Distance")]
+script = ExtResource("6_2khvr")
+RotateY = NodePath("../RotateY")
+RotateX = NodePath("../RotateY/RotateX")
+Distance = NodePath("../RotateY/RotateX/Distance")
+
+[node name="CubeRoot" type="Node3D" parent="."]
+
+[node name="CubeBuilder" type="Node" parent="CubeRoot" node_paths=PackedStringArray("CameraStack")]
+script = ExtResource("1_5x340")
+Spacing = 0.2
+Template = ExtResource("4_4npvf")
+CameraStack = NodePath("../../CameraController")
+
+[node name="CubeAnimator" type="Node" parent="CubeRoot" node_paths=PackedStringArray("CubeBuilder")]
+script = ExtResource("1_4e0s5")
+CubeBuilder = NodePath("../CubeBuilder")
+LedOnMaterial = ExtResource("6_b7its")
+LedOffMaterial = ExtResource("7_8vsyj")

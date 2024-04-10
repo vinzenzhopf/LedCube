@@ -1,0 +1,22 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://djecv7r0r5lvy"
+path="res://.godot/imported/Led5mm.obj-2c569d1d588d2d52f89bd51cc530e5f9.mesh"
+
+[deps]
+
+files=["res://.godot/imported/Led5mm.obj-2c569d1d588d2d52f89bd51cc530e5f9.mesh"]
+
+source_file="res://Models/Led5mm.obj"
+dest_files=["res://.godot/imported/Led5mm.obj-2c569d1d588d2d52f89bd51cc530e5f9.mesh", "res://.godot/imported/Led5mm.obj-2c569d1d588d2d52f89bd51cc530e5f9.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true
+force_disable_mesh_compression=false
