@@ -67,6 +67,7 @@ public class UdpCommunication : IUdpCommunication
     /// </remarks>
     public Task<bool> ConnectAsync(HostAndPort hostAndPort, CancellationToken token)
     {
+        Client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
         Client.Connect(hostAndPort.Hostname, hostAndPort.Port);
         RemoteHost = hostAndPort;
         IsConnected = true;
