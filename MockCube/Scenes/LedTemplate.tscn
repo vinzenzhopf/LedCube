@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://bmc2vlb3tjhh4"]
+
+[ext_resource type="ArrayMesh" uid="uid://djecv7r0r5lvy" path="res://Models/Led5mm.obj" id="2_d0ux7"]
+
+[node name="LedTemplate" type="Node3D"]
+
+[node name="Mesh" type="MeshInstance3D" parent="."]
+cast_shadow = 0
+mesh = ExtResource("2_d0ux7")
