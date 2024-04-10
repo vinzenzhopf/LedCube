@@ -6,27 +6,20 @@ using Microsoft.Extensions.Logging;
 
 namespace LedCube.Plugins.Animation.LedWalker;
 
-public class LedWalkerAnimation : IFrameGenerator
+public class LedWalkerAnimation(IConfiguration configuration, ILogger<LedWalkerAnimation> logger)
+    : IFrameGenerator
 {
     public static FrameGeneratorInfo Info => new("Led Walker Animation", "Walks one led through the cube.");
     
-    private readonly IConfiguration _configuration;
-    private readonly ILogger<LedWalkerAnimation> _logger;
+    private readonly IConfiguration _configuration = configuration;
+    private readonly ILogger<LedWalkerAnimation> _logger = logger;
 
     public TimeSpan? FrameTime { get; } = null;
     
     private IEnumerator<Point3D>? _activeLedPos;
     private double _lastMove;
-    private double _walkingSpeedMs;
+    private double _walkingSpeedMs = 1000.0 / 256; // 1 sec per Plane
     private GeneratorCubeConfiguration? _config = null;
-
-    public LedWalkerAnimation(IConfiguration configuration, ILogger<LedWalkerAnimation> logger)
-    {
-        _configuration = configuration;
-        _logger = logger;
-
-        _walkingSpeedMs = 1000.0 / 256; // 1 sec per Plane
-    }
 
     public void Initialize(GeneratorCubeConfiguration config)
     {

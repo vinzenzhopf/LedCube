@@ -6,24 +6,18 @@ using Microsoft.Extensions.Logging;
 
 namespace LedCube.Plugins.Animation.SdfTest;
 
-public class LedWalkerAnimation : IFrameGenerator
+public class SdfTestAnimation(IConfiguration configuration, ILogger<SdfTestAnimation> logger)
+    : IFrameGenerator
 {
     public static FrameGeneratorInfo Info => new("SDF Test Animation", "SDF Test.");
     
-    private readonly IConfiguration _configuration;
-    private readonly ILogger<LedWalkerAnimation> _logger;
+    private readonly IConfiguration _configuration = configuration;
+    private readonly ILogger<SdfTestAnimation> _logger = logger;
 
     public TimeSpan? FrameTime { get; } = TimeSpan.FromMilliseconds(20);
     
     private GeneratorCubeConfiguration? _config = null;
-    private Sdf3D _sdf;
-
-    public LedWalkerAnimation(IConfiguration configuration, ILogger<LedWalkerAnimation> logger)
-    {
-        _configuration = configuration;
-        _logger = logger;
-        _sdf = Sdf.Core.Sdf.Void();
-    }
+    private Sdf3D _sdf = Sdf.Core.Sdf.Void();
 
     public void Initialize(GeneratorCubeConfiguration config)
     {
