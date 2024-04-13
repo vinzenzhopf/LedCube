@@ -71,6 +71,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Global", "Global", "{8FE210
 		Directory.Packages.props = Directory.Packages.props
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LedCube.Plugins.Animation.GameOfLife", "Plugin\LedCube.Plugins.Animation.GameOfLife\LedCube.Plugins.Animation.GameOfLife.csproj", "{D613FED2-986F-4A2F-AF55-8B3701285A24}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -181,6 +183,10 @@ Global
 		{2AAAB4E0-479C-4D04-B5C4-DCA8B6E78E73}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2AAAB4E0-479C-4D04-B5C4-DCA8B6E78E73}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2AAAB4E0-479C-4D04-B5C4-DCA8B6E78E73}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D613FED2-986F-4A2F-AF55-8B3701285A24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D613FED2-986F-4A2F-AF55-8B3701285A24}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D613FED2-986F-4A2F-AF55-8B3701285A24}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D613FED2-986F-4A2F-AF55-8B3701285A24}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{68A322D7-0A18-43C2-8D40-26ADA8D7C9F0} = {BD7277D3-0869-46B1-A5EE-AEE5F773F4C1}
@@ -209,5 +215,6 @@ Global
 		{20FF7C19-AB2A-4EB1-B02D-2CF834B5DF90} = {C2DE345E-5A08-4C96-8677-2C5BB6B92248}
 		{3EC4F7B6-164B-45B8-89D8-49723AB89C80} = {C2DE345E-5A08-4C96-8677-2C5BB6B92248}
 		{2AAAB4E0-479C-4D04-B5C4-DCA8B6E78E73} = {C2DE345E-5A08-4C96-8677-2C5BB6B92248}
+		{D613FED2-986F-4A2F-AF55-8B3701285A24} = {C2DE345E-5A08-4C96-8677-2C5BB6B92248}
 	EndGlobalSection
 EndGlobal
