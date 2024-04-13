@@ -66,6 +66,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LedCube.Plugins.Animation.T
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LedCube.PluginBase.UI", "Plugin\LedCube.PluginBase.UI\LedCube.PluginBase.UI.csproj", "{2AAAB4E0-479C-4D04-B5C4-DCA8B6E78E73}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Global", "Global", "{8FE210AA-5283-420A-915E-4B98212458F1}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Packages.props = Directory.Packages.props
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
