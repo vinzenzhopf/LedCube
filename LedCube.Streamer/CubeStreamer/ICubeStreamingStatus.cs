@@ -1,4 +1,5 @@
-﻿using LedCube.Streamer.Datagram;
+﻿using System;
+using LedCube.Streamer.Datagram;
 
 namespace LedCube.Streamer.CubeStreamer;
 

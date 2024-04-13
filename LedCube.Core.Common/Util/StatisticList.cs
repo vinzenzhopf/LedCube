@@ -1,4 +1,7 @@
-﻿namespace LedCube.Core.Common.Util;
+﻿using System;
+using System.Linq;
+
+namespace LedCube.Core.Common.Util;
 
 public class StatisticList
 {

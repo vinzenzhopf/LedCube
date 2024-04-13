@@ -1,4 +1,6 @@
-﻿namespace LedCube.Core.Common.Model.Cube.Event;
+﻿using System;
+
+namespace LedCube.Core.Common.Model.Cube.Event;
 
 public sealed class LegChangedEventArgs<TPos>(TPos position, bool value) : EventArgs
 {

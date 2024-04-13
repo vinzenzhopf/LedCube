@@ -1,4 +1,6 @@
-﻿namespace LedCube.Streamer.Datagram.String;
+﻿using System;
+
+namespace LedCube.Streamer.Datagram.String;
 
 public interface IStringBuffer<TSelf> where TSelf : struct, IStringBuffer<TSelf>
 {

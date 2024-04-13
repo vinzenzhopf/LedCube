@@ -1,4 +1,6 @@
-﻿namespace LedCube.Streamer.CubeStreamer;
+﻿using System;
+
+namespace LedCube.Streamer.CubeStreamer;
 
 public record RemoteInfo(
     string Version,

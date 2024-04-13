@@ -1,3 +1,5 @@
-﻿namespace LedCube.Core.Common.Model.Cube.Event;
+﻿using System;
+
+namespace LedCube.Core.Common.Model.Cube.Event;
 
 public delegate void CubeChangedEventHandler(object? sender, EventArgs args);

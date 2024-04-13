@@ -1,4 +1,6 @@
-﻿namespace LedCube.Streamer.Datagram;
+﻿using System;
+
+namespace LedCube.Streamer.Datagram;
 
 /// <summary>
 /// Only meant as a type-constraint for generic methods!

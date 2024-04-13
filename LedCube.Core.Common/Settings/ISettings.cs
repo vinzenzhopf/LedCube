@@ -1,3 +1,5 @@
+using System.Threading.Tasks;
+
 namespace LedCube.Core.Common.Settings;
 
 public interface ISettingsProvider<T> : ISettings<T> where T : class, new()

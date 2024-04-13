@@ -1,3 +1,4 @@
+using System;
 using LedCube.Core.Common.Model.Cube.Event;
 
 namespace LedCube.Core.Common.Model.Cube;

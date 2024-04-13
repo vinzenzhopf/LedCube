@@ -1,4 +1,6 @@
-﻿namespace LedCube.Core.Common.Model.Cube.Buffer;
+﻿using System;
+
+namespace LedCube.Core.Common.Model.Cube.Buffer;
 
 public interface ICubeDataBuffer<TSelf> where TSelf : struct, ICubeDataBuffer<TSelf>
 {

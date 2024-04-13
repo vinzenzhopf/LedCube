@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
 using LedCube.Core.Common.Model;
 using LedCube.Core.Common.Model.Cube;
 using LedCube.Core.Common.Model.Cube.Event;

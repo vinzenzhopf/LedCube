@@ -1,4 +1,6 @@
 ﻿using System.Collections.Immutable;
+using System.IO;
+using System.Linq;
 using System.Reflection;
 using LedCube.PluginBase;
 using Microsoft.Extensions.Configuration;

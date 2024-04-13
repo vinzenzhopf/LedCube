@@ -1,4 +1,6 @@
-﻿namespace LedCube.Streamer.Datagram;
+﻿using System;
+
+namespace LedCube.Streamer.Datagram;
 
 public enum DatagramType : UInt16
 {

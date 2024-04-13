@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 using LedCube.Core.Common.Model;
 using LedCube.Core.Common.Model.Cube;

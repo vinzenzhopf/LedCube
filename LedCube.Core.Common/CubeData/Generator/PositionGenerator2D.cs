@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using LedCube.Core.Common.Model;
 
 namespace LedCube.Core.Common.CubeData.Generator;
