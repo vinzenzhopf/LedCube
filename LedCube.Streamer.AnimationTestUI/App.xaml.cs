@@ -43,6 +43,7 @@ namespace LedCube.Streamer.AnimationTestUI
         IRecipient<EditAnimationInstanceDialogMessage>
     {
         private IHost? _host;
+        private readonly PluginHostContext _pluginHostContext = new();
         
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -51,6 +52,8 @@ namespace LedCube.Streamer.AnimationTestUI
             #else
                 const bool debugBuild = false;
             #endif
+
+            _pluginHostContext.Initialize();
             
             Log.Verbose("Starting HostBuilder built...");
             _host = new HostBuilder()
@@ -60,6 +63,7 @@ namespace LedCube.Streamer.AnimationTestUI
                     configurationBuilder.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
                     configurationBuilder.AddEnvironmentVariables();
                     configurationBuilder.AddCommandLine(e.Args);
+                    configurationBuilder.ConfigurePluginHost(_pluginHostContext);
                 })
                 .ConfigureLogging((context, loggingBuilder) =>
                 {
@@ -105,9 +109,7 @@ namespace LedCube.Streamer.AnimationTestUI
                         services.AddSingleton<LogAppenderViewModel>();
                         // services.AddSingleton<NavigationController>();
                         
-                        
-                        // services.SetupPluginHost(context.Configuration);
-                        services.SetupPluginHost(context.Configuration);
+                        services.SetupPluginHost(_pluginHostContext);
                         
                         ConfigureServices(services);
                     })

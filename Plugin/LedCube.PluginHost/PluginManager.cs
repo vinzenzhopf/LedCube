@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using LedCube.PluginBase;
 using Microsoft.Extensions.DependencyInjection;
@@ -7,23 +8,16 @@ using Microsoft.Extensions.Logging;
 
 namespace LedCube.PluginHost;
 
-public class PluginManager : IPluginManager
+public class PluginManager(ILogger<PluginManager> logger, IPluginHostContext context, IServiceProvider serviceProvider)
+    : IPluginManager
 {
-    private readonly ILogger<PluginManager> _logger;
-    private readonly PluginHostContext _context;
-    private readonly IServiceProvider _serviceProvider; 
-    
-    public PluginManager(ILogger<PluginManager> logger, PluginHostContext context, IServiceProvider serviceProvider)
-    {
-        _logger = logger;
-        _context = context;
-        _serviceProvider = serviceProvider;
-    }
-
     public IEnumerable<FrameGeneratorEntry> AllFrameGeneratorInfos()
     {
         var list = new List<FrameGeneratorEntry>();
-        foreach (var typeInfo in _context.FrameGeneratorTypes)
+        foreach (var typeInfo in context.EntriesImmutable
+                     .Select(x => x.FrameGeneratorType)
+                     .Where(x => x is not null)
+                     .Cast<TypeInfo>())
         {
             try
             {
@@ -32,7 +26,7 @@ public class PluginManager : IPluginManager
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "FrameGenerator {FrameGeneratorName} does not have property {FrameGeneratorPropertyInfo}",
+                logger.LogError(e, "FrameGenerator {FrameGeneratorName} does not have property {FrameGeneratorPropertyInfo}",
                     typeInfo.Name, nameof(IFrameGenerator.Info));
             }
         }
@@ -41,7 +35,7 @@ public class PluginManager : IPluginManager
 
     public IFrameGenerator GetFrameGenerator(FrameGeneratorEntry entry)
     {
-        return (IFrameGenerator)_serviceProvider.GetRequiredService(entry.TypeInfo);
+        return (IFrameGenerator)serviceProvider.GetRequiredService(entry.TypeInfo);
     }
 }
 

@@ -1,62 +1,111 @@
-﻿using System.Collections.Immutable;
+﻿using System;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using LedCube.PluginBase;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Serilog;
 
 namespace LedCube.PluginHost;
 
 public static class PluginHostExtensions
 {
-    public static void SetupPluginHost(this IServiceCollection services, IConfiguration configuration)
+    public static void Initialize(this PluginHostContext pluginHostContext)
     {
-        services.Configure<PluginOptions>(
-            configuration.GetSection(PluginOptions.Key));
-
-        var assemblies = Directory
+        var pluginTypes = Directory
             .GetFiles(System.AppDomain.CurrentDomain.BaseDirectory, "*.dll", SearchOption.AllDirectories)
             .Select(Assembly.LoadFrom)
-            .ToList();
-
-        var frameGeneratorTypes = assemblies
-            .SelectMany(a => a.DefinedTypes
-                .Where(x =>
-                    typeof(IFrameGenerator).IsAssignableFrom(x) &&
-                    !x.IsInterface &&
-                    !x.IsAbstract))
+            .Select(a => a.DefinedTypes
+                .SingleOrDefault(x =>
+                    typeof(IPlugin).IsAssignableFrom(x) &&
+                    x is {IsInterface: false, IsAbstract: false}))
+            .Where(x => x is not null)
+            .Cast<TypeInfo>()
             .ToList();
         
-        var pluginHostContext = new PluginHostContext(frameGeneratorTypes.ToImmutableList());
-        
-        foreach (var type in frameGeneratorTypes)
+        foreach (var pluginEntry in pluginTypes
+                     .Select(InitializePlugin))
         {
-            services.AddTransient(type);
+            if (pluginEntry is not null)
+            {
+                pluginHostContext.Entries.Add(pluginEntry);        
+            }
         }
+        
+    }
 
-        services.AddSingleton(pluginHostContext);
-        services.AddSingleton<IPluginManager, PluginManager>();
+    private static PluginEntry? InitializePlugin(TypeInfo pluginType)
+    {
+        try
+        {
+            Log.Information("Loading Plugin {0} from Assembly {1}...", pluginType.Name, pluginType.Assembly.GetName());
+            if (Activator.CreateInstance(pluginType)
+                is not IPlugin pluginInstance)
+            {
+                Log.Error("Error creating instance of {0}. Skip loading Plugin.", pluginType.Name);
+                return null;
+            }
+            return new PluginEntry(pluginType, pluginInstance);
+        }
+        catch (Exception e)
+        {
+            Log.Error(e, "Error creating instance of {0}. Skip loading Plugin.", pluginType.Name);
+            return null;
+        }
+    }
 
-        // services.Scan(scan => scan
-        //     .FromAssemblies(assemblies)
-        //     .AddClasses(classes => classes.AssignableTo<IPlugin>(), true)
-        //     .AsImplementedInterfaces()
-        //     .WithSingletonLifetime());
-        //
-        // services.Scan(scan => scan
-        //     .FromAssemblies(assemblies)
-        //     .AddClasses(classes => classes.AssignableTo<IFrameGenerator>(), true)
-        //     .AsImplementedInterfaces()
-        //     .WithTransientLifetime());
-        //
-        // services.AddSingleton<IHostServiceProxy, HostServiceProxy>();
-        // services.AddSingleton<IPluginContext, PluginContext>();
-        // services.AddSingleton<IServiceProxy, ServiceProxy>();
-        // services.AddHostedService<PluginInitializer>();
+    public static void ConfigurePluginHost(this IConfigurationBuilder configurationBuilder, PluginHostContext pluginHostContext)
+    {
+        var entries = pluginHostContext.Entries.ToList();
+        foreach (var pluginEntry in entries)
+        {
+            try
+            {
+                Log.Debug("Configure for Plugin {0}", pluginEntry.PluginType.Name);
+                pluginEntry.PluginInstance.ConfigureAppConfiguration(configurationBuilder);
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "Error while running Configure on plugin {0}.", pluginEntry.PluginType.Name);
+                pluginHostContext.Entries.Remove(pluginEntry);
+            }
+        }
     }
     
-    
-}
+    public static void SetupPluginHost(this IServiceCollection services, PluginHostContext pluginHostContext)
+    {
+        foreach (var pluginEntry in pluginHostContext.Entries)
+        {
+            SetupPlugin(services, pluginEntry);
+        }
+        services.AddSingleton<IPluginHostContext>(pluginHostContext);
+        services.AddSingleton<IPluginManager, PluginManager>();
+    }
 
-public record PluginHostContext(ImmutableList<TypeInfo> FrameGeneratorTypes);
+    private static void SetupPlugin(IServiceCollection services, PluginEntry pluginEntry)
+    {
+        try
+        {
+            Log.Debug("ConfigureServices for Plugin {0}", pluginEntry.PluginType.Name);
+            pluginEntry.PluginInstance.ConfigureServices(services);
+            
+            var frameGeneratorType = pluginEntry.PluginType.Assembly
+                .DefinedTypes
+                .FirstOrDefault(x =>
+                    typeof(IFrameGenerator).IsAssignableFrom(x) &&
+                    x is {IsInterface: false, IsAbstract: false});
+            
+            if (frameGeneratorType is null) return;
+            
+            Log.Debug("Loading FrameGenerator {0} from Plugin {1}", frameGeneratorType.Name, pluginEntry.PluginType.Name);
+            pluginEntry.FrameGeneratorType = frameGeneratorType;
+            services.AddTransient(frameGeneratorType);
+        }
+        catch (Exception e)
+        {
+            Log.Error(e, "Error while running ConfigureServices on plugin {0}.", pluginEntry.PluginType.Name);
+        }
+    }
+}
