@@ -14,9 +14,7 @@ public class GameOfLifeAnimation(IOptions<GameOfLifeConfiguration> options, ILog
     private readonly ILogger<GameOfLifeAnimation> _logger = logger;
 
     public TimeSpan? FrameTime { get; } = null;
-
     private double _lastMove;
-    private double _walkingSpeedMs = 1000.0 / 256; // 1 sec per Plane
     private GeneratorCubeConfiguration? _config = null;
     private Random _random = Random.Shared;
 
@@ -42,6 +40,8 @@ public class GameOfLifeAnimation(IOptions<GameOfLifeConfiguration> options, ILog
         }
 
         RunCellularAutomata(frameContext.Buffer);
+        _lastMove = elapsedTimeMs;
+        _logger.LogInformation("New Frame at: {0}ms", elapsedTimeMs);
     }
 
     private void RunCellularAutomata(ICubeData frameContextBuffer)
@@ -94,7 +94,7 @@ public class GameOfLifeAnimation(IOptions<GameOfLifeConfiguration> options, ILog
                                 cY %= lY;
                                 if (cY < 0)
                                 {
-                                    cZ += lY;
+                                    cY += lY;
                                 }
                             }
                             for (var dX = -1; dX <= 1; dX++)

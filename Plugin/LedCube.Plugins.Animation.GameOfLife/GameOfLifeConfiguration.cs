@@ -7,7 +7,7 @@ public class GameOfLifeConfiguration
 
     public const string SectionName = "GameOfLife";
     
-    public TimeSpan FrameTime { get; init; }= TimeSpan.FromSeconds(1);
+    public TimeSpan FrameTime { get; init; } = TimeSpan.FromSeconds(2);
     
     public int Seed { get; init; }
 

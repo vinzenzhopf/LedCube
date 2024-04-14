@@ -14,6 +14,9 @@
       <None Update="LedCube.Plugins.Animation.LedWalker.json">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
+      <None Update="LedCube.Plugins.Animation.GameOfLife.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
     <ItemGroup>
