@@ -1,12 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
-        
         <Nullable>enable</Nullable>
+        <UseWpf>true</UseWpf>
+        <TargetFramework>net8.0-windows</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\LedCube.Core.UI\LedCube.Core.UI.csproj" />
       <ProjectReference Include="..\..\LedCube.Sdf.Core\LedCube.Sdf.Core.csproj" />
       <ProjectReference Include="..\LedCube.PluginBase\LedCube.PluginBase.csproj" />
     </ItemGroup>
@@ -15,9 +16,13 @@
       <None Update="LedCube.Plugins.Animation.LedWalker.json">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
+      <None Update="LedCube.Plugins.Animation.Snake3D.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="CommunityToolkit.Mvvm" />
       <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
     </ItemGroup>
 

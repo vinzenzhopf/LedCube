@@ -1,4 +1,5 @@
-﻿using LedCube.PluginBase;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using LedCube.PluginBase;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -11,9 +12,12 @@ public class Snake3DPlugin : IPlugin
     
     public void ConfigureAppConfiguration(IConfigurationBuilder configurationBuilder)
     {
+        configurationBuilder.AddJsonFile("LedCube.Plugins.Animation.Snake3D.json");
     }
 
     public void ConfigureServices(IServiceCollection serviceCollection)
     {
+        serviceCollection.AddOptions<Snake3DConfiguration>()
+            .BindConfiguration(Snake3DConfiguration.SectionName);
     }
 }

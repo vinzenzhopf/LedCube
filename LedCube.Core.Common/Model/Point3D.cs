@@ -63,6 +63,9 @@ public readonly struct Point3D : IEquatable<Point3D>
     public static bool operator <(Point3D left, Point3D right) =>
         left.X < right.X && left.Y < right.Y && left.Z < right.Z;
 
+    public static Point3D operator %(Point3D left, Point3D right) =>
+        new Point3D(left.X % right.X, left.Y % right.Y, left.Z % right.Z);
+    
     /// <summary>
     /// Checks if the given point p lays within the points min (including) and max (excluding).
     /// </summary>
