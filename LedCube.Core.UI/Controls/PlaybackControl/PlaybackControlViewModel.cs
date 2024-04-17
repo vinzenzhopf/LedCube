@@ -9,8 +9,7 @@ using AnimationViewModel = LedCube.Core.UI.Controls.AnimationInstanceList.Animat
 
 namespace LedCube.Core.UI.Controls.PlaybackControl;
 
-[ObservableObject]
-public partial class PlaybackControlViewModel
+public partial class PlaybackControlViewModel : ObservableObject
 {
     public IPlaybackService PlaybackService { get; }
     

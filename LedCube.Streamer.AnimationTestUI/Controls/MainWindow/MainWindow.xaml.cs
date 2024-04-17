@@ -1,4 +1,8 @@
-﻿using MahApps.Metro.Controls;
+﻿using System.Windows.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using LedCube.Core.UI.Messages;
+using MahApps.Metro.Controls;
+using Serilog;
 
 namespace LedCube.Streamer.AnimationTestUI.Controls.MainWindow
 {
@@ -7,13 +11,20 @@ namespace LedCube.Streamer.AnimationTestUI.Controls.MainWindow
     /// </summary>
     public partial class MainWindow : MetroWindow
     {
-        private readonly MainViewModel _mainViewModel;
-
         public MainWindow(MainViewModel mainViewModel)
         {
-            _mainViewModel = mainViewModel;
-            DataContext = _mainViewModel;
+            DataContext = mainViewModel;
             InitializeComponent();
+        }
+        
+        private void MainWindow_OnPreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            WeakReferenceMessenger.Default.Send(new KeyEventMessage(e.Timestamp, e.Key, e.KeyStates, e.KeyboardDevice.Modifiers));
+        }
+
+        private void MainWindow_OnPreviewKeyUp(object sender, KeyEventArgs e)
+        {
+            WeakReferenceMessenger.Default.Send(new KeyEventMessage(e.Timestamp, e.Key, e.KeyStates, e.KeyboardDevice.Modifiers));
         }
     }
 }
