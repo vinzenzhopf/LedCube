@@ -8,24 +8,18 @@ using Microsoft.Extensions.Logging;
 namespace LedCube.Plugins.Animation.SdfTest;
 
 public class SdfTestAnimation(IConfiguration configuration, ILogger<SdfTestAnimation> logger)
-    : IFrameGenerator
+    : FrameGeneratorBase
 {
-    public static FrameGeneratorInfo Info => new("SDF Test Animation", "SDF Test.");
+    public new static FrameGeneratorInfo Info => new("SDF Test Animation", "SDF Test.");
     
     private readonly IConfiguration _configuration = configuration;
     private readonly ILogger<SdfTestAnimation> _logger = logger;
 
-    public TimeSpan? FrameTime { get; } = TimeSpan.FromMilliseconds(20);
+    public override TimeSpan? FrameTime { get; } = TimeSpan.FromMilliseconds(20);
     
-    private GeneratorCubeConfiguration? _config = null;
     private Sdf3D _sdf = Sdf.Core.Sdf.Void();
 
-    public void Initialize(GeneratorCubeConfiguration config)
-    {
-        _config = config;
-    }
-
-    public void Start(AnimationContext animationContext)
+    public override void Start(AnimationContext animationContext)
     {
         animationContext.CubeData.Clear();
         _sdf = SetupSdf();
@@ -41,32 +35,9 @@ public class SdfTestAnimation(IConfiguration configuration, ILogger<SdfTestAnima
     }
     
 
-    public void DrawFrame(FrameContext frameContext)
+    public override void DrawFrame(FrameContext frameContext)
     {
         var elapsedTimeS = (float) frameContext.ElapsedTimeUs / 1_000_000;  
         frameContext.Buffer.Render(_sdf, elapsedTimeS, new SdfRenderOptions{Centered = true, Margin = 0.49f});
-    }
-
-    public void End(AnimationContext animationContext)
-    {
-    }
-
-    public void Pause(AnimationContext animationContext)
-    {
-        // throw new NotImplementedException();
-    }
-
-    public void Continue(AnimationContext animationContext)
-    {
-        // throw new NotImplementedException();
-    }
-
-    public void ChangeTime(AnimationContext animationContext)
-    {
-        // throw new NotImplementedException();
-    }
-
-    public void Dispose()
-    {
     }
 }
