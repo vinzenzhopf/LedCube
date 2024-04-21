@@ -11,6 +11,6 @@ public interface IPlugin
     string Name { get; }
     string Description { get; }
 
-    void ConfigureAppConfiguration(IConfigurationBuilder configurationBuilder);
-    void ConfigureServices(IServiceCollection serviceCollection);
+    void ConfigureAppConfiguration(IConfigurationBuilder configurationBuilder) {}
+    void ConfigureServices(IServiceCollection serviceCollection) {}
 }
