@@ -40,18 +40,18 @@ public static class PluginHostExtensions
     {
         try
         {
-            Log.Information("Loading Plugin {0} from Assembly {1}...", pluginType.Name, pluginType.Assembly.GetName());
+            Log.Information("Loading Plugin {PluginTypeName} from Assembly {AssemblyName}...", pluginType.Name, pluginType.Assembly.GetName());
             if (Activator.CreateInstance(pluginType)
                 is not IPlugin pluginInstance)
             {
-                Log.Error("Error creating instance of {0}. Skip loading Plugin.", pluginType.Name);
+                Log.Error("Error creating instance of {PluginTypeName}. Skip loading Plugin", pluginType.Name);
                 return null;
             }
             return new PluginEntry(pluginType, pluginInstance);
         }
         catch (Exception e)
         {
-            Log.Error(e, "Error creating instance of {0}. Skip loading Plugin.", pluginType.Name);
+            Log.Error(e, "Error creating instance of {PluginTypeName}. Skip loading Plugin", pluginType.Name);
             return null;
         }
     }
@@ -63,12 +63,12 @@ public static class PluginHostExtensions
         {
             try
             {
-                Log.Debug("Configure for Plugin {0}", pluginEntry.PluginType.Name);
+                Log.Debug("Configure for Plugin {PluginTypeName}", pluginEntry.PluginType.Name);
                 pluginEntry.PluginInstance.ConfigureAppConfiguration(configurationBuilder);
             }
             catch (Exception e)
             {
-                Log.Error(e, "Error while running Configure on plugin {0}.", pluginEntry.PluginType.Name);
+                Log.Error(e, "Error while running Configure on plugin {PluginTypeName}", pluginEntry.PluginType.Name);
                 pluginHostContext.Entries.Remove(pluginEntry);
             }
         }
@@ -88,7 +88,7 @@ public static class PluginHostExtensions
     {
         try
         {
-            Log.Debug("ConfigureServices for Plugin {0}", pluginEntry.PluginType.Name);
+            Log.Debug("ConfigureServices for Plugin {PluginTypeName}", pluginEntry.PluginType.Name);
             pluginEntry.PluginInstance.ConfigureServices(services);
             
             var frameGeneratorType = pluginEntry.PluginType.Assembly
@@ -99,13 +99,13 @@ public static class PluginHostExtensions
             
             if (frameGeneratorType is null) return;
             
-            Log.Debug("Loading FrameGenerator {0} from Plugin {1}", frameGeneratorType.Name, pluginEntry.PluginType.Name);
+            Log.Debug("Loading FrameGenerator {FrameGeneratorTypeName} from Plugin {PluginTypeName}", frameGeneratorType.Name, pluginEntry.PluginType.Name);
             pluginEntry.FrameGeneratorType = frameGeneratorType;
             services.AddTransient(frameGeneratorType);
         }
         catch (Exception e)
         {
-            Log.Error(e, "Error while running ConfigureServices on plugin {0}.", pluginEntry.PluginType.Name);
+            Log.Error(e, "Error while running ConfigureServices on plugin {PluginTypeName}", pluginEntry.PluginType.Name);
         }
     }
 }

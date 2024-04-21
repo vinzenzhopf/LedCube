@@ -8,18 +8,18 @@ using Microsoft.Extensions.Logging;
 namespace LedCube.Plugins.Animation.SdfTest;
 
 public class SdfTestAnimation(IConfiguration configuration, ILogger<SdfTestAnimation> logger)
-    : FrameGeneratorBase
+    : IFrameGenerator
 {
-    public new static FrameGeneratorInfo Info => new("SDF Test Animation", "SDF Test.");
+    public static FrameGeneratorInfo Info => new("SDF Test Animation", "SDF Test.");
     
     private readonly IConfiguration _configuration = configuration;
     private readonly ILogger<SdfTestAnimation> _logger = logger;
 
-    public override TimeSpan? FrameTime { get; } = TimeSpan.FromMilliseconds(20);
+    public TimeSpan? FrameTime { get; } = TimeSpan.FromMilliseconds(20);
     
     private Sdf3D _sdf = Sdf.Core.Sdf.Void();
 
-    public override void Start(AnimationContext animationContext)
+    public void Start(AnimationContext animationContext)
     {
         animationContext.CubeData.Clear();
         _sdf = SetupSdf();
@@ -35,9 +35,11 @@ public class SdfTestAnimation(IConfiguration configuration, ILogger<SdfTestAnima
     }
     
 
-    public override void DrawFrame(FrameContext frameContext)
+    public void DrawFrame(FrameContext frameContext)
     {
         var elapsedTimeS = (float) frameContext.ElapsedTimeUs / 1_000_000;  
         frameContext.Buffer.Render(_sdf, elapsedTimeS, new SdfRenderOptions{Centered = true, Margin = 0.49f});
     }
+    
+    public void Dispose(){}
 }
