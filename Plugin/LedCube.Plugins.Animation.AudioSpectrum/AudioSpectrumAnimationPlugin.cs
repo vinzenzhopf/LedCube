@@ -6,14 +6,6 @@ namespace LedCube.Plugins.Animation.AudioSpectrum;
 
 public class AudioSpectrumAnimationPlugin : IPlugin
 {
-    public string Name => "Audio Spectrum Animation";
-    public string Description => "3D Audio Spectrum Visualizer Animation";
-    
-    public void ConfigureAppConfiguration(IConfigurationBuilder configurationBuilder)
-    {
-    }
-
-    public void ConfigureServices(IServiceCollection serviceCollection)
-    {
-    }
+    string IPlugin.Name => "Audio Spectrum Animation";
+    string IPlugin.Description => "3D Audio Spectrum Visualizer Animation";
 }

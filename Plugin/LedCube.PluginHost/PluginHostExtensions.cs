@@ -69,6 +69,11 @@ public static class PluginHostExtensions
             catch (Exception e)
             {
                 Log.Error(e, "Error while running Configure on plugin {PluginTypeName}", pluginEntry.PluginType.Name);
+                // If a plugin instance implements IDisposable, dispose any allocated resources
+                if (pluginEntry.PluginInstance is IDisposable disposable)
+                {
+                    disposable.Dispose();
+                }
                 pluginHostContext.Entries.Remove(pluginEntry);
             }
         }

@@ -6,14 +6,7 @@ namespace LedCube.Plugins.Animation.LedWalker;
 
 public class LedWalkerPlugin : IPlugin
 {
-    public string Name => "Led Walker Animation";
-    public string Description => "Walks one led through the cube.";
+    string IPlugin.Name => "Led Walker Animation";
+    string IPlugin.Description => "Walks one led through the cube.";
     
-    public void ConfigureAppConfiguration(IConfigurationBuilder configurationBuilder)
-    {
-    }
-
-    public void ConfigureServices(IServiceCollection serviceCollection)
-    {
-    }
 }
