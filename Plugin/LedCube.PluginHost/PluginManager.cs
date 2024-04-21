@@ -21,7 +21,7 @@ public class PluginManager(ILogger<PluginManager> logger, IPluginHostContext con
         {
             try
             {
-                var info = (FrameGeneratorInfo) typeInfo.GetProperty("Info")?.GetValue(null, null)!;
+                var info = (FrameGeneratorInfo) typeInfo.GetProperty(nameof(IFrameGenerator.Info))?.GetValue(null, null)!;
                 list.Add(new FrameGeneratorEntry(info, typeInfo));
             }
             catch (Exception e)

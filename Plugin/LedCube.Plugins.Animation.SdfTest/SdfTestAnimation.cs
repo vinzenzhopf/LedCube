@@ -40,6 +40,4 @@ public class SdfTestAnimation(IConfiguration configuration, ILogger<SdfTestAnima
         var elapsedTimeS = (float) frameContext.ElapsedTimeUs / 1_000_000;  
         frameContext.Buffer.Render(_sdf, elapsedTimeS, new SdfRenderOptions{Centered = true, Margin = 0.49f});
     }
-    
-    public void Dispose(){}
 }

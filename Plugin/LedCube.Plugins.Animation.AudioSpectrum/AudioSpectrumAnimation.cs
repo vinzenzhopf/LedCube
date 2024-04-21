@@ -23,6 +23,4 @@ public class AudioSpectrumAnimation(IConfiguration configuration, ILogger<AudioS
     {
         var elapsedTimeMs = (float) frameContext.ElapsedTimeUs / 1_000;  
     }
-    
-    public void Dispose(){}
 }

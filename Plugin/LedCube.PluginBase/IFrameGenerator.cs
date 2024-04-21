@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace LedCube.PluginBase;
 
-public interface IFrameGenerator : IDisposable
+public interface IFrameGenerator
 {
     static abstract FrameGeneratorInfo Info { get; }
 

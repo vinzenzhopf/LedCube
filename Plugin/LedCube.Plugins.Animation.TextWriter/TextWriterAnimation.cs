@@ -22,6 +22,4 @@ public class TextWriterAnimation(IConfiguration configuration, ILogger<TextWrite
     {
         var elapsedTimeMs = (float) frameContext.ElapsedTimeUs / 1_000;  
     }
-    
-    public void Dispose(){}
 }
