@@ -47,6 +47,4 @@ public class LedWalkerAnimation(IConfiguration configuration, ILogger<LedWalkerA
         _activeLedPos?.Dispose();
         _activeLedPos = null;
     }
-    
-    public void Dispose(){}
 }

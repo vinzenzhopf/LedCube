@@ -136,6 +136,4 @@ public class GameOfLifeAnimation(IOptions<GameOfLifeConfiguration> options, ILog
             }
         }
     }
-    
-    public void Dispose(){}
 }

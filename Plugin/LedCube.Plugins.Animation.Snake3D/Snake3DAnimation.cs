@@ -19,8 +19,8 @@ using Microsoft.Extensions.Options;
 
 namespace LedCube.Plugins.Animation.Snake3D;
 
-public class Snake3DAnimation(IOptions<Snake3DConfiguration> options, ILogger<Snake3DAnimation> logger)
-    : IFrameGenerator, IRecipient<KeyEventMessage>
+public sealed class Snake3DAnimation(IOptions<Snake3DConfiguration> options, ILogger<Snake3DAnimation> logger)
+    : IFrameGenerator, IRecipient<KeyEventMessage>, IDisposable
 {
     public new static FrameGeneratorInfo Info => new("Snake-3D", "3D Snake Game adaptation");
 
