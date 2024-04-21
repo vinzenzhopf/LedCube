@@ -9,16 +9,16 @@ using Microsoft.Extensions.Logging;
 namespace LedCube.Plugins.Animation.LedWalker;
 
 public class LedWalkerAnimation(IConfiguration configuration, ILogger<LedWalkerAnimation> logger)
-    : FrameGeneratorBase
+    : IFrameGenerator
 {
-    public new static FrameGeneratorInfo Info => new("Led Walker Animation", "Walks one led through the cube.");
-    public override TimeSpan? FrameTime { get; } = TimeSpan.FromMilliseconds(10);
+    public static FrameGeneratorInfo Info => new("Led Walker Animation", "Walks one led through the cube.");
+    public TimeSpan? FrameTime { get; } = TimeSpan.FromMilliseconds(10);
     
     private IEnumerator<Point3D>? _activeLedPos;
     private float _lastMove;
     private float _walkingSpeedMs = 1000.0f / 256; // 1 sec per Plane
     
-    public override void Start(AnimationContext animationContext)
+    public void Start(AnimationContext animationContext)
     { 
         _lastMove = (float) animationContext.ElapsedTimeUs / 1000.0f;
         animationContext.CubeData.Clear();
@@ -26,7 +26,7 @@ public class LedWalkerAnimation(IConfiguration configuration, ILogger<LedWalkerA
         _activeLedPos = new PositionGenerator3D(animationContext.CubeData.Size, true).GetEnumerator();
     }
 
-    public override void DrawFrame(FrameContext frameContext)
+    public void DrawFrame(FrameContext frameContext)
     {
         var elapsedTimeMs = (float) frameContext.ElapsedTimeUs / 1_000;  
         var lastMoveDiff = elapsedTimeMs - _lastMove;
@@ -42,9 +42,11 @@ public class LedWalkerAnimation(IConfiguration configuration, ILogger<LedWalkerA
         }
     }
 
-    public override void End(AnimationContext animationContext)
+    public void End(AnimationContext animationContext)
     {
         _activeLedPos?.Dispose();
         _activeLedPos = null;
     }
+    
+    public void Dispose(){}
 }

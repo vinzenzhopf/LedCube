@@ -6,23 +6,23 @@ using Microsoft.Extensions.Options;
 
 namespace LedCube.Plugins.Animation.GameOfLife;
 
-public class GameOfLifeAnimation(IOptions<GameOfLifeConfiguration> options, ILogger<GameOfLifeAnimation> logger) : FrameGeneratorBase
+public class GameOfLifeAnimation(IOptions<GameOfLifeConfiguration> options, ILogger<GameOfLifeAnimation> logger) : IFrameGenerator
 {
-    public new static FrameGeneratorInfo Info => new("CellularAutomata Animation", "Game of Life.");
+    public static FrameGeneratorInfo Info => new("CellularAutomata Animation", "Game of Life.");
 
     private readonly GameOfLifeConfiguration _configuration = options.Value;
-    public override TimeSpan? FrameTime { get; } = null;
+    public TimeSpan? FrameTime { get; } = null;
     private double _lastMove;
     private Random _random = Random.Shared;
 
-    public override void Start(AnimationContext animationContext)
+    public void Start(AnimationContext animationContext)
     {
         _random = new Random(_configuration.Seed);
         _lastMove = animationContext.ElapsedTimeUs / 1000;
         animationContext.CubeData.ForEach((_, _) => _random.NextDouble() < _configuration.InitialFill);
     }
 
-    public override void DrawFrame(FrameContext frameContext)
+    public void DrawFrame(FrameContext frameContext)
     {
         var elapsedTimeMs = (double)frameContext.ElapsedTimeUs / 1000;
         var lastMoveDiff = elapsedTimeMs - _lastMove;
@@ -136,4 +136,6 @@ public class GameOfLifeAnimation(IOptions<GameOfLifeConfiguration> options, ILog
             }
         }
     }
+    
+    public void Dispose(){}
 }

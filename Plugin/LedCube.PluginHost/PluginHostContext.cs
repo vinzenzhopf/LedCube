@@ -6,7 +6,7 @@ namespace LedCube.PluginHost;
 
 public class PluginHostContext : IPluginHostContext
 {
-    public List<PluginEntry> Entries { get; set; } = [];
+    public List<PluginEntry> Entries { get; init; } = [];
     
     public ImmutableList<IPluginEntry> EntriesImmutable => Entries.Cast<IPluginEntry>().ToImmutableList();
 }

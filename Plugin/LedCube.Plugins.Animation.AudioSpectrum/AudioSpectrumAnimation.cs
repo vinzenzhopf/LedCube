@@ -8,19 +8,21 @@ using Microsoft.Extensions.Logging;
 namespace LedCube.Plugins.Animation.AudioSpectrum;
 
 public class AudioSpectrumAnimation(IConfiguration configuration, ILogger<AudioSpectrumAnimation> logger)
-    : FrameGeneratorBase
+    : IFrameGenerator
 {
-    public new static FrameGeneratorInfo Info => new("Audio Spectrum", "Audio Spectrum Visualizer");
+    public static FrameGeneratorInfo Info => new("Audio Spectrum", "Audio Spectrum Visualizer");
 
-    public override TimeSpan? FrameTime { get; } = TimeSpan.FromMilliseconds(10);
+    public TimeSpan? FrameTime { get; } = TimeSpan.FromMilliseconds(10);
 
-    public override void Start(AnimationContext animationContext)
+    public void Start(AnimationContext animationContext)
     {
         animationContext.CubeData.Clear();
     }
 
-    public override void DrawFrame(FrameContext frameContext)
+    public void DrawFrame(FrameContext frameContext)
     {
         var elapsedTimeMs = (float) frameContext.ElapsedTimeUs / 1_000;  
     }
+    
+    public void Dispose(){}
 }

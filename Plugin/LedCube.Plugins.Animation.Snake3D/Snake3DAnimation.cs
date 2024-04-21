@@ -20,7 +20,7 @@ using Microsoft.Extensions.Options;
 namespace LedCube.Plugins.Animation.Snake3D;
 
 public class Snake3DAnimation(IOptions<Snake3DConfiguration> options, ILogger<Snake3DAnimation> logger)
-    : FrameGeneratorBase, IRecipient<KeyEventMessage>
+    : IFrameGenerator, IRecipient<KeyEventMessage>
 {
     public new static FrameGeneratorInfo Info => new("Snake-3D", "3D Snake Game adaptation");
 
@@ -37,21 +37,20 @@ public class Snake3DAnimation(IOptions<Snake3DConfiguration> options, ILogger<Sn
     
     private Random _random = Random.Shared;
     
-    public override TimeSpan? FrameTime { get; } = TimeSpan.FromMilliseconds(20);
+    public TimeSpan? FrameTime { get; } = TimeSpan.FromMilliseconds(20);
 
-    public override void Dispose()
+    public void Dispose()
     {
         WeakReferenceMessenger.Default.UnregisterAll(this);
-        base.Dispose();
     }
 
-    public override Task InitializeAsync(CancellationToken token)
+    public Task InitializeAsync(CancellationToken token)
     {
         WeakReferenceMessenger.Default.Register(this);
-        return base.InitializeAsync(token);
+        return Task.CompletedTask;
     }
 
-    public override void Start(AnimationContext animationContext)
+    public void Start(AnimationContext animationContext)
     {
         _size = animationContext.CubeData.Size;
         animationContext.CubeData.Clear();
@@ -66,7 +65,7 @@ public class Snake3DAnimation(IOptions<Snake3DConfiguration> options, ILogger<Sn
         _gameSpeed = 1;
     }
     
-    public override void DrawFrame(FrameContext frameContext)
+    public void DrawFrame(FrameContext frameContext)
     {
         var elapsedTimeMs = (float) frameContext.ElapsedTimeUs / 1_000;
         var lastMoveDiff = elapsedTimeMs - _lastMove;
