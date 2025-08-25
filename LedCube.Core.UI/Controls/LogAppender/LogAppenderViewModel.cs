@@ -4,8 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 
 namespace LedCube.Core.UI.Controls.LogAppender;
 
-[ObservableObject]
-public partial class LogAppenderViewModel
+public partial class LogAppenderViewModel : ObservableObject
 {
     [ObservableProperty]
     private bool _showLog = true;

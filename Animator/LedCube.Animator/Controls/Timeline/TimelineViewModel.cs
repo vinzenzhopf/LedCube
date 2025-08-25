@@ -2,8 +2,7 @@
 
 namespace LedCube.Animator.Controls.Timeline;
 
-[ObservableObject]
-public partial class TimelineViewModel
+public partial class TimelineViewModel : ObservableObject
 {
     private double _length;
     private double _position;

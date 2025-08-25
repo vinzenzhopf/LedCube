@@ -3,8 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace LedCube.Core.UI.Controls.AnimationInstanceList;
 
-[ObservableObject]
-public partial class AnimationInstanceViewModel
+public partial class AnimationInstanceViewModel : ObservableObject
 {
     [ObservableProperty]
     private AnimationViewModel _animation;

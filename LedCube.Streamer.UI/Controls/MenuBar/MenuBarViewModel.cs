@@ -4,8 +4,7 @@ using LedCube.Core.UI.Controls.LogAppender;
 
 namespace LedCube.Streamer.UI.Controls.MenuBar;
 
-[ObservableObject]
-public partial class MenuBarViewModel
+public partial class MenuBarViewModel : ObservableObject
 {
     public LogAppenderViewModel AppenderViewModel { get; }
 

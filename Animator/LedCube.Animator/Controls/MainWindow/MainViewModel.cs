@@ -6,8 +6,7 @@ using LedCube.Core.Common;
 
 namespace LedCube.Animator.Controls.MainWindow;
 
-[ObservableObject]
-public partial class MainViewModel
+public partial class MainViewModel : ObservableObject
 {
     private readonly AppInfo _appInfo;
     public LogAppenderViewModel LogAppenderViewModel { get; }

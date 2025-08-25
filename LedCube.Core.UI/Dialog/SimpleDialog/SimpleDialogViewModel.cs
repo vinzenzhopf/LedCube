@@ -4,8 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 
 namespace LedCube.Core.UI.Dialog.SimpleDialog;
 
-[ObservableObject]
-public partial class SimpleDialogViewModel
+public partial class SimpleDialogViewModel : ObservableObject
 {
     [ObservableProperty]
     private string _title;

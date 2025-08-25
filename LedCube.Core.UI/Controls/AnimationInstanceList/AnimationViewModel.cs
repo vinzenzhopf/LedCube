@@ -4,8 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace LedCube.Core.UI.Controls.AnimationInstanceList;
 
-[ObservableObject]
-public partial class AnimationViewModel
+public partial class AnimationViewModel : ObservableObject
 {
     public const int DYMANIC_FRAME_COUNT = -1;
     

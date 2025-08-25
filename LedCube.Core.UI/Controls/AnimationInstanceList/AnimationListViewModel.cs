@@ -12,8 +12,7 @@ using Microsoft.Extensions.Logging;
 
 namespace LedCube.Core.UI.Controls.AnimationInstanceList;
 
-[ObservableObject]
-public partial class AnimationListViewModel
+public partial class AnimationListViewModel : ObservableObject
 {
     private readonly IPlaybackService _playbackService;
     private readonly IPluginManager _pluginManager;

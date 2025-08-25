@@ -6,8 +6,7 @@ using LedCube.Animator.Messages;
 
 namespace LedCube.Animator.Controls.MenuBar;
 
-[ObservableObject]
-public partial class MenuBarViewModel
+public partial class MenuBarViewModel : ObservableObject
 {
     public LogAppenderViewModel AppenderViewModel { get; }
 

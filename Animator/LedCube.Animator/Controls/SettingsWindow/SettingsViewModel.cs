@@ -6,8 +6,7 @@ using LedCube.Core.Common.Settings;
 
 namespace LedCube.Animator.Controls.SettingsWindow;
 
-[ObservableObject]
-public partial class SettingsViewModel
+public partial class SettingsViewModel : ObservableObject
 {
     private readonly ISettingsProvider<LedCubeAnimatorSettings> _settingsProvider;
 

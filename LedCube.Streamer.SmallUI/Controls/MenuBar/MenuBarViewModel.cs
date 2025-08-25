@@ -3,8 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 
 namespace LedCube.Streamer.SmallUI.Controls.MenuBar;
 
-[ObservableObject]
-public partial class MenuBarViewModel
+public partial class MenuBarViewModel : ObservableObject
 {
     // public LogAppenderViewModel AppenderViewModel { get; }
 

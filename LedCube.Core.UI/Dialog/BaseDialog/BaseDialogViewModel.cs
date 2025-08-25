@@ -6,8 +6,7 @@ using CommunityToolkit.Mvvm.Input;
 
 namespace LedCube.Core.UI.Dialog.BaseDialog;
 
-[ObservableObject]
-public partial class BaseDialogViewModel<T> where T : BaseDialogMessage
+public partial class BaseDialogViewModel<T> : ObservableObject where T : BaseDialogMessage
 {
     [ObservableProperty]
     private string _title;
