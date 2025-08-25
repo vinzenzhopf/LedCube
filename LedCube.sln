@@ -64,9 +64,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LedCube.Plugins.Animation.A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LedCube.Plugins.Animation.TextWriter", "Plugin\LedCube.Plugins.Animation.TextWriter\LedCube.Plugins.Animation.TextWriter.csproj", "{3EC4F7B6-164B-45B8-89D8-49723AB89C80}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Global", "Global", "{8FE210AA-5283-420A-915E-4B98212458F1}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_SolutionItems", "_SolutionItems", "{8FE210AA-5283-420A-915E-4B98212458F1}"
 	ProjectSection(SolutionItems) = preProject
 		Directory.Packages.props = Directory.Packages.props
+		.gitignore = .gitignore
+		readme.md = readme.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LedCube.Plugins.Animation.GameOfLife", "Plugin\LedCube.Plugins.Animation.GameOfLife\LedCube.Plugins.Animation.GameOfLife.csproj", "{D613FED2-986F-4A2F-AF55-8B3701285A24}"

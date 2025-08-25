@@ -12,7 +12,6 @@ using LedCube.Core.Common.Model;
 using LedCube.Core.Common.Model.Cube;
 using LedCube.Core.UI.Messages;
 using Microsoft.Extensions.Logging;
-using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace LedCube.Core.UI.Controls.CubeView2D;
 
