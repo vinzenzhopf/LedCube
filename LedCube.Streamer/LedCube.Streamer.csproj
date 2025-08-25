@@ -1,33 +1,25 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
-        
+        <TargetFramework>net9.0</TargetFramework>
         <Nullable>enable</Nullable>
     </PropertyGroup>
-
-
+    
     <ItemGroup>
       <PackageReference Include="CommunityToolkit.Mvvm" />
       <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
       <PackageReference Include="Microsoft.Extensions.Logging" />
       <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
     </ItemGroup>
-
-
+    
     <ItemGroup>
-      <Reference Include="LedCube.Streamer">
-        <HintPath>..\LedCube.Streamer.Test\bin\Debug\net7.0\LedCube.Streamer.dll</HintPath>
-      </Reference>
       <Reference Include="PresentationFramework" />
     </ItemGroup>
-
-
+    
     <ItemGroup>
       <Folder Include="Styles\" />
     </ItemGroup>
-
-
+    
     <ItemGroup>
       <ProjectReference Include="..\LedCube.Core.Common\LedCube.Core.Common.csproj" />
     </ItemGroup>
