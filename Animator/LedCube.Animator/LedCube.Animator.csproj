@@ -38,6 +38,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Controls\Timeline\" />
       <Folder Include="Converter" />
     </ItemGroup>
 

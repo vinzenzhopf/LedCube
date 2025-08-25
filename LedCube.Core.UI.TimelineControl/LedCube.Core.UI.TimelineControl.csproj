@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0-windows</TargetFramework>
+        <LangVersion>latest</LangVersion>
+        <Nullable>enable</Nullable>
+        <UseWpf>true</UseWpf>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Reference Include="PresentationFramework" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="CommunityToolkit.Mvvm" />
+        <PackageReference Include="MahApps.Metro" />
+        <PackageReference Include="MahApps.Metro.IconPacks" />
+        <PackageReference Include="MahApps.Metro.IconPacks.FontAwesome" />
+    </ItemGroup>
+
+</Project>

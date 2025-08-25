@@ -1,0 +1,27 @@
+﻿<controls:UserControl
+    x:Class="LedCube.Core.UI.TimelineControl.Timeline"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:controls="clr-namespace:System.Windows.Controls;assembly=PresentationFramework"
+    mc:Ignorable="d"
+    d:DesignHeight="80" d:DesignWidth="400">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <ScrollViewer x:Name="PART_ScrollViewer" Grid.Row="0" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" CanContentScroll="False">
+            <Grid>
+                <Canvas x:Name="PART_TimelineCanvas" Height="60" Background="Transparent" IsHitTestVisible="False"/>
+                <Canvas x:Name="PART_MarkersCanvas" Height="60" Background="Transparent" IsHitTestVisible="False"/>
+                <Canvas x:Name="PART_OverlayCanvas" Height="60" Background="Transparent" Focusable="True"
+                        ToolTipService.InitialShowDelay="0" ToolTipService.ShowDuration="60000" ToolTipService.BetweenShowDelay="0"/>
+            </Grid>
+        </ScrollViewer>
+        <Grid Grid.Row="1" Height="20">
+            <Canvas x:Name="PART_LegendCanvas" Height="20" IsHitTestVisible="False"/>
+        </Grid>
+    </Grid>
+</controls:UserControl>
