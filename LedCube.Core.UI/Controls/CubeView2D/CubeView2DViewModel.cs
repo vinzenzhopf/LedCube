@@ -16,8 +16,7 @@ using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace LedCube.Core.UI.Controls.CubeView2D;
 
-[ObservableObject]
-public partial class CubeView2DViewModel
+public partial class CubeView2DViewModel : ObservableObject
 {
     private ILogger Logger { get; }
     

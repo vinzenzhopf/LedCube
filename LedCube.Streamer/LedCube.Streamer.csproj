@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFramework>net9.0</TargetFramework>
         
         <Nullable>enable</Nullable>
     </PropertyGroup>
@@ -17,7 +17,7 @@
 
     <ItemGroup>
       <Reference Include="LedCube.Streamer">
-        <HintPath>..\LedCube.Streamer.Test\bin\Debug\net7.0\LedCube.Streamer.dll</HintPath>
+        <HintPath>..\LedCube.Streamer.Test\bin\Debug\net9.0\LedCube.Streamer.dll</HintPath>
       </Reference>
       <Reference Include="PresentationFramework" />
     </ItemGroup>

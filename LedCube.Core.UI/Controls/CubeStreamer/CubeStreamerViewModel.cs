@@ -18,8 +18,7 @@ using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace LedCube.Core.UI.Controls.CubeStreamer;
 
-[ObservableObject]
-public partial class CubeStreamerViewModel
+public partial class CubeStreamerViewModel : ObservableObject
 {
     private ILogger Logger { get; }
     

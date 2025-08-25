@@ -8,6 +8,7 @@
                  xmlns:logAppender="clr-namespace:LedCube.Animator.Controls.LogAppender"
                  xmlns:mainWindow="clr-namespace:LedCube.Animator.Controls.MainWindow"
                  xmlns:menuBar="clr-namespace:LedCube.Animator.Controls.MenuBar"
+                 xmlns:timeline="clr-namespace:LedCube.Animator.Controls.Timeline"
                  mc:Ignorable="d"
                  Title="{Binding TitleText}" Height="600" Width="1000"
                  d:DataContext="{d:DesignInstance mainWindow:MainViewModel, IsDesignTimeCreatable=True}">
@@ -41,9 +42,11 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <TextBox Grid.Row="0" AcceptsReturn="True" Background="CornflowerBlue">This is the main 3d Content to show the Cube!</TextBox>
-                <Grid Grid.Row="1"
+                <timeline:TimelineControl Grid.Row="1" MinHeight="60"/>
+                <Grid Grid.Row="2"
                       Visibility="{Binding LogAppenderViewModel.ShowLog, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <Grid.RowDefinitions>
                         <RowDefinition />
