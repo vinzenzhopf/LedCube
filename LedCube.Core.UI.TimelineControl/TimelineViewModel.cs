@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace LedCube.Animator.Controls.Timeline;
+namespace LedCube.Core.UI.TimelineControl;
 
 public partial class TimelineViewModel : ObservableObject
 {
