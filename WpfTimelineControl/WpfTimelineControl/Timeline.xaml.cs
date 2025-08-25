@@ -202,6 +202,7 @@ public partial class Timeline : UserControl
         
         MouseMove += Timeline_MouseMove;
         MouseLeftButtonUp += Timeline_MouseLeftButtonUp;
+        PreviewMouseWheel += Timeline_OnPreviewMouseWheel;
     }
     
     private void RefreshElements()
@@ -238,6 +239,37 @@ public partial class Timeline : UserControl
         
         var halfWidth = element.ActualWidth / 2;
         Canvas.SetLeft(element, UnitWidth * element.Position - halfWidth);
+    }
+
+    /// <summary>
+    /// Creates and returns a marker element at the given position.
+    /// </summary>
+    public TimelineElementBase CreateMarker(int position)
+    {
+        var element = new TimelineElementBase()
+        {
+            Position = position,
+            Height = 100
+        };
+        element.MouseLeftButtonDown += TimelineElement_MouseLeftButtonDown;
+        Elements.Add(element);
+        MainCanvas.Children.Add(element);
+        Canvas.SetTop(element, _elementTop);
+        var halfWidth = element.ActualWidth / 2;
+        Canvas.SetLeft(element, UnitWidth * element.Position - halfWidth);
+        return element;
+    }
+
+    /// <summary>
+    /// Removes a marker/element from the timeline visual tree and collection.
+    /// </summary>
+    public void RemoveElement(TimelineElementBase element)
+    {
+        if (element is null) return;
+        if (Elements.Contains(element))
+            Elements.Remove(element);
+        if (MainCanvas.Children.Contains(element))
+            MainCanvas.Children.Remove(element);
     }
 
     /// <summary>
@@ -319,6 +351,38 @@ public partial class Timeline : UserControl
         RecalculateWidth();
         RecalculateHeight();
     }
+
+    /// <summary>
+    /// Converts an X coordinate (relative to this control) to the nearest frame value.
+    /// Accounts for horizontal scroll and canvas margins.
+    /// </summary>
+    public int GetFrameFromPoint(double x)
+    {
+        var xRelative = x + ScrollHost.HorizontalOffset - MainCanvas.Margin.Left;
+        var frame = StartValue + (int)Math.Round(xRelative / UnitWidth);
+        if (frame < StartValue) frame = StartValue;
+        if (frame > EndValue) frame = EndValue;
+        return frame;
+    }
+
+    /// <summary>
+    /// Sets the element's logical position and snaps it visually to the grid.
+    /// </summary>
+    public void SetElementPosition(TimelineElementBase element, int position)
+    {
+        if (element is null) return;
+        if (position < StartValue) position = StartValue;
+        if (position > EndValue) position = EndValue;
+        element.Position = position;
+        var halfWidth = element.ActualWidth / 2;
+        Canvas.SetLeft(element, UnitWidth * position - halfWidth);
+        Canvas.SetTop(element, _elementTop);
+    }
+
+    /// <summary>
+    /// Exposes the current unit width (pixels per frame unit).
+    /// </summary>
+    public double UnitWidthValue => UnitWidth;
 
     private void RecalculateWidth()
     {
@@ -414,5 +478,26 @@ public partial class Timeline : UserControl
             return;
         _draggedElement.OnMouseLeftButtonUp(sender, e);
         _draggedElement = null;
+    }
+
+    private void Timeline_OnPreviewMouseWheel(object sender, MouseWheelEventArgs e)
+    {
+        if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
+        {
+            var zoomFactor = e.Delta > 0 ? 1.1 : 0.9;
+            var newScale = Scale * zoomFactor;
+            if (newScale < 0.1) newScale = 0.1;
+            if (newScale > 10.0) newScale = 10.0;
+            Scale = newScale;
+            e.Handled = true;
+        }
+        else
+        {
+            var newOffset = ScrollHost.HorizontalOffset - e.Delta; // delta: +120 up, -120 down
+            if (newOffset < 0) newOffset = 0;
+            if (newOffset > ScrollHost.ScrollableWidth) newOffset = ScrollHost.ScrollableWidth;
+            ScrollHost.ScrollToHorizontalOffset(newOffset);
+            e.Handled = true;
+        }
     }
 }

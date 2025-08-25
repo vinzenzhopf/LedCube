@@ -61,5 +61,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\\..\\LedCube.Core.Common\\LedCube.Core.Common.csproj" />
+      <ProjectReference Include="..\\..\\WpfTimelineControl\\WpfTimelineControl\\WpfTimelineControl.csproj" />
     </ItemGroup>
 </Project>

@@ -1,3 +1,5 @@
+using Xunit;
+
 namespace WpfTimelineControl.Test;
 
 public class UnitTest1
