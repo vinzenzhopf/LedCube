@@ -12,8 +12,16 @@ using LedCube.Core.UI.Controls.CubeView2D;
 using LedCube.Core.UI.Controls.LogAppender;
 using LedCube.Core.UI.Controls.PlaybackControl;
 using LedCube.Core.UI.Controls.StreamingControl;
+using LedCube.Core.UI.Dialog.BroadcastSearchDialog;
+using LedCube.Core.UI.Dialog.EditAnimationInstanceDialog;
+using LedCube.Core.UI.Dialog.SelectAnimationDialog;
+using LedCube.Core.UI.Services;
+using LedCube.PluginHost;
+using LedCube.Streamer.CubeStreamer;
+using LedCube.Streamer.UdpCom;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Extensions.Logging;
@@ -25,75 +33,94 @@ namespace LedCube.Streamer.UI;
 /// </summary>
 public partial class App : Application
 {
-    private ServiceProvider? _serviceProvider;
-    private IConfigurationRoot? _configurationRoot;
+    private IHost? _host;
+    private readonly PluginHostContext _pluginHostContext = new();
 
     protected override void OnStartup(StartupEventArgs e)
     {
-        var basePath = Directory.GetCurrentDirectory();
 #if DEBUG
         const bool debugBuild = true;
 #else
-            const bool debugBuild = false;
+        const bool debugBuild = false;
 #endif
-            
-        //Initialize Configuration and AppSettings
-        _configurationRoot = new ConfigurationBuilder()
-            .SetBasePath(basePath)
-            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-            .AddEnvironmentVariables()
-            .AddCommandLine(e.Args)
+
+        _pluginHostContext.Initialize();
+
+        Log.Verbose("Starting HostBuilder built...");
+        _host = new HostBuilder()
+            .ConfigureAppConfiguration((context, configurationBuilder) =>
+            {
+                configurationBuilder.SetBasePath(context.HostingEnvironment.ContentRootPath);
+                configurationBuilder.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+                configurationBuilder.AddEnvironmentVariables();
+                configurationBuilder.AddCommandLine(e.Args);
+                configurationBuilder.ConfigurePluginHost(_pluginHostContext);
+            })
+            .ConfigureLogging((context, loggingBuilder) =>
+            {
+                var logFile = context.Configuration.GetValue<string>("LogFile") ?? "LedCube.Steamer.UI.log";
+                var logAppenderControlSink = new LogAppenderControlSink();
+                var logger = new LoggerConfiguration()
+                    .Enrich.WithThreadId()
+                    .Enrich.FromLogContext()
+                    .MinimumLevel.Debug()
+                    .WriteTo.File(logFile)
+                    .WriteTo.Debug()
+                    .WriteTo.LogAppenderControlSink(logAppenderControlSink)
+                    .CreateLogger();
+                Log.Logger = logger;
+                var loggerFactory = new SerilogLoggerFactory(logger, false);
+                Log.Verbose("Logger initialized. Logging to {0}", logFile);
+
+                loggingBuilder.AddSerilog(logger, true);
+                loggingBuilder.Services.AddSingleton<Serilog.ILogger>(logger);
+                loggingBuilder.Services.AddSingleton<ILoggerFactory>(loggerFactory);
+                loggingBuilder.Services.AddSingleton(logAppenderControlSink);
+            })
+            .ConfigureServices((context, services) =>
+            {
+                //Initialize UserSettings
+                var settingsFile = context.Configuration.GetValue<string>("SettingsFile") ?? "LedCube.Streamer.UI.json";
+                var settingsProvider = new SettingsProvider<LedCubeStreamerSettings>("LedCube", settingsFile);
+                settingsProvider.Load(LedCubeStreamerSettings.Default);
+
+                var assembly = Assembly.GetExecutingAssembly();
+                var appInfo = new AppInfo(
+                    assembly.GetName().Version!.ToString(),
+                    GetLinkerTime(assembly),
+                    debugBuild
+                );
+
+                services.AddSingleton(appInfo);
+
+                // services.AddSingleton<IConfiguration>(_configurationRoot);
+                services.AddSingleton<ISettingsProvider<LedCubeStreamerSettings>>(settingsProvider);
+                services.AddSingleton<ISettings<LedCubeStreamerSettings>>(settingsProvider);
+                services.AddSingleton<ICubeConfigRepository>(settingsProvider.Settings);
+                services.AddSingleton<LogAppenderViewModel>();
+                // services.AddSingleton<NavigationController>();
+
+                services.SetupPluginHost(_pluginHostContext);
+
+                ConfigureServices(services);
+            })
             .Build();
-            
-        //Initialize Logger
-        var logFile = _configurationRoot.GetValue<string>("LogFile") ?? "LedCube.Animator.log";
-        var logAppenderControlSink = new LogAppenderControlSink();
-        var logger = new LoggerConfiguration()
-            .Enrich.WithThreadId()
-            .Enrich.FromLogContext()
-            .MinimumLevel.Verbose()
-            .WriteTo.File(logFile)
-            .WriteTo.Debug()
-            .WriteTo.LogAppenderControlSink(logAppenderControlSink)
-            .CreateLogger();
-        Log.Logger = logger;
-        var loggerFactory = new SerilogLoggerFactory(logger, true);
-            
-        Log.Verbose("Logger initialized. Logging to {0}", logFile);
+        Log.Verbose("HostBuilder built!");
 
-        //Initialize UserSettings
-        var settingsFile = _configurationRoot.GetValue<string>("SettingsFile") ?? "LedCube.Streamer.json";
-        var settingsProvider = new SettingsProvider<LedCubeStreamerSettings>("LedCube", settingsFile);
-        settingsProvider.Load(LedCubeStreamerSettings.Default);
-
-        var assembly = Assembly.GetExecutingAssembly();
-        var appInfo = new AppInfo(
-            assembly.GetName().Version!.ToString(),
-            GetLinkerTime(assembly),
-            debugBuild
-        );
-
-        //Build Service Collection
-        var services = new ServiceCollection();
-        services.AddSingleton(appInfo);
-        services.AddSingleton<ILoggerFactory>(loggerFactory);
-        services.AddSingleton<IConfiguration>(_configurationRoot);
-        services.AddSingleton<ISettingsProvider<LedCubeStreamerSettings>>(settingsProvider);
-        services.AddSingleton<ISettings<LedCubeStreamerSettings>>(settingsProvider);
-        services.AddSingleton<ICubeConfigRepository>(settingsProvider.Settings);
-        services.AddLogAppenderControlViewModel(logAppenderControlSink);
-        // services.AddSingleton<NavigationController>();
-        ConfigureServices(services);
-        _serviceProvider = services.BuildServiceProvider();
-        Log.Verbose("ServiceProvider built!");
-            
-            
         //Start Application
-        var mainWindow = _serviceProvider.GetService<Controls.MainWindow.MainWindow>();
+        var mainWindow = _host.Services.GetService<Controls.MainWindow.MainWindow>();
         Log.Information("Application started!");
         mainWindow!.Show();
     }
-        
+    
+    private async void Application_Exit(object sender, ExitEventArgs e)
+    {
+        using (_host)
+        {
+            await _host?.StopAsync(TimeSpan.FromSeconds(5))!;
+        }
+    }
+
     private void ConfigureServices(IServiceCollection services)
     {
         services.AddSingleton<ICubeRepository, CubeRepository>();
@@ -109,7 +136,37 @@ public partial class App : Application
         services.AddSingleton<AnimationList>();
         services.AddSingleton<PlaybackControlViewModel>();
         services.AddSingleton<PlaybackControl>();
+        
+        services.AddSingleton<CubeView2DViewModel>();
+        services.AddSingleton<CubeView2D>();
+        services.AddSingleton<StreamingControlViewModel>();
+        services.AddSingleton<StreamingControl>();
+        
+        // services.AddSingleton<AnimationTestViewModel>();
+        // services.AddSingleton<AnimationTest>();
             
+        // services.AddSingleton<BroadcastSearchDialogViewModel>();
+        // services.AddSingleton<SelectAnimationDialogViewModel>();
+        // services.AddSingleton<EditAnimationInstanceDialogViewModel>();
+
+        services.AddTransient<IUdpCubeCommunication, UdpCubeCubeCommunication>();
+        services.AddSingleton<ICubeStreamingStatusMutable, CubeStreamingStatus>();
+        services.AddSingleton<ICubeStreamingStatus>(p => p.GetService<ICubeStreamingStatusMutable>()!);
+        services.AddSingleton<CubeStreamingStatusViewModel>();
+        services.AddSingleton<CubeStreamerService>();
+        services.AddSingleton<ICubeStreamer>(p => p.GetService<CubeStreamerService>()!);
+        services.AddHostedService(p => p.GetService<CubeStreamerService>()!);
+        services.AddTransient<Func<IUdpCubeCommunication>>(
+            x => () => x.GetService<IUdpCubeCommunication>()!);
+        
+        services.AddSingleton<PlaybackService>();
+        services.AddSingleton<IPlaybackService>(p => p.GetService<PlaybackService>()!);
+        services.AddHostedService(p => p.GetService<PlaybackService>()!);
+        services.AddSingleton<AnimationListViewModel>();
+        services.AddSingleton<AnimationList>();
+        services.AddSingleton<PlaybackControlViewModel>();
+        services.AddSingleton<PlaybackControl>();
+        
         // services.AddTransient<Controls.SettingsWindow.SettingsViewModel>();
         // services.AddTransient<Controls.SettingsWindow.SettingsWindow>();
     }
