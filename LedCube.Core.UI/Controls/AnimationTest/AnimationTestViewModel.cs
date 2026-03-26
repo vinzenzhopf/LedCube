@@ -49,16 +49,15 @@ public partial class AnimationTestViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private Task SelectedAnimationChanged(CancellationToken token)
+    private async Task SelectedAnimationChanged(CancellationToken token)
     {
         if (SelectedAnimation is null)
-            return Task.CompletedTask;
+            return;
         var entry = _pluginManager.AllFrameGeneratorInfos()
             .FirstOrDefault(x => x.TypeInfo.Equals(SelectedAnimation.TypeInfo));
         if(entry is null)
-            return Task.CompletedTask;
-        _playbackService.UpdateFrameGenerator(entry, SelectedAnimation);
-        return Task.CompletedTask;
+            return;
+        await _playbackService.UpdateFrameGeneratorAsync(entry, SelectedAnimation, token);
     }
 
     [RelayCommand]

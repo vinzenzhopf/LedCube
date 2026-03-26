@@ -59,20 +59,36 @@ public partial class PlaybackService : BackgroundService, IPlaybackService
     [ObservableProperty]
     private TimeSpan _currentTime = TimeSpan.Zero;
 
-    public void UpdateFrameGenerator(FrameGeneratorEntry entry, AnimationViewModel animation)
+    public async Task UpdateFrameGeneratorAsync(FrameGeneratorEntry entry, AnimationViewModel animation, CancellationToken token)
     {
+        UnloadFrameGenerator();
+        
         FrameGeneratorEntry = entry;
         PlaybackState = PlaybackState.Stopped;
-        
-        _elapsedTicksUntilPause = 0;
-        _lastFrameTicks = 0;
-        _frameTicks = 0;
+        Animation = animation;
         
         _frameGenerator = _pluginManager.GetFrameGenerator(FrameGeneratorEntry);
         _cubeData = new CubeData<CubeDataBuffer16>();
         _cubeRepository.SetCubeData(_cubeData);
 
         _frameTime = _frameGenerator.FrameTime ?? TimeSpan.FromMilliseconds(1);
+        _updateTimer = null;
+
+        await _frameGenerator.InitializeAsync(token).ConfigureAwait(false);
+    }
+
+    private void UnloadFrameGenerator()
+    {
+        _elapsedTicksUntilPause = 0;
+        _lastFrameTicks = 0;
+        _frameTicks = 0;
+
+        Animation = null;
+        FrameGeneratorEntry = null;
+        PlaybackState = PlaybackState.Stopped;
+        
+        _frameGenerator?.Dispose();
+        _frameGenerator = null;
         _updateTimer = null;
     }
 
@@ -82,12 +98,14 @@ public partial class PlaybackService : BackgroundService, IPlaybackService
         _elapsedTicksUntilPause = 0;
         _updateTimer = new PeriodicTimer(_frameTime);
         _stopwatch.Restart();
-        
-        if (_cubeData is not null && _frameGenerator is not null)
+
+        if (_cubeData is null || _frameGenerator is null)
         {
-            var context = new AnimationContext(_frameTime, _stopwatch.ElapsedTicks + _elapsedTicksUntilPause, _cubeData);
-            _frameGenerator.Start(context);
+            return;
         }
+
+        var context = new AnimationContext(_frameTime, _stopwatch.ElapsedTicks + _elapsedTicksUntilPause, _cubeData);
+        _frameGenerator.Start(context);
     }
 
     public void ContinuePlayback()
@@ -95,12 +113,14 @@ public partial class PlaybackService : BackgroundService, IPlaybackService
         PlaybackState = PlaybackState.Playing;
         _updateTimer = new PeriodicTimer(_frameTime);
         _stopwatch.Restart();
-        
-        if (_cubeData is not null && _frameGenerator is not null)
+
+        if (_cubeData is null || _frameGenerator is null)
         {
-            var context = new AnimationContext(_frameTime, _stopwatch.ElapsedTicks + _elapsedTicksUntilPause, _cubeData);
-            _frameGenerator.Continue(context);
+            return;
         }
+
+        var context = new AnimationContext(_frameTime, _stopwatch.ElapsedTicks + _elapsedTicksUntilPause, _cubeData);
+        _frameGenerator.Continue(context);
     }
     
     public void StopPlayback()
@@ -110,12 +130,14 @@ public partial class PlaybackService : BackgroundService, IPlaybackService
         _updateTimer = null;
         _stopwatch.Stop();
         _elapsedTicksUntilPause = 0;
-        
-        if (_cubeData is not null && _frameGenerator is not null)
+
+        if (_cubeData is null || _frameGenerator is null)
         {
-            var context = new AnimationContext(_frameTime, _stopwatch.ElapsedTicks + _elapsedTicksUntilPause, _cubeData);
-            _frameGenerator.End(context);
+            return;
         }
+
+        var context = new AnimationContext(_frameTime, _stopwatch.ElapsedTicks + _elapsedTicksUntilPause, _cubeData);
+        _frameGenerator.End(context);
     }
 
     public void PausePlayback()
@@ -125,12 +147,14 @@ public partial class PlaybackService : BackgroundService, IPlaybackService
         _updateTimer = null;
         _stopwatch.Stop();
         _elapsedTicksUntilPause += _stopwatch.ElapsedTicks;
-        
-        if (_cubeData is not null && _frameGenerator is not null)
+
+        if (_cubeData is null || _frameGenerator is null)
         {
-            var context = new AnimationContext(_frameTime, _stopwatch.ElapsedTicks + _elapsedTicksUntilPause, _cubeData);
-            _frameGenerator.Pause(context);
+            return;
         }
+
+        var context = new AnimationContext(_frameTime, _stopwatch.ElapsedTicks + _elapsedTicksUntilPause, _cubeData);
+        _frameGenerator.Pause(context);
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
