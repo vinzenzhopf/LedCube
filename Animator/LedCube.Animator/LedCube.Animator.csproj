@@ -2,9 +2,10 @@
 
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <TargetFramework>net9.0-windows</TargetFramework>
+        <TargetFramework>net10.0-windows</TargetFramework>
         <UseWPF>true</UseWPF>
         <Nullable>enable</Nullable>
+        
     </PropertyGroup>
 
     <ItemGroup>
@@ -55,11 +56,11 @@
 
     <ItemGroup>
       <Reference Include="LedCube.Core">
-        <HintPath>..\..\LedCube.Streamer.AnimationTestUI\bin\Debug\net9.0-windows\LedCube.Core.dll</HintPath>
+        <HintPath>..\..\LedCube.Streamer.AnimationTestUI\bin\Debug\net7.0-windows\LedCube.Core.dll</HintPath>
       </Reference>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\\..\\LedCube.Core.Common\\LedCube.Core.Common.csproj" />
+      <ProjectReference Include="..\..\LedCube.Core.Common\LedCube.Core.Common.csproj" />
     </ItemGroup>
 </Project>

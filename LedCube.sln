@@ -81,6 +81,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfTimelineControl.Demo", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfTimelineControl.Test", "WpfTimelineControl\WpfTimelineControl.Test\WpfTimelineControl.Test.csproj", "{9AF13094-34A5-4413-A908-49896D3A6ABD}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{05EF5F70-13EA-441E-8EE5-2E6CFFAEF946}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		Directory.Packages.props = Directory.Packages.props
+		readme.md = readme.md
+		doc\Datagrams.md = doc\Datagrams.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
