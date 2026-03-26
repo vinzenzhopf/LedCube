@@ -87,7 +87,7 @@ public partial class PlaybackService : BackgroundService, IPlaybackService
         FrameGeneratorEntry = null;
         PlaybackState = PlaybackState.Stopped;
         
-        _frameGenerator?.Dispose();
+        (_frameGenerator as IDisposable)?.Dispose();
         _frameGenerator = null;
         _updateTimer = null;
     }
