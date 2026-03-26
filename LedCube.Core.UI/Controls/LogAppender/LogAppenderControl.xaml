@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:logAppender1="clr-namespace:LedCube.Core.UI.Controls.LogAppender"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:logging="clr-namespace:Microsoft.Extensions.Logging;assembly=Microsoft.Extensions.Logging.Abstractions"
              mc:Ignorable="d"
              d:DesignHeight="200" d:DesignWidth="500"
              d:DataContext="{d:DesignInstance logAppender1:LogAppenderViewModel, IsDesignTimeCreatable=True}">
@@ -19,6 +20,11 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
+        <ObjectDataProvider MethodName="GetValues" ObjectType="{x:Type logging:LogLevel}" x:Key="LogLevelProvider">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="logging:LogLevel" />
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
     </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -86,6 +92,9 @@
                                           Height="16"
                                           Kind="Delete"  />
             </Button>
+            <ComboBox ItemsSource="{Binding Source={StaticResource LogLevelProvider}}"
+                      SelectedItem="{Binding LogLevel}"
+                      Width="30"/>
         </StackPanel>
     </Grid>
 </UserControl>
