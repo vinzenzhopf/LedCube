@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
-             xmlns:menuBar="clr-namespace:LedCube.Streamer.UI.Controls.MenuBar;assembly=LedCube.Streamer.UI"
+             xmlns:menuBar="clr-namespace:LedCube.Streamer.AnimationTestUI.Controls.MenuBar"
              mc:Ignorable="d"
              d:DesignWidth="600"
              d:DataContext="{d:DesignInstance menuBar:MenuBarViewModel, IsDesignTimeCreatable=True}">

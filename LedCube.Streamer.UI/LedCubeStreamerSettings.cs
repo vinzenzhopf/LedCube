@@ -1,4 +1,4 @@
-﻿using System.Drawing;
+using System.Drawing;
 using LedCube.Core.Common.Config;
 using LedCube.Core.Common.Config.Config;
 
@@ -14,8 +14,8 @@ public record LedCubeStreamerSettings : ICubeConfigRepository
         {
             Name = "LedCube",
             Dimensions = new CubeDimensions() {
-                X = 8, 
-                Y = 8, 
+                X = 8,
+                Y = 8,
                 Z = 8,
             },
             StreamerSettings = new CubeStreamerSettings()

@@ -19,6 +19,7 @@
         <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" />
         <PackageReference Include="Microsoft.Extensions.Logging" />
         <PackageReference Include="Serilog" />
         <PackageReference Include="Serilog.Enrichers.Thread" />
@@ -30,8 +31,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\LedCube.Core.UI\LedCube.Core.UI.csproj" />
-      <ProjectReference Include="..\LedCube.Streamer\LedCube.Streamer.csproj" />
+        <ProjectReference Include="..\LedCube.Core.UI\LedCube.Core.UI.csproj" />
+        <ProjectReference Include="..\LedCube.Streamer\LedCube.Streamer.csproj" />
+        <ProjectReference Include="..\Plugin\LedCube.PluginHost\LedCube.PluginHost.csproj" />
     </ItemGroup>
 
     <ItemGroup>
@@ -46,5 +48,5 @@
         <SubType>Designer</SubType>
       </Page>
     </ItemGroup>
-    
+
 </Project>
