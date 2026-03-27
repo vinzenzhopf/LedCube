@@ -1,26 +1,26 @@
-﻿# LedCube.Animator App
+# LedCube.Animator App
 
-## Features
+## Planned Features
 
-- Timeline Control
-  - Support Play, Pause, Stop, Scrub through Animations
-  - Speed Up/Down Animations
-  - Allow Selection of Individual Frames
-  - Allow Selection of a Frame Range
-  - Support Major and Minor Tick Marks
-  - Support Marker for Information 
-    - For an edited Range with same Frames
-    - Or an Range between two Keyframes
-- Allow setting Keyframe with an antomation Transformation mode between them
-- Provide a 2D Selection Control where Leds and Groups of LEDs can be easily selected and manipulated
-  - Allow Selection of LEDs and Groups of LEDs with the mouse
-  - Enable one or multiple Layers at a time for editing
-- Provide a 3D Viewport Control where LEDs and Groups of LEDs can be easily manipulated and selected
-  - Allow Camera Control and optional different Perspective Views
-  - Allow Zooming and Panning of the Viewport
-  - Allow Selection of LEDs and Groups of LEDs with the mouse
-- Load Animations from a File
-- Save Animations to a File
-- Export Animations to a Raw animation file (Without dynamic Animations, that can be loaded by the LedCube.Player)
-- Allow Dynamic animation Building using a Rule/Boolean based system
-- Allow Dynamic Rules to be programmed with an integrated Editor & Interpreter (Python? Lua? JS?)
+- **Timeline**
+  - Play, Pause, Stop, Scrub, Speed Up/Down
+  - Select individual frames or a frame range
+  - Major and minor tick marks
+  - Markers for edited ranges and keyframe spans
+  - Set keyframes with an animation transformation mode between them
+
+- **2D Editor**
+  - Select and edit LEDs and groups with the mouse
+  - Enable one or multiple layers at a time
+
+- **3D Viewport**
+  - Camera control with multiple perspective views
+  - Zoom, pan, and select LEDs/groups with the mouse
+
+- **File I/O**
+  - Load and save animation files
+  - Export to raw animation format (baked, no dynamic animations) for LedCube.Player
+
+- **Dynamic Animations**
+  - Rule/Boolean-based animation system
+  - Integrated script editor and interpreter (Python / Lua / JS?)
