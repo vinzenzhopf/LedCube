@@ -35,9 +35,10 @@ public class SdfTestAnimation(IConfiguration configuration, ILogger<SdfTestAnima
     }
     
 
-    public void DrawFrame(FrameContext frameContext)
+    public DrawingResult DrawFrame(FrameContext frameContext)
     {
-        var elapsedTimeS = (float) frameContext.ElapsedTimeUs / 1_000_000;  
+        var elapsedTimeS = (float) frameContext.ElapsedTimeUs / 1_000_000;
         frameContext.Buffer.Render(_sdf, elapsedTimeS, new SdfRenderOptions{Centered = true, Margin = 0.49f});
+        return DrawingResult.Continue;
     }
 }

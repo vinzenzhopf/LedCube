@@ -26,13 +26,13 @@ public class LedWalkerAnimation(IConfiguration configuration, ILogger<LedWalkerA
         _activeLedPos = new PositionGenerator3D(animationContext.CubeData.Size, true).GetEnumerator();
     }
 
-    public void DrawFrame(FrameContext frameContext)
+    public DrawingResult DrawFrame(FrameContext frameContext)
     {
-        var elapsedTimeMs = (float) frameContext.ElapsedTimeUs / 1_000;  
+        var elapsedTimeMs = (float) frameContext.ElapsedTimeUs / 1_000;
         var lastMoveDiff = elapsedTimeMs - _lastMove;
         if (!(lastMoveDiff > _walkingSpeedMs))
         {
-            return;
+            return DrawingResult.Continue;
         }
 
         if (_activeLedPos?.MoveNext() is true)
@@ -40,6 +40,7 @@ public class LedWalkerAnimation(IConfiguration configuration, ILogger<LedWalkerA
             frameContext.Buffer.SetLed(_activeLedPos.Current, !frameContext.Buffer.GetLed(_activeLedPos.Current));
             _lastMove = elapsedTimeMs;
         }
+        return DrawingResult.Continue;
     }
 
     public void End(AnimationContext animationContext)

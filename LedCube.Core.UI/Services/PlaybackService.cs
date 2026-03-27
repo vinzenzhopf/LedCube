@@ -186,7 +186,12 @@ public partial class PlaybackService : BackgroundService, IPlaybackService
                     _elapsedTicks = _stopwatch.ElapsedTicks + _elapsedTicksUntilPause;
                     var context = new FrameContext(_frameTime, _lastFrameTime, 
                         (ulong)StopwatchUtil.TicksToMicroseconds(_elapsedTicks), _cubeData);
-                    _frameGenerator.DrawFrame(context);
+                    var result = _frameGenerator.DrawFrame(context);
+                    if (result == DrawingResult.Finished)
+                    {
+                        _logger.LogInformation("Animation signalled finished.");
+                        StopPlayback();
+                    }
                     await _updateTimer.WaitForNextTickAsync(stoppingToken).ConfigureAwait(false);
                 }
             }

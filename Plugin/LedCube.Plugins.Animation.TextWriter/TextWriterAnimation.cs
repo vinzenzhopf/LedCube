@@ -18,8 +18,9 @@ public class TextWriterAnimation(IConfiguration configuration, ILogger<TextWrite
         animationContext.CubeData.Clear();
     }
 
-    public void DrawFrame(FrameContext frameContext)
+    public DrawingResult DrawFrame(FrameContext frameContext)
     {
-        var elapsedTimeMs = (float) frameContext.ElapsedTimeUs / 1_000;  
+        var elapsedTimeMs = (float) frameContext.ElapsedTimeUs / 1_000;
+        return DrawingResult.Continue;
     }
 }

@@ -22,18 +22,19 @@ public class GameOfLifeAnimation(IOptions<GameOfLifeConfiguration> options, ILog
         animationContext.CubeData.ForEach((_, _) => _random.NextDouble() < _configuration.InitialFill);
     }
 
-    public void DrawFrame(FrameContext frameContext)
+    public DrawingResult DrawFrame(FrameContext frameContext)
     {
         var elapsedTimeMs = (double)frameContext.ElapsedTimeUs / 1000;
         var lastMoveDiff = elapsedTimeMs - _lastMove;
         if (!(lastMoveDiff > _configuration.FrameTime.TotalMilliseconds))
         {
-            return;
+            return DrawingResult.Continue;
         }
 
         RunCellularAutomata(frameContext.Buffer);
         _lastMove = elapsedTimeMs;
         logger.LogInformation("New Frame at: {0}ms", elapsedTimeMs);
+        return DrawingResult.Continue;
     }
 
     private void RunCellularAutomata(ICubeData frameContextBuffer)

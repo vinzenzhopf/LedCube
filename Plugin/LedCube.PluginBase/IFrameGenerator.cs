@@ -21,7 +21,7 @@ public interface IFrameGenerator
     /// Called every cycle to draw a new Frame.
     /// </summary>
     /// <param name="frameContext">Context of the Current Frame, with timing and drawing informations.</param>
-    void DrawFrame(FrameContext frameContext);
+    DrawingResult DrawFrame(FrameContext frameContext);
 
     /// <summary>
     /// Called when the Animation has been started.

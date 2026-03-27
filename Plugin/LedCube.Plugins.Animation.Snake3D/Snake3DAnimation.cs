@@ -65,7 +65,7 @@ public sealed class Snake3DAnimation(IOptions<Snake3DConfiguration> options, ILo
         _gameSpeed = 1;
     }
     
-    public void DrawFrame(FrameContext frameContext)
+    public DrawingResult DrawFrame(FrameContext frameContext)
     {
         var elapsedTimeMs = (float) frameContext.ElapsedTimeUs / 1_000;
         var lastMoveDiff = elapsedTimeMs - _lastMove;
@@ -87,6 +87,7 @@ public sealed class Snake3DAnimation(IOptions<Snake3DConfiguration> options, ILo
             RenderGameFrame(frameContext, elapsedTimeMs);
             _lastFrame = elapsedTimeMs;
         }
+        return DrawingResult.Continue;
     }
 
     private void UpdateGameMove(float elapsedTimeMs)
