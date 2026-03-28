@@ -68,7 +68,7 @@ public class TimelineLayoutTests
     [Theory]
     [InlineData(10, 0, 100, 5.0, 1)]  // 5.0 / 10 = 0.5 -> rounds to 0 (banker's rounding) or 1; Math.Round uses MidpointRounding.ToEven
     [InlineData(10, 0, 100, 15.0, 2)] // 15.0 / 10 = 1.5 -> rounds to 2
-    [InlineData(10, 0, 100, 25.0, 2)] // 25.0 / 10 = 2.5 -> rounds to 2 (banker's)
+    [InlineData(10, 0, 100, 25.0, 3)] // 25.0 / 10 = 2.5 -> rounds to 3 (AwayFromZero)
     public void PixelToFrame_HalfwaySnapping(double zoom, double scroll, int total, double pixel, int expected)
     {
         var layout = Layout(zoom, scroll, total, viewport: 2000);

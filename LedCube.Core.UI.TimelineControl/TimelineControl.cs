@@ -383,22 +383,21 @@ public class TimelineControl : System.Windows.Controls.Control
     // Layout
     // ──────────────────────────────────────────────────────────────────────────
 
-    private static readonly double ControlHeight = TimelineRenderer.RulerHeight + TimelineRenderer.TrackHeight;
+    private static readonly double MinControlHeight = TimelineRenderer.RulerHeight + TimelineRenderer.DefaultTrackHeight;
 
     protected override Size MeasureOverride(Size availableSize)
     {
-        var desired = new Size(
-            double.IsInfinity(availableSize.Width) ? 0 : availableSize.Width,
-            ControlHeight);
-        _element?.Measure(desired);
-        return desired;
+        double w = double.IsInfinity(availableSize.Width) ? 0 : availableSize.Width;
+        double h = double.IsInfinity(availableSize.Height) ? MinControlHeight : Math.Max(MinControlHeight, availableSize.Height);
+        _element?.Measure(new Size(w, h));
+        return new Size(w, h);
     }
 
     protected override Size ArrangeOverride(Size finalSize)
     {
-        var rect = new Rect(0, 0, finalSize.Width, ControlHeight);
-        _element?.Arrange(rect);
-        return new Size(finalSize.Width, ControlHeight);
+        double h = Math.Max(MinControlHeight, finalSize.Height);
+        _element?.Arrange(new Rect(0, 0, finalSize.Width, h));
+        return new Size(finalSize.Width, h);
     }
 
     // ──────────────────────────────────────────────────────────────────────────
@@ -476,7 +475,7 @@ public class TimelineControl : System.Windows.Controls.Control
         if (_resources is null) return;
         var canvas = e.Surface.Canvas;
         canvas.Clear();
-        var layout = _state.BuildLayout(e.Info.Width);
+        var layout = _state.BuildLayout(e.Info.Width, e.Info.Height);
         TimelineRenderer.Draw(canvas, layout, _state, _activeDrag, _resources);
     }
 
@@ -521,7 +520,7 @@ public class TimelineControl : System.Windows.Controls.Control
         if (Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
         {
             // Zoom centred on cursor
-            var layout = _state.BuildLayout(ActualWidth);
+            var layout = _state.BuildLayout(ActualWidth, ActualHeight);
             double mouseX = e.GetPosition(this).X;
             int frameUnderCursor = layout.PixelToFrame(mouseX);
 
@@ -558,7 +557,7 @@ public class TimelineControl : System.Windows.Controls.Control
         if (_state.Mode != TimelineMode.Edit) return;
 
         var pos = e.GetPosition(this);
-        var layout = _state.BuildLayout(ActualWidth);
+        var layout = _state.BuildLayout(ActualWidth, ActualHeight);
         int frame = layout.PixelToFrame(pos.X);
         bool inRuler = pos.Y < TimelineRenderer.RulerHeight;
 
@@ -689,7 +688,7 @@ public class TimelineControl : System.Windows.Controls.Control
         if (_activeDrag is null) return;
 
         var pos = e.GetPosition(this);
-        var layout = _state.BuildLayout(ActualWidth);
+        var layout = _state.BuildLayout(ActualWidth, ActualHeight);
         int frame = layout.PixelToFrame(pos.X);
 
         _activeDrag.GhostFrame = frame;
@@ -737,7 +736,7 @@ public class TimelineControl : System.Windows.Controls.Control
         if (_activeDrag is null) return;
 
         var pos = e.GetPosition(this);
-        var layout = _state.BuildLayout(ActualWidth);
+        var layout = _state.BuildLayout(ActualWidth, ActualHeight);
         int frame = layout.PixelToFrame(pos.X);
 
         CommitDrag(frame);
@@ -812,7 +811,7 @@ public class TimelineControl : System.Windows.Controls.Control
     {
         if (_state.Mode != TimelineMode.Live) return;
 
-        var layout = _state.BuildLayout(ActualWidth);
+        var layout = _state.BuildLayout(ActualWidth, ActualHeight);
         double playheadPx = layout.FrameToPixel(_state.CurrentFrame);
 
         if (playheadPx < 0 || playheadPx > layout.ViewportWidth)

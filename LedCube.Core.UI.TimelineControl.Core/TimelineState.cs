@@ -125,12 +125,13 @@ public class TimelineState : INotifyPropertyChanged
 
     public ObservableCollection<MarkerBase> Markers { get; } = new();
 
-    public TimelineLayout BuildLayout(double viewportWidth) => new()
+    public TimelineLayout BuildLayout(double viewportWidth, double viewportHeight = 0) => new()
     {
         ZoomScale = _zoomScale,
         ScrollOffsetPx = _scrollOffsetPx,
         TotalFrames = _totalFrames,
-        ViewportWidth = viewportWidth
+        ViewportWidth = viewportWidth,
+        ViewportHeight = viewportHeight
     };
 
     private void ApplyFrameLimit(int newTotalFrames)

@@ -10,11 +10,17 @@ namespace LedCube.Core.UI.TimelineControl;
 public static class TimelineRenderer
 {
     public const float RulerHeight = 24f;
-    public const float TrackHeight = 48f;
+    public const float DefaultTrackHeight = 48f;
+    private const float MinTrackHeight = 20f;
 
     // Triangle handle half-width and height for loop/marker handles
-    private const float HandleHalfWidth = 5f;
-    private const float HandleHeight = 7f;
+    private const float HandleHalfWidth = 8f;
+    private const float HandleHeight = 11f;
+
+    // Flag label banner dimensions
+    private const float FlagPadX = 4f;
+    private const float FlagHeight = 13f;
+    private const float FlagY = 1f;
 
     // Major tick label: minimum pixel spacing before choosing a wider interval
     private static readonly int[] MajorTickIntervals = { 1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000 };
@@ -26,16 +32,19 @@ public static class TimelineRenderer
         DragOperation? activeDrag,
         RenderResources res)
     {
-        float totalHeight = RulerHeight + TrackHeight;
+        float trackHeight = layout.ViewportHeight > RulerHeight + MinTrackHeight
+            ? (float)layout.ViewportHeight - RulerHeight
+            : DefaultTrackHeight;
+        float totalHeight = RulerHeight + trackHeight;
 
         DrawBackground(canvas, totalHeight, layout, res);
-        DrawLoopRegion(canvas, layout, state, res);
-        DrawSelection(canvas, layout, state, res);
+        DrawLoopRegion(canvas, layout, state, trackHeight, res);
+        DrawSelection(canvas, layout, state, trackHeight, res);
         DrawTicks(canvas, layout, state, res);
         DrawRulerLabels(canvas, layout, state, res);
-        DrawMarkers(canvas, layout, state, res);
-        DrawPlayhead(canvas, layout, state, res);
-        DrawDragGhost(canvas, layout, activeDrag, res);
+        DrawMarkers(canvas, layout, state, trackHeight, res);
+        DrawPlayhead(canvas, layout, state, totalHeight, res);
+        DrawDragGhost(canvas, layout, activeDrag, totalHeight, res);
     }
 
     private static void DrawBackground(SKCanvas canvas, float totalHeight, TimelineLayout layout, RenderResources res)
@@ -45,7 +54,7 @@ public static class TimelineRenderer
         canvas.DrawLine(0f, RulerHeight, (float)layout.ViewportWidth, RulerHeight, res.BaselinePaint);
     }
 
-    private static void DrawLoopRegion(SKCanvas canvas, TimelineLayout layout, TimelineState state, RenderResources res)
+    private static void DrawLoopRegion(SKCanvas canvas, TimelineLayout layout, TimelineState state, float trackHeight, RenderResources res)
     {
         if (!state.LoopEnabled || state.LoopStart is null || state.LoopEnd is null)
             return;
@@ -60,18 +69,18 @@ public static class TimelineRenderer
         float clampedX2 = Math.Min((float)layout.ViewportWidth, x2);
 
         // Tinted band in track area
-        canvas.DrawRect(clampedX1, RulerHeight, clampedX2 - clampedX1, TrackHeight, res.LoopPaint);
+        canvas.DrawRect(clampedX1, RulerHeight, clampedX2 - clampedX1, trackHeight, res.LoopPaint);
 
         // Vertical handle lines
-        canvas.DrawLine(x1, RulerHeight, x1, RulerHeight + TrackHeight, res.LoopHandlePaint);
-        canvas.DrawLine(x2, RulerHeight, x2, RulerHeight + TrackHeight, res.LoopHandlePaint);
+        canvas.DrawLine(x1, RulerHeight, x1, RulerHeight + trackHeight, res.LoopHandlePaint);
+        canvas.DrawLine(x2, RulerHeight, x2, RulerHeight + trackHeight, res.LoopHandlePaint);
 
         // Triangle handles at top of track
         DrawDownTriangle(canvas, x1, RulerHeight, res.LoopHandleFill);
         DrawDownTriangle(canvas, x2, RulerHeight, res.LoopHandleFill);
     }
 
-    private static void DrawSelection(SKCanvas canvas, TimelineLayout layout, TimelineState state, RenderResources res)
+    private static void DrawSelection(SKCanvas canvas, TimelineLayout layout, TimelineState state, float trackHeight, RenderResources res)
     {
         if (state.Mode != TimelineMode.Edit)
             return;
@@ -90,9 +99,9 @@ public static class TimelineRenderer
         float clampedX1 = Math.Max(0f, x1);
         float clampedX2 = Math.Min((float)layout.ViewportWidth, x2);
 
-        canvas.DrawRect(clampedX1, RulerHeight, clampedX2 - clampedX1, TrackHeight, res.SelectionPaint);
-        canvas.DrawLine(x1, RulerHeight, x1, RulerHeight + TrackHeight, res.SelectionBorderPaint);
-        canvas.DrawLine(x2, RulerHeight, x2, RulerHeight + TrackHeight, res.SelectionBorderPaint);
+        canvas.DrawRect(clampedX1, RulerHeight, clampedX2 - clampedX1, trackHeight, res.SelectionPaint);
+        canvas.DrawLine(x1, RulerHeight, x1, RulerHeight + trackHeight, res.SelectionBorderPaint);
+        canvas.DrawLine(x2, RulerHeight, x2, RulerHeight + trackHeight, res.SelectionBorderPaint);
     }
 
     private static void DrawTicks(SKCanvas canvas, TimelineLayout layout, TimelineState state, RenderResources res)
@@ -163,12 +172,12 @@ public static class TimelineRenderer
         }
     }
 
-    private static void DrawMarkers(SKCanvas canvas, TimelineLayout layout, TimelineState state, RenderResources res)
+    private static void DrawMarkers(SKCanvas canvas, TimelineLayout layout, TimelineState state, float trackHeight, RenderResources res)
     {
         IReadOnlyList<MarkerBase> markers = state.Markers;
         var (first, last) = layout.VisibleFrameRange;
         float viewportWidth = (float)layout.ViewportWidth;
-        float totalHeight = RulerHeight + TrackHeight;
+        float totalHeight = RulerHeight + trackHeight;
 
         for (int i = 0; i < markers.Count; i++)
         {
@@ -187,6 +196,9 @@ public static class TimelineRenderer
                 canvas.DrawLine(x, RulerHeight, x, totalHeight, res.MarkerPointPaint);
                 res.MarkerRangeFill.Color = new SKColor(point.Color.Red, point.Color.Green, point.Color.Blue, 0xCC);
                 DrawDownTriangle(canvas, x, RulerHeight, res.MarkerRangeFill);
+
+                if (!string.IsNullOrEmpty(point.Label))
+                    DrawFlag(canvas, x, point.Color, point.Label, res);
             }
             else if (marker is RangeMarker range)
             {
@@ -201,7 +213,7 @@ public static class TimelineRenderer
 
                 // Semi-transparent fill
                 res.MarkerRangeFill.Color = new SKColor(range.Color.Red, range.Color.Green, range.Color.Blue, 0x40);
-                canvas.DrawRect(clampedX1, RulerHeight, clampedX2 - clampedX1, TrackHeight, res.MarkerRangeFill);
+                canvas.DrawRect(clampedX1, RulerHeight, clampedX2 - clampedX1, trackHeight, res.MarkerRangeFill);
 
                 // Border lines
                 res.MarkerRangeBorder.Color = range.Color;
@@ -212,21 +224,23 @@ public static class TimelineRenderer
                 res.MarkerRangeFill.Color = new SKColor(range.Color.Red, range.Color.Green, range.Color.Blue, 0xCC);
                 DrawDownTriangle(canvas, x1, RulerHeight, res.MarkerRangeFill);
                 DrawDownTriangle(canvas, x2, RulerHeight, res.MarkerRangeFill);
+
+                if (!string.IsNullOrEmpty(range.Label))
+                    DrawFlag(canvas, x1, range.Color, range.Label, res);
             }
         }
     }
 
-    private static void DrawPlayhead(SKCanvas canvas, TimelineLayout layout, TimelineState state, RenderResources res)
+    private static void DrawPlayhead(SKCanvas canvas, TimelineLayout layout, TimelineState state, float totalHeight, RenderResources res)
     {
         float x = (float)layout.FrameToPixel(state.CurrentFrame);
         if (x < 0f || x > (float)layout.ViewportWidth)
             return;
 
-        float totalHeight = RulerHeight + TrackHeight;
         canvas.DrawLine(x, 0f, x, totalHeight, res.PlayheadPaint);
     }
 
-    private static void DrawDragGhost(SKCanvas canvas, TimelineLayout layout, DragOperation? activeDrag, RenderResources res)
+    private static void DrawDragGhost(SKCanvas canvas, TimelineLayout layout, DragOperation? activeDrag, float totalHeight, RenderResources res)
     {
         if (activeDrag is null)
             return;
@@ -235,8 +249,21 @@ public static class TimelineRenderer
         if (x < 0f || x > (float)layout.ViewportWidth)
             return;
 
-        float totalHeight = RulerHeight + TrackHeight;
         canvas.DrawLine(x, 0f, x, totalHeight, res.GhostLinePaint);
+    }
+
+    // Draws a flag label banner (colored rounded rect with white text) in the ruler area just above the track.
+    private static void DrawFlag(SKCanvas canvas, float anchorX, SKColor color, string label, RenderResources res)
+    {
+        res.FlagBackgroundPaint.Color = new SKColor(color.Red, color.Green, color.Blue, 0xDD);
+
+        float textWidth = res.FlagFont.MeasureText(label);
+        float rectWidth = textWidth + FlagPadX * 2f;
+        float rectX = anchorX;
+        float rectY = FlagY;
+
+        canvas.DrawRoundRect(rectX, rectY, rectWidth, FlagHeight, 2f, 2f, res.FlagBackgroundPaint);
+        canvas.DrawText(label, rectX + FlagPadX, rectY + FlagHeight - 3f, res.FlagFont, res.FlagTextPaint);
     }
 
     // Draws a downward-pointing triangle with its apex pointing down, base at the given y.

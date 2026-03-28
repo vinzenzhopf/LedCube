@@ -12,6 +12,7 @@ public readonly record struct TimelineLayout
     public double ScrollOffsetPx { get; init; }
     public int TotalFrames { get; init; }
     public double ViewportWidth { get; init; }
+    public double ViewportHeight { get; init; }
 
     public double TotalWidthPx => TotalFrames * ZoomScale;
 

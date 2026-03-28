@@ -113,6 +113,12 @@ public sealed class RenderResources : IDisposable
         StrokeWidth = 1f
     };
 
+    public SKFont FlagFont { get; } = new SKFont(SKTypeface.Default, 9f);
+
+    public SKPaint FlagTextPaint { get; } = new SKPaint { Color = SKColors.White };
+
+    public SKPaint FlagBackgroundPaint { get; } = new SKPaint { Style = SKPaintStyle.Fill };
+
     private bool _disposed;
 
     public void Dispose()
@@ -139,5 +145,8 @@ public sealed class RenderResources : IDisposable
         MarkerPointPaint.Dispose();
         MarkerRangeFill.Dispose();
         MarkerRangeBorder.Dispose();
+        FlagFont.Dispose();
+        FlagTextPaint.Dispose();
+        FlagBackgroundPaint.Dispose();
     }
 }
