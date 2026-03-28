@@ -1,65 +1,94 @@
-﻿<Window x:Class="LedCube.Core.UI.TimelineControl.Demo.MainWindow"
+<Window x:Class="LedCube.Core.UI.TimelineControl.Demo.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:timelineControl="clr-namespace:LedCube.Core.UI.TimelineControl;assembly=LedCube.Core.UI.TimelineControl"
-        mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800"
+        xmlns:tc="clr-namespace:LedCube.Core.UI.TimelineControl;assembly=LedCube.Core.UI.TimelineControl"
+        Title="TimelineControl Demo" Height="550" Width="900"
         DataContext="{Binding RelativeSource={RelativeSource Self}}">
-    <Grid>
+    <Grid Margin="8">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="5"/>
-            <RowDefinition Height="*"/>    
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
+
+        <!-- Control panel -->
         <Grid Grid.Row="0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="150" />
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <Label Grid.Row="0" Grid.Column="0" Content="Scale" />
-            <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding ScaleValue, Mode=TwoWay}" />
-            <Slider Grid.Row="0" Grid.Column="2" Value="{Binding ScaleValue, Mode=TwoWay}" TickPlacement="BottomRight" Maximum="5"/>
-            <Label Grid.Row="1" Grid.Column="0" Content="StartValue" />
-            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding StartValue, Mode=TwoWay}"/>
-            <Slider Grid.Row="1" Grid.Column="2" Value="{Binding StartValue, Mode=TwoWay}" Maximum="5000"/>
-            <Label Grid.Row="2" Grid.Column="0" Content="EndValue" />
-            <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding EndValue, Mode=TwoWay}"/>
-            <Slider Grid.Row="2" Grid.Column="2" Value="{Binding EndValue, Mode=TwoWay}" Maximum="5000" />
-            <Label Grid.Row="3" Grid.Column="0" Content="MajorTicks" />
-            <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding MajorTicks, Mode=TwoWay}"/>
-            <Slider Grid.Row="3" Grid.Column="2" Value="{Binding MajorTicks, Mode=TwoWay}" Maximum="100" TickPlacement="BottomRight"/>
-            <Label Grid.Row="4" Grid.Column="0" Content="MinorTicks" />
-            <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding MinorTicks, Mode=TwoWay}"/>
-            <Slider Grid.Row="4" Grid.Column="2" Value="{Binding MinorTicks, Mode=TwoWay}" Maximum="100" TickPlacement="BottomRight"/>
-            <Label Grid.Row="5" Grid.Column="0" Content="ReadOnly" />
-            <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding ReadOnlyValue, Mode=TwoWay}"/>
-            <CheckBox Grid.Row="5" Grid.Column="2" IsChecked="{Binding ReadOnlyValue, Mode=TwoWay}" />
-            <Label Grid.Row="6" Grid.Column="0" Content="CursorPosition" />
-            <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding CursorPosition, Mode=TwoWay}"/>
-            <Slider Grid.Row="6" Grid.Column="2" Value="{Binding CursorPosition, Mode=TwoWay}" />
+
+            <!-- Column 1: Playback -->
+            <GroupBox Grid.Column="0" Header="Playback" Margin="2">
+                <StackPanel Margin="4">
+                    <DockPanel LastChildFill="True" Margin="0,2">
+                        <Label DockPanel.Dock="Left" Content="Mode:" Width="90"/>
+                        <ComboBox SelectedIndex="{Binding ModeIndex, Mode=TwoWay}">
+                            <ComboBoxItem Content="Edit"/>
+                            <ComboBoxItem Content="Live"/>
+                        </ComboBox>
+                    </DockPanel>
+                    <DockPanel LastChildFill="True" Margin="0,2">
+                        <Label DockPanel.Dock="Left" Content="TotalFrames:" Width="90"/>
+                        <Slider Value="{Binding TotalFrames, Mode=TwoWay}" Minimum="10" Maximum="1000" TickFrequency="10"/>
+                    </DockPanel>
+                    <DockPanel LastChildFill="True" Margin="0,2">
+                        <Label DockPanel.Dock="Left" Content="CurrentFrame:" Width="90"/>
+                        <Slider Value="{Binding CurrentFrame, Mode=TwoWay}" Minimum="0" Maximum="{Binding TotalFrames}"/>
+                    </DockPanel>
+                    <DockPanel LastChildFill="True" Margin="0,2">
+                        <Label DockPanel.Dock="Left" Content="FrameTime(ms):" Width="90"/>
+                        <CheckBox IsChecked="{Binding ShowFrameTime, Mode=TwoWay}" Content="33ms (30fps)" VerticalAlignment="Center"/>
+                    </DockPanel>
+                </StackPanel>
+            </GroupBox>
+
+            <!-- Column 2: Loop Region -->
+            <GroupBox Grid.Column="1" Header="Loop Region" Margin="2">
+                <StackPanel Margin="4">
+                    <DockPanel LastChildFill="True" Margin="0,2">
+                        <Label DockPanel.Dock="Left" Content="Enabled:" Width="90"/>
+                        <CheckBox IsChecked="{Binding LoopEnabled, Mode=TwoWay}" VerticalAlignment="Center"/>
+                    </DockPanel>
+                    <DockPanel LastChildFill="True" Margin="0,2">
+                        <Label DockPanel.Dock="Left" Content="LoopStart:" Width="90"/>
+                        <Slider Value="{Binding LoopStart, Mode=TwoWay}" Minimum="0" Maximum="{Binding TotalFrames}"/>
+                    </DockPanel>
+                    <DockPanel LastChildFill="True" Margin="0,2">
+                        <Label DockPanel.Dock="Left" Content="LoopEnd:" Width="90"/>
+                        <Slider Value="{Binding LoopEnd, Mode=TwoWay}" Minimum="0" Maximum="{Binding TotalFrames}"/>
+                    </DockPanel>
+                </StackPanel>
+            </GroupBox>
+
+            <!-- Column 3: Markers -->
+            <GroupBox Grid.Column="2" Header="Markers" Margin="2">
+                <StackPanel Margin="4">
+                    <Button Content="Add PointMarker at CurrentFrame" Margin="0,2" Click="AddPointMarker_Click"/>
+                    <Button Content="Add RangeMarker (selection)" Margin="0,2" Click="AddRangeMarker_Click"/>
+                    <Button Content="Clear All Markers" Margin="0,2" Click="ClearMarkers_Click"/>
+                </StackPanel>
+            </GroupBox>
         </Grid>
-        <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" Height="5" />
-        <Border Grid.Row="2" BorderBrush="CornflowerBlue" BorderThickness="20">
-            <timelineControl:Timeline x:Name="Timeline"
-                               Scale="{Binding ScaleValue, Mode=TwoWay}"
-                               StartValue="{Binding StartValue, Mode=TwoWay}"
-                               EndValue="{Binding EndValue, Mode=TwoWay}"
-                               TickMarksMajor="{Binding MajorTicks, Mode=TwoWay}"
-                               TickMarksMinor="{Binding MinorTicks, Mode=TwoWay}"
-                               IsReadOnly="{Binding ReadOnlyValue, Mode=TwoWay}"
-                               CursorPosition="{Binding CursorPosition, Mode=TwoWay}" />    
+
+        <!-- Status bar -->
+        <TextBlock Grid.Row="1" x:Name="StatusText" Margin="4,4,4,2" FontSize="11" Foreground="Gray"
+                   Text="Click the timeline to move the playhead. Shift+Scroll to zoom. Drag markers to reposition."/>
+
+        <!-- Timeline control -->
+        <Border Grid.Row="2" Margin="0,4,0,0" BorderBrush="#444" BorderThickness="1">
+            <tc:TimelineControl x:Name="Timeline"
+                                Mode="{Binding Mode}"
+                                TotalFrames="{Binding TotalFrames, Mode=TwoWay}"
+                                CurrentFrame="{Binding CurrentFrame, Mode=TwoWay}"
+                                FrameTime="{Binding FrameTime}"
+                                LoopEnabled="{Binding LoopEnabled, Mode=TwoWay}"
+                                LoopStart="{Binding LoopStart, Mode=TwoWay}"
+                                LoopEnd="{Binding LoopEnd, Mode=TwoWay}"
+                                PlayheadChanged="Timeline_PlayheadChanged"
+                                SelectionChanged="Timeline_SelectionChanged"
+                                MarkerDragCompleted="Timeline_MarkerDragCompleted"/>
         </Border>
     </Grid>
 </Window>
