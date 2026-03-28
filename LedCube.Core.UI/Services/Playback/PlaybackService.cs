@@ -13,7 +13,7 @@ using LedCube.PluginHost;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace LedCube.Core.UI.Services;
+namespace LedCube.Core.UI.Services.Playback;
 
 [ObservableObject]
 public partial class PlaybackService : BackgroundService, IPlaybackService

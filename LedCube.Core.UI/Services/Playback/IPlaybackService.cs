@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using LedCube.Core.UI.Controls.AnimationInstanceList;
 using LedCube.PluginHost;
 
-namespace LedCube.Core.UI.Services;
+namespace LedCube.Core.UI.Services.Playback;
 
 public interface IPlaybackService
 {

@@ -1,4 +1,4 @@
-﻿namespace LedCube.Core.UI.Services;
+﻿namespace LedCube.Core.UI.Services.Playback;
 
 public enum PlaybackState
 {
