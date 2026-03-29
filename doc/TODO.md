@@ -20,11 +20,15 @@
 - [ ] **Streamer module** — stream directly from Animator to cube
 - [ ] General: get Animator to a working/usable level
 
+## Plugin System
+
+- [ ] True dynamic plugin loading — replace explicit project references with an MSBuild target that builds and copies plugin DLLs automatically, so any plugin dropped into the output folder is discovered without modifying the host app's `.csproj`
+
 ## Infrastructure / Misc
 
-- [ ] Review and tighten nullable usage across Solution
-- [ ] Fix/Improve App Configuration Handling
-- [ ] Remove/Combine Streamer.UI and Streamer.SmallUI
+- [x] Review and tighten nullable usage across Solution
+- [x] Fix/Improve App Configuration Handling
+- [x] Remove/Combine Streamer.UI and Streamer.SmallUI
 - [ ] Resolve Changes from AnimationTestUI
   - AnimationList vs AnimationTest control, PreviewKeyDown/Up event handlers? This was probably used for the Snake Animation?)
 - [ ] Add/Improve documentation
