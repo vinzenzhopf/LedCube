@@ -1,0 +1,96 @@
+﻿<UserControl x:Class="LedCube.Core.UI.Controls.SettingsDialog.SettingsPage_KeyboardControlSettings"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:LedCube.Core.UI.Controls.SettingsDialog"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance local:KeyboardControlSettingViewModel, IsDesignTimeCreatable=True}"
+             d:DesignHeight="300" d:DesignWidth="550">
+    <UserControl.Resources>
+        <!-- Chip style -->
+        <Style x:Key="KeyChipBorderStyle" TargetType="{x:Type Border}">
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"/>
+            <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}"/>
+            <Setter Property="Padding" Value="8,4"/>
+            <Setter Property="Margin" Value="0,0,6,0"/>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+        </Style>
+
+        <Style x:Key="KeyChipTextStyle" TargetType="{x:Type TextBlock}">
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+
+        <!-- A reusable chip template -->
+        <DataTemplate x:Key="KeyChipTemplate">
+            <Border Style="{StaticResource KeyChipBorderStyle}">
+                <TextBlock Style="{StaticResource KeyChipTextStyle}" Text="{Binding}"/>
+            </Border>
+        </DataTemplate>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        
+        <StackPanel Grid.Row="0">
+            <TextBlock FontSize="16"
+                       FontWeight="SemiBold"
+                       Text="Keyboard Controls"
+                       Margin="0,0,0,8"/>
+        </StackPanel>
+        
+        <DataGrid Grid.Row="1"
+                  ItemsSource="{Binding Entries}"
+                  AutoGenerateColumns="False"
+                  CanUserAddRows="False"
+                  CanUserDeleteRows="False"
+                  IsReadOnly="False"
+                  HeadersVisibility="Column"
+                  SelectionUnit="FullRow"
+                  GridLinesVisibility="Horizontal"
+                  RowHeaderWidth="0">
+
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Icon"
+                                    Width="50"
+                                    Binding="{Binding Icon, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <DataGridTextColumn Header="Function"
+                                    Width="160"
+                                    Binding="{Binding FunctionId, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <DataGridTextColumn Header="Description"
+                                    Width="*"
+                                    Binding="{Binding Description, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <DataGridTemplateColumn Header="Hotkey" Width="200">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Command="{Binding InputHotkeyClickedCommand}"
+                                    Background="Transparent"
+                                    BorderThickness="0"
+                                    HorizontalContentAlignment="Left"
+                                    Padding="2"
+                                    Cursor="Hand"
+                                    ToolTip="Click to change binding">
+                                <ItemsControl ItemsSource="{Binding HotkeyTokens}"
+                                              ItemTemplate="{StaticResource KeyChipTemplate}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                </ItemsControl>
+                            </Button>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>

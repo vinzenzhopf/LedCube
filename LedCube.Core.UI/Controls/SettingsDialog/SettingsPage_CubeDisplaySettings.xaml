@@ -1,0 +1,97 @@
+﻿<UserControl x:Class="LedCube.Core.UI.Controls.SettingsDialog.SettingsPage_CubeDisplaySettings"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:LedCube.Core.UI.Controls.SettingsDialog"
+             xmlns:sys="clr-namespace:System;assembly=System.Runtime"
+             xmlns:cfg="clr-namespace:LedCube.Core.Common.Config;assembly=LedCube.Core.Common"
+             xmlns:entities="clr-namespace:LedCube.Core.Common.Config.Entities;assembly=LedCube.Core.Common"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance local:CubeDisplaySettingsViewModel, IsDesignTimeCreatable=True}"
+             d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <ObjectDataProvider x:Key="CartesianOrientationValues"
+                            MethodName="GetValues"
+                            ObjectType="{x:Type sys:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="entities:CartesianOrientation"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+        <ObjectDataProvider x:Key="LedShapeValues"
+                            MethodName="GetValues"
+                            ObjectType="{x:Type sys:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="entities:LedShape"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+    </UserControl.Resources>
+    <StackPanel>
+        <TextBlock FontSize="16" FontWeight="SemiBold" Text="3D Drawing" Margin="0,0,0,12"/>
+
+        <GroupBox Header="LED" Margin="0,0,0,12">
+            <Grid Margin="12">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="180"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="LED Dimensions"/>
+                <TextBox   Grid.Row="0" Grid.Column="1"
+                           Text="{Binding LedType.LedDimensions, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Text="Shape" Margin="0,8,0,0"/>
+                <ComboBox  Grid.Row="1" Grid.Column="1" Margin="0,8,0,0"
+                           ItemsSource="{Binding Source={StaticResource LedShapeValues}}"
+                           SelectedItem="{Binding LedType.Shape, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="Tint" Margin="0,8,0,0"/>
+                <!-- Color editing: without a color picker, this is a placeholder.
+                     Consider a converter or a color picker control. -->
+                <TextBox   Grid.Row="2" Grid.Column="1" Margin="0,8,0,0"
+                           Text="{Binding LedType.Tint, UpdateSourceTrigger=PropertyChanged}"/>
+            </Grid>
+        </GroupBox>
+
+        <GroupBox Header="Rendering">
+            <StackPanel Margin="12">
+                <CheckBox Content="Draw wireframe"
+                          IsChecked="{Binding DrawWireframe, UpdateSourceTrigger=PropertyChanged}"/>
+            </StackPanel>
+        </GroupBox>
+        
+        <StackPanel>
+            <TextBlock FontSize="16" FontWeight="SemiBold" Text="LED Type" Margin="0,0,0,12"/>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="180"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="LED Dimensions"/>
+                <TextBox   Grid.Row="0" Grid.Column="1"
+                           Text="{Binding LedDimensions, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Text="Shape" Margin="0,8,0,0"/>
+                <ComboBox  Grid.Row="1" Grid.Column="1" Margin="0,8,0,0"
+                           ItemsSource="{Binding Source={StaticResource LedShapeValues}}"
+                           SelectedItem="{Binding Shape, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="Tint" Margin="0,8,0,0"/>
+                <TextBox   Grid.Row="2" Grid.Column="1" Margin="0,8,0,0"
+                           Text="{Binding Tint, UpdateSourceTrigger=PropertyChanged}"/>
+            </Grid>
+        </StackPanel>
+    </StackPanel>
+</UserControl>

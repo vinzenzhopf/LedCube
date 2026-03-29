@@ -1,0 +1,49 @@
+<mah:MetroWindow x:Class="LedCube.Core.UI.Controls.SettingsDialog.SettingsHotkeyInputDialog"
+                xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                xmlns:local="clr-namespace:LedCube.Core.UI.Controls.SettingsDialog"
+                xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+                mc:Ignorable="d"
+                d:DataContext="{d:DesignInstance local:SettingsHotkeyInputDialogViewModel, IsDesignTimeCreatable=True}"
+                Title="{Binding Description}"
+                Height="160" Width="400"
+                ResizeMode="NoResize"
+                WindowStartupLocation="CenterOwner">
+    <mah:MetroWindow.Resources>
+        <Style x:Key="KeyChipBorderStyle" TargetType="{x:Type Border}">
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"/>
+            <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}"/>
+            <Setter Property="Padding" Value="8,4"/>
+            <Setter Property="Margin" Value="0,0,6,0"/>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+        </Style>
+        <Style x:Key="KeyChipTextStyle" TargetType="{x:Type TextBlock}">
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <DataTemplate x:Key="KeyChipTemplate">
+            <Border Style="{StaticResource KeyChipBorderStyle}">
+                <TextBlock Style="{StaticResource KeyChipTextStyle}" Text="{Binding}"/>
+            </Border>
+        </DataTemplate>
+    </mah:MetroWindow.Resources>
+    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+        <TextBlock HorizontalAlignment="Center" Text="Press the key combination you want to set:"/>
+        <TextBlock HorizontalAlignment="Center" Text="(ESC to cancel)" Foreground="Gray" FontSize="11" Margin="0,2,0,8"/>
+        <ItemsControl Height="40"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center"
+                      ItemsSource="{Binding HotkeyTokens}"
+                      ItemTemplate="{StaticResource KeyChipTemplate}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel HorizontalAlignment="Center"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+        </ItemsControl>
+    </StackPanel>
+</mah:MetroWindow>

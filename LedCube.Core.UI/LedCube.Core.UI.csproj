@@ -20,7 +20,6 @@
         <PackageReference Include="Serilog.Sinks.Debug" />
         <PackageReference Include="Serilog.Sinks.File" />
         <PackageReference Include="Serilog.Sinks.RichTextBox.Wpf" />
-        <PackageReference Include="System.Text.Json" />
     </ItemGroup>
     
     <ItemGroup>
@@ -67,6 +66,26 @@
         <SubType>Designer</SubType>
       </Page>
       <Page Update="Controls\StreamingControl\StreamingControl.xaml">
+        <Generator>MSBuild:Compile</Generator>
+        <XamlRuntime>Wpf</XamlRuntime>
+        <SubType>Designer</SubType>
+      </Page>
+      <Page Update="Controls\SettingsDialog\SettingsPage_StreamerSettings.xaml">
+        <Generator>MSBuild:Compile</Generator>
+        <XamlRuntime>Wpf</XamlRuntime>
+        <SubType>Designer</SubType>
+      </Page>
+      <Page Update="Controls\SettingsDialog\SettingsPage_CubeDisplaySettings.xaml">
+        <Generator>MSBuild:Compile</Generator>
+        <XamlRuntime>Wpf</XamlRuntime>
+        <SubType>Designer</SubType>
+      </Page>
+      <Page Update="Controls\SettingsDialog\SettingsPage_KeyboardControlSettings.xaml">
+        <Generator>MSBuild:Compile</Generator>
+        <XamlRuntime>Wpf</XamlRuntime>
+        <SubType>Designer</SubType>
+      </Page>
+      <Page Update="Controls\SettingsDialog\SettingsHotkeyInputDialog.xaml">
         <Generator>MSBuild:Compile</Generator>
         <XamlRuntime>Wpf</XamlRuntime>
         <SubType>Designer</SubType>

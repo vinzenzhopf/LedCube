@@ -1,0 +1,69 @@
+﻿<UserControl x:Class="LedCube.Core.UI.Controls.SettingsDialog.SettingsPage_StreamerSettings"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:LedCube.Core.UI.Controls.SettingsDialog"
+             xmlns:sys="clr-namespace:System;assembly=System.Runtime"
+             xmlns:cfg="clr-namespace:LedCube.Core.Common.Config;assembly=LedCube.Core.Common"
+             xmlns:entities="clr-namespace:LedCube.Core.Common.Config.Entities;assembly=LedCube.Core.Common"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance local:CubeStreamerSettingsViewModel, IsDesignTimeCreatable=True}"
+             d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <ObjectDataProvider x:Key="CartesianOrientationValues"
+                            MethodName="GetValues"
+                            ObjectType="{x:Type sys:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="entities:CartesianOrientation"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+    </UserControl.Resources>
+    <StackPanel>
+        <TextBlock FontSize="16" FontWeight="SemiBold" Text="Streaming" Margin="0,0,0,8"/>
+
+        <GroupBox Header="Connection" Margin="0,0,0,8">
+            <Grid Margin="8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="180"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="Hostname"/>
+                <TextBox   Grid.Row="0" Grid.Column="1"
+                           Text="{Binding Hostname, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Text="Port" Margin="0,8,0,0"/>
+                <TextBox   Grid.Row="1" Grid.Column="1" Margin="0,8,0,0"
+                           Text="{Binding Port, UpdateSourceTrigger=PropertyChanged}"/>
+            </Grid>
+        </GroupBox>
+
+        <GroupBox Header="Discovery" Margin="0,0,0,8">
+            <StackPanel Margin="8">
+                <CheckBox Content="Search per broadcast"
+                          IsChecked="{Binding SearchPerBroadcast, UpdateSourceTrigger=PropertyChanged}"/>
+            </StackPanel>
+        </GroupBox>
+        
+        <GroupBox Header="Projection" Margin="0,0,0,8">
+            <StackPanel Margin="8">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="180"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="Orientation"/>
+                    <ComboBox  Grid.Column="1"
+                               ItemsSource="{Binding Source={StaticResource CartesianOrientationValues}}"
+                               SelectedItem="{Binding Projection.Orientation, UpdateSourceTrigger=PropertyChanged}"/>
+                </Grid>
+            </StackPanel>
+        </GroupBox>
+    </StackPanel>
+</UserControl>
