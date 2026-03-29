@@ -1,9 +1,11 @@
+using System;
 using System.Threading.Tasks;
 
 namespace LedCube.Core.Common.Settings;
 
 public interface ISettingsProvider<T> : ISettings<T> where T : class, new()
 {
+    event EventHandler<T>? SettingsChanged;
     void Load(T? defaultSettings = null);
     Task LoadSettingsAsync(T? defaultSettings = null);
     void SaveAndUpdate(T settings);

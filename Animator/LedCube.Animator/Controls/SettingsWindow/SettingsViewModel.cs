@@ -21,7 +21,7 @@ public partial class SettingsViewModel : ObservableObject
     public SettingsViewModel(ISettingsProvider<LedCubeAnimatorSettings> settingsProvider)
     {
         _settingsProvider = settingsProvider;
-        _currentSettings = new LedCubeAnimatorSettings(_settingsProvider.Settings);
+        _currentSettings = _settingsProvider.Settings;
     }
 
     [RelayCommand]
@@ -51,7 +51,7 @@ public partial class SettingsViewModel : ObservableObject
     private void SaveInternal()
     {
         //TODO: Validate new Settings
-        _settingsProvider.SaveAndUpdate(_currentSettings);
+        _settingsProvider.SaveAndUpdate(CurrentSettings);
     }
     
     private void CloseInternal()

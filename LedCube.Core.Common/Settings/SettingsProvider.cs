@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using Serilog;
 
@@ -7,6 +7,7 @@ namespace LedCube.Core.Common.Settings;
 public class SettingsProvider<T> : ISettingsProvider<T> where T : class, new()
 {
     public T Settings { get; private set; } = new T();
+    public event EventHandler<T>? SettingsChanged;
 
     private readonly SettingsLoader<T> _loader;
 
@@ -20,38 +21,32 @@ public class SettingsProvider<T> : ISettingsProvider<T> where T : class, new()
         try
         {
             if (defaultSettings is not null && !_loader.Exists())
-            {
                 _loader.SaveSettings(defaultSettings);
-            }
             var settings = _loader.LoadSettings();
             if (settings is null)
-            {
                 throw new SettingsLoaderException("Error reading settings file.");
-            }
+            Settings = settings;
         }
         catch (Exception e)
         {
-            Log.ForContext(GetType()).Error(e, "Could not load settings file from {0}'", _loader.FilePath);
+            Log.ForContext(GetType()).Error(e, "Could not load settings file from '{0}'", _loader.FilePath);
         }
     }
-    
+
     public async Task LoadSettingsAsync(T? defaultSettings = null)
     {
         try
         {
             if (defaultSettings is not null && !_loader.Exists())
-            {
-                await _loader.SaveSettingsAsync(defaultSettings);   
-            }
+                await _loader.SaveSettingsAsync(defaultSettings);
             var settings = await _loader.LoadSettingsAsync().ConfigureAwait(false);
             if (settings is null)
-            {
                 throw new SettingsLoaderException("Error reading settings file.");
-            }
+            Settings = settings;
         }
         catch (Exception e)
         {
-            Log.ForContext(GetType()).Error(e, "Could not load settings file from {0}'", _loader.FilePath);
+            Log.ForContext(GetType()).Error(e, "Could not load settings file from '{0}'", _loader.FilePath);
         }
     }
 
@@ -61,23 +56,25 @@ public class SettingsProvider<T> : ISettingsProvider<T> where T : class, new()
         {
             Settings = settings;
             _loader.SaveSettings(Settings);
+            SettingsChanged?.Invoke(this, Settings);
         }
         catch (Exception e)
         {
-            Log.ForContext(GetType()).Error(e, "Could not load settings file from {0}'", _loader.FilePath);
+            Log.ForContext(GetType()).Error(e, "Could not save settings file to '{0}'", _loader.FilePath);
         }
     }
-    
+
     public async Task SaveAndUpdateAsync(T settings)
     {
         try
         {
             Settings = settings;
             await _loader.SaveSettingsAsync(Settings);
+            SettingsChanged?.Invoke(this, Settings);
         }
         catch (Exception e)
         {
-            Log.ForContext(GetType()).Error(e, "Could not load settings file from {0}'", _loader.FilePath);
+            Log.ForContext(GetType()).Error(e, "Could not save settings file to '{0}'", _loader.FilePath);
         }
     }
 }

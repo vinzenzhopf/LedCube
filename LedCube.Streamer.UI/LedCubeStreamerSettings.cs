@@ -1,42 +1,30 @@
-using System.Drawing;
 using LedCube.Core.Common.Config;
-using LedCube.Core.Common.Config.Config;
+using LedCube.Core.Common.Config.Entities;
+using LedCube.Streamer.UI.Settings;
 
 namespace LedCube.Streamer.UI;
 
-public record LedCubeStreamerSettings : ICubeConfigRepository
+public record LedCubeStreamerSettings
 {
-    public CubeConfig CubeConfig { get; set; } = new();
+    public CubeSettings Cube { get; init; } = new();
+    public CubeStreamerSettings Connection { get; init; } = new();
+    public StreamerUIState UIState { get; init; } = new();
 
-    public static LedCubeStreamerSettings Default => new LedCubeStreamerSettings()
+    public static LedCubeStreamerSettings Default => new()
     {
-        CubeConfig = new CubeConfig()
+        Cube = new CubeSettings
         {
             Name = "LedCube",
-            Dimensions = new CubeDimensions() {
-                X = 8,
-                Y = 8,
-                Z = 8,
-            },
-            StreamerSettings = new CubeStreamerSettings()
+            Dimensions = new CubeDimensions { X = 8, Y = 8, Z = 8 }
+        },
+        Connection = new CubeStreamerSettings
+        {
+            Hostname = "",
+            Port = 4242,
+            SearchPerBroadcast = true,
+            Projection = new CubeDataProjectionSettings
             {
-                Hostname = "",
-                Port = 4242,
-                SearchPerBroadcast = true,
-                Projection = new CubeDataProjectionSettings()
-                {
-                    Orientation = CartesianOrientation.LeftHanded
-                }
-            },
-            Cube3DDrawingConfig =
-            {
-                DrawWireframe = true,
-                LedType = new LedType()
-                {
-                    LedDimensions = 5,
-                    Shape = LedShape.Zylinder,
-                    Tint = Color.Blue
-                }
+                Orientation = CartesianOrientation.LeftHanded
             }
         }
     };
