@@ -1,4 +1,6 @@
-﻿namespace LedCube.Core.Common.Config.Config;
+﻿using LedCube.Core.Common.Config.Entities;
+
+namespace LedCube.Core.Common.Config;
 
 public record Cube3DDrawingConfig()
 {

@@ -1,4 +1,5 @@
 ﻿using LedCube.Core.Common.Config;
+using LedCube.Core.Common.Config.Entities;
 
 namespace LedCube.PluginBase;
 

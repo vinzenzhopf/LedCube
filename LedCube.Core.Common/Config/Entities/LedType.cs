@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace LedCube.Core.Common.Config.Config;
+namespace LedCube.Core.Common.Config.Entities;
 
 public record LedType
 {

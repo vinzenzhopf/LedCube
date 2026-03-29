@@ -4,7 +4,6 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
-using LedCube.Core.Common.Config.Config;
 using LedCube.Core.Common.CubeData.Repository;
 using LedCube.Streamer.Datagram;
 using LedCube.Streamer.UdpCom;
@@ -19,7 +18,6 @@ public partial class CubeStreamerService : BackgroundService, ICubeStreamer
 {
     private readonly ILogger _logger;
     private readonly IUdpCubeCommunication _communication;
-    private readonly ICubeConfigRepository _cubeConfigRepository;
     private readonly ICubeRepository _cubeRepository;
     private readonly ICubeStreamingStatusMutable _cubeStreamingStatus;
     
@@ -43,15 +41,13 @@ public partial class CubeStreamerService : BackgroundService, ICubeStreamer
     
     public ushort FrameCounter => _frameCounter;
 
-    public CubeStreamerService(ILoggerFactory loggerFactory, 
-        IUdpCubeCommunication communication, 
-        ICubeConfigRepository cubeConfigRepository, 
-        ICubeRepository cubeRepository, 
+    public CubeStreamerService(ILoggerFactory loggerFactory,
+        IUdpCubeCommunication communication,
+        ICubeRepository cubeRepository,
         ICubeStreamingStatusMutable cubeStreamingStatus)
     {
         _logger = loggerFactory.CreateLogger(GetType());
         _communication = communication;
-        _cubeConfigRepository = cubeConfigRepository;
         _cubeRepository = cubeRepository;
         _cubeStreamingStatus = cubeStreamingStatus;
     }

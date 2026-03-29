@@ -2,7 +2,7 @@ using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using LedCube.Core.Common.Config.Config;
+using LedCube.Core.Common.Config;
 using LedCube.Core.Common.Settings;
 
 namespace LedCube.Core.UI.Services.Hotkey;

@@ -5,12 +5,10 @@ using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using LedCube.Core.Common.Config.Config;
 using LedCube.Core.Common.CubeData.Projections;
 using LedCube.Core.Common.CubeData.Repository;
 using LedCube.Core.Common.Model;
 using LedCube.Core.Common.Model.Cube;
-using LedCube.Core.UI.Messages;
 using Microsoft.Extensions.Logging;
 
 namespace LedCube.Core.UI.Controls.CubeView2D;
@@ -19,7 +17,6 @@ public partial class CubeView2DViewModel : ObservableObject
 {
     private ILogger Logger { get; }
     
-    private readonly ICubeConfigRepository _cubeConfigRepository;
     private ICubeRepository _cubeRepository;
 
     public ObservableCollection<int> AllPlanes { get; } = new();
@@ -43,10 +40,9 @@ public partial class CubeView2DViewModel : ObservableObject
     private readonly SimpleRotationCubeProjection _cubeProjection;
     private readonly PlaneCubeProjection _planeCubeProjection;
 
-    public CubeView2DViewModel(ILoggerFactory loggerFactory, ICubeConfigRepository cubeConfigRepository, ICubeRepository cubeRepository)
+    public CubeView2DViewModel(ILoggerFactory loggerFactory, ICubeRepository cubeRepository)
     {
         Logger = loggerFactory.CreateLogger(GetType());
-        _cubeConfigRepository = cubeConfigRepository;
         _cubeRepository = cubeRepository;
 
         //Init values
@@ -60,9 +56,6 @@ public partial class CubeView2DViewModel : ObservableObject
         // _planeData.LedChanged += PlaneData_OnLedChanged;
         // _planeData.PlaneChanged += PlaneData_OnPlaneChanged;
 
-        //Register Listeners
-        WeakReferenceMessenger.Default.Register<CubeConfigChangedMessage>(this, HandleCubeConfigChangedMessage);
-        
         this.PropertyChanged += OnPropertyChanged;
     }
 
@@ -114,11 +107,6 @@ public partial class CubeView2DViewModel : ObservableObject
     {
         Logger.LogDebug("Selected Plane changed: {value}", value);
         _planeCubeProjection.Z = value;
-    }
-
-    private void HandleCubeConfigChangedMessage(object recipient, CubeConfigChangedMessage message)
-    {
-        Logger.LogDebug("Received Message: CubeConfigChanged {data}", message);
     }
 
     [RelayCommand]

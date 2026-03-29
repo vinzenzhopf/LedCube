@@ -1,4 +1,5 @@
 ﻿using LedCube.Core.Common.Config;
+using LedCube.Core.Common.Config.Entities;
 using LedCube.Core.Common.Model;
 
 namespace LedCube.Core.Common.Extensions;
