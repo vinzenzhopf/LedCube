@@ -21,7 +21,7 @@ public partial class SettingsHotkeyInputDialogViewModel : ObservableObject
     [ObservableProperty]
     private bool? _dialogResult;
 
-    public IReadOnlyList<string> HotkeyTokens => BuildTokens(_capturedBinding);
+    public IReadOnlyList<string> HotkeyTokens => BuildTokens(CapturedBinding);
 
     public void CaptureBinding(HotkeyInputBinding binding)
     {

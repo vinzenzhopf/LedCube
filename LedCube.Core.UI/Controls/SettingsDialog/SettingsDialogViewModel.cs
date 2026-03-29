@@ -5,14 +5,16 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using LedCube.Core.Common.Config;
 using LedCube.Core.Common.Config.Entities;
+using LedCube.Core.Common.Settings;
 using LedCube.Core.UI.Services.Hotkey;
-using LedCube.Core.UI.Settings;
 
 namespace LedCube.Core.UI.Controls.SettingsDialog;
 
 public partial class SettingsDialogViewModel : ObservableObject
 {
-    private readonly ISettingsFacade _facade;
+    private readonly ISettingsProvider<CubeSettings> _cubeSettings;
+    private readonly ISettingsProvider<CubeStreamerSettings>? _connectionSettings;
+    private readonly ISettingsProvider<Cube3DDrawingConfig>? _displaySettings;
     private readonly GeneralCubeSettingsViewModel _generalCubeSettingsViewModel;
     private readonly CubeStreamerSettingsViewModel? _streamerSettings;
     private readonly CubeDisplaySettingsViewModel? _cubeDisplaySettingsViewModel;
@@ -20,19 +22,25 @@ public partial class SettingsDialogViewModel : ObservableObject
 
     public Action? CloseAction { get; set; }
 
-    public SettingsDialogViewModel(ISettingsFacade facade, IHotkeyService hotkeyService)
+    public SettingsDialogViewModel(
+        ISettingsProvider<CubeSettings> cubeSettings,
+        ISettingsProvider<CubeStreamerSettings>? connectionSettings,
+        ISettingsProvider<Cube3DDrawingConfig>? displaySettings,
+        IHotkeyService hotkeyService)
     {
-        _facade = facade;
+        _cubeSettings = cubeSettings;
+        _connectionSettings = connectionSettings;
+        _displaySettings = displaySettings;
 
-        var cube = facade.CubeSettings;
         _generalCubeSettingsViewModel = new GeneralCubeSettingsViewModel
         {
-            Dimensions = new CubeDimensionsViewModel(cube.Dimensions)
+            Dimensions = new CubeDimensionsViewModel(cubeSettings.Settings.Dimensions)
         };
         Nodes.Add(new SettingsNodeViewModel("Cube", _generalCubeSettingsViewModel));
 
-        if (facade.ConnectionSettings is { } conn)
+        if (connectionSettings is not null)
         {
+            var conn = connectionSettings.Settings;
             _streamerSettings = new CubeStreamerSettingsViewModel
             {
                 Port = conn.Port,
@@ -45,8 +53,9 @@ public partial class SettingsDialogViewModel : ObservableObject
             Nodes.Add(streaming);
         }
 
-        if (facade.DisplaySettings is { } display)
+        if (displaySettings is not null)
         {
+            var display = displaySettings.Settings;
             _cubeDisplaySettingsViewModel = new CubeDisplaySettingsViewModel
             {
                 Cube3DDrawingConfig = new Cube3DDrawingConfigViewModel
@@ -81,7 +90,7 @@ public partial class SettingsDialogViewModel : ObservableObject
     [RelayCommand]
     private void Accept()
     {
-        _facade.SaveCubeSettings(_facade.CubeSettings with
+        _cubeSettings.SaveAndUpdate(_cubeSettings.Settings with
         {
             Dimensions = new CubeDimensions(
                 _generalCubeSettingsViewModel.Dimensions.X,
@@ -89,9 +98,9 @@ public partial class SettingsDialogViewModel : ObservableObject
                 _generalCubeSettingsViewModel.Dimensions.Z)
         });
 
-        if (_streamerSettings is not null && _facade.ConnectionSettings is not null)
+        if (_streamerSettings is not null && _connectionSettings is not null)
         {
-            _facade.SaveConnectionSettings(new CubeStreamerSettings
+            _connectionSettings.SaveAndUpdate(new CubeStreamerSettings
             {
                 Port = _streamerSettings.Port,
                 Hostname = _streamerSettings.Hostname,
@@ -103,9 +112,9 @@ public partial class SettingsDialogViewModel : ObservableObject
             });
         }
 
-        if (_cubeDisplaySettingsViewModel is not null && _facade.DisplaySettings is not null)
+        if (_cubeDisplaySettingsViewModel is not null && _displaySettings is not null)
         {
-            _facade.SaveDisplaySettings(new Cube3DDrawingConfig
+            _displaySettings.SaveAndUpdate(new Cube3DDrawingConfig
             {
                 DrawWireframe = _cubeDisplaySettingsViewModel.Cube3DDrawingConfig.DrawWireframe,
                 LedType = new LedType

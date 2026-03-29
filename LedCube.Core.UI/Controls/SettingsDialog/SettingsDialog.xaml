@@ -7,6 +7,7 @@
                  xmlns:sys="clr-namespace:System;assembly=mscorlib"
                  xmlns:cfg="clr-namespace:LedCube.Core.Common.Config;assembly=LedCube.Core.Common"
                  xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+                 xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
                  xmlns:entities="clr-namespace:LedCube.Core.Common.Config.Entities;assembly=LedCube.Core.Common"
                  mc:Ignorable="d"
                  d:DesignHeight="500" d:DesignWidth="700"
@@ -29,6 +30,94 @@
                 <x:Type TypeName="entities:LedShape"/>
             </ObjectDataProvider.MethodParameters>
         </ObjectDataProvider>
+
+        <Style x:Key="SettingsTreeExpanderStyle" TargetType="{x:Type ToggleButton}">
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ToggleButton}">
+                        <Border Width="20" Height="20" Background="Transparent">
+                            <Grid>
+                                <iconPacks:PackIconFontAwesome x:Name="IconRight"
+                                                               Kind="AngleRightSolid"
+                                                               Width="10" Height="10"
+                                                               Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"
+                                                               HorizontalAlignment="Center"
+                                                               VerticalAlignment="Center"/>
+                                <iconPacks:PackIconFontAwesome x:Name="IconDown"
+                                                               Kind="AngleDownSolid"
+                                                               Width="10" Height="10"
+                                                               Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"
+                                                               HorizontalAlignment="Center"
+                                                               VerticalAlignment="Center"
+                                                               Visibility="Collapsed"/>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="IconRight" Property="Visibility" Value="Collapsed"/>
+                                <Setter TargetName="IconDown" Property="Visibility" Value="Visible"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SettingsTreeViewItemStyle" TargetType="{x:Type TreeViewItem}">
+            <Setter Property="IsExpanded" Value="True"/>
+            <Setter Property="Foreground" Value="{DynamicResource MahApps.Brushes.ThemeForeground}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TreeViewItem}">
+                        <StackPanel>
+                            <Border x:Name="Bd"
+                                    Background="Transparent"
+                                    CornerRadius="4"
+                                    Margin="2,1"
+                                    Padding="4,2">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="20"/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <ToggleButton x:Name="Expander"
+                                                  Grid.Column="0"
+                                                  ClickMode="Press"
+                                                  IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}}"
+                                                  Style="{StaticResource SettingsTreeExpanderStyle}"
+                                                  Visibility="Hidden"/>
+                                    <ContentPresenter x:Name="PART_Header"
+                                                      Grid.Column="1"
+                                                      ContentSource="Header"
+                                                      VerticalAlignment="Center"/>
+                                </Grid>
+                            </Border>
+                            <ItemsPresenter x:Name="ItemsHost" Margin="20,0,0,0"/>
+                        </StackPanel>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsExpanded" Value="False">
+                                <Setter TargetName="ItemsHost" Property="Visibility" Value="Collapsed"/>
+                            </Trigger>
+                            <Trigger Property="HasItems" Value="True">
+                                <Setter TargetName="Expander" Property="Visibility" Value="Visible"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource MahApps.Brushes.Accent}"/>
+                                <Setter Property="Foreground" Value="{DynamicResource MahApps.Brushes.IdealForeground}"/>
+                            </Trigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsSelected" Value="True"/>
+                                    <Condition Property="IsSelectionActive" Value="False"/>
+                                </MultiTrigger.Conditions>
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource MahApps.Brushes.Accent2}"/>
+                            </MultiTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </mah:MetroWindow.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -43,16 +132,12 @@
 
         <TreeView Grid.Row="0" Grid.Column="0"
                   ItemsSource="{Binding Nodes}"
+                  ItemContainerStyle="{StaticResource SettingsTreeViewItemStyle}"
                   local:TreeViewSelectedItem.SelectedItem="{Binding SelectedNode, Mode=TwoWay}">
-            <TreeView.ItemContainerStyle>
-                <Style TargetType="{x:Type TreeViewItem}">
-                    <Setter Property="IsExpanded" Value="True"/>
-                </Style>
-            </TreeView.ItemContainerStyle>
             <TreeView.ItemTemplate>
                 <HierarchicalDataTemplate DataType="{x:Type local:SettingsNodeViewModel}"
                                           ItemsSource="{Binding Children}">
-                    <TextBlock Text="{Binding Title}"/>
+                    <TextBlock Text="{Binding Title}" FontWeight="SemiBold"/>
                 </HierarchicalDataTemplate>
             </TreeView.ItemTemplate>
         </TreeView>

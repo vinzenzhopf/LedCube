@@ -69,7 +69,7 @@ public partial class KeyboardControlEntryViewModel : ObservableObject
     [RelayCommand]
     private void InputHotkeyClicked()
     {
-        var msg = new OpenSettingsHotkeyInputDialogMessage(_functionId, _description);
+        var msg = new OpenSettingsHotkeyInputDialogMessage(FunctionId, Description);
         WeakReferenceMessenger.Default.Send(msg);
         if (!msg.DialogResult.HasValue || !msg.DialogResult.Value) return;
         Binding = msg.ResultBinding;

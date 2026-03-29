@@ -9,6 +9,7 @@ public record LedCubeStreamerSettings
     public CubeSettings Cube { get; init; } = new();
     public CubeStreamerSettings Connection { get; init; } = new();
     public StreamerUIState UIState { get; init; } = new();
+    public KeyboardControlConfig KeyboardControl { get; init; } = new();
 
     public static LedCubeStreamerSettings Default => new()
     {

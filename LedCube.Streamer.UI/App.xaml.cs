@@ -20,9 +20,7 @@ using LedCube.Core.UI.Messages;
 using LedCube.Core.UI.Services;
 using LedCube.Core.UI.Services.Hotkey;
 using LedCube.Core.UI.Services.Playback;
-using LedCube.Core.UI.Settings;
 using LedCube.PluginHost;
-using LedCube.Streamer.UI.Settings;
 using LedCube.Streamer.CubeStreamer;
 using LedCube.Streamer.UdpCom;
 using Microsoft.Extensions.Configuration;
@@ -83,25 +81,19 @@ namespace LedCube.Streamer.UI
                 })
                 .ConfigureServices((context, services) =>
                 {
-                    var settingsFile = context.Configuration.GetValue<string>("SettingsFile") ?? "LedCube.Streamer.json";
-                    var settingsProvider = new SettingsProvider<LedCubeStreamerSettings>("LedCube", settingsFile);
-                    settingsProvider.Load(LedCubeStreamerSettings.Default);
-
                     var assembly = Assembly.GetExecutingAssembly();
                     var appInfo = new AppInfo(
                         assembly.GetName().Version!.ToString(),
                         GetLinkerTime(assembly),
                         debugBuild
                     );
-
                     services.AddSingleton(appInfo);
-                    services.AddSingleton<ISettingsProvider<LedCubeStreamerSettings>>(settingsProvider);
-                    services.AddSingleton<ISettings<LedCubeStreamerSettings>>(settingsProvider);
-
-                    var hotkeySettingsProvider = new SettingsProvider<KeyboardControlConfig>("LedCube", "hotkeys.json");
-                    hotkeySettingsProvider.Load();
-                    services.AddSingleton<ISettingsProvider<KeyboardControlConfig>>(hotkeySettingsProvider);
-                    services.AddSingleton<ISettingsFacade, StreamerSettingsFacade>();
+                    
+                    var settingsFile = context.Configuration.GetValue<string>("SettingsFile") ?? "LedCube.Streamer.json";
+                    services.AddSettingsProvider<LedCubeStreamerSettings>("LedCube", settingsFile, LedCubeStreamerSettings.Default)
+                        .AddSection(s => s.Cube, (s, v) => s with { Cube = v })
+                        .AddSection(s => s.Connection, (s, v) => s with { Connection = v })
+                        .AddSection(s => s.KeyboardControl, (s, v) => s with { KeyboardControl = v });
                     services.AddLogAppenderControlViewModel(logAppenderControlSink);
 
                     services.SetupPluginHost(_pluginHostContext);
@@ -167,7 +159,11 @@ namespace LedCube.Streamer.UI
             services.AddSingleton<PlaybackControlViewModel>();
             services.AddSingleton<PlaybackControl>();
             services.AddSingleton<IHotkeyService, HotkeyService>();
-            services.AddTransient<SettingsDialogViewModel>();
+            services.AddTransient<SettingsDialogViewModel>(sp => new SettingsDialogViewModel(
+                sp.GetRequiredService<ISettingsProvider<CubeSettings>>(),
+                sp.GetService<ISettingsProvider<CubeStreamerSettings>>(),
+                sp.GetService<ISettingsProvider<Cube3DDrawingConfig>>(),
+                sp.GetRequiredService<IHotkeyService>()));
             services.AddSingleton<SettingsHotkeyInputDialogViewModel>();
             services.AddSingleton<SettingsHotkeyInputDialog>();
         }
