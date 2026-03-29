@@ -17,12 +17,6 @@ public partial class PlaybackControlViewModel : ObservableObject
     [ObservableProperty]
     private PlaybackState _playbackState;
 
-    [ObservableProperty]
-    private int _currentFrame;
-
-    [ObservableProperty]
-    private TimeSpan _currentTime = TimeSpan.Zero;
-
     public bool IsAnimationSelected => PlaybackService.Animation is not null;
     
     public PlaybackControlViewModel(IPlaybackService playbackService)

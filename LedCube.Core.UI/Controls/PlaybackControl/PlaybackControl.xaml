@@ -8,6 +8,7 @@
              xmlns:services="clr-namespace:LedCube.Core.UI.Services"
              xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:playback="clr-namespace:LedCube.Core.UI.Services.Playback"
+             xmlns:timeline="clr-namespace:LedCube.Core.UI.TimelineControl;assembly=LedCube.Core.UI.TimelineControl"
              mc:Ignorable="d"
              d:DesignWidth="600"
              d:DataContext="{d:DesignInstance local:PlaybackControlViewModel, IsDesignTimeCreatable=True}">
@@ -64,20 +65,12 @@
     <StackPanel>
         <!-- Upper Timeline Bar -->
         <Grid>
-            <Slider Margin="5"
-                    Height="40"
-                    Maximum="{Binding PlaybackService.Animation.FrameCount}"
-                    Minimum="1"
-                    Orientation="Horizontal"
-                    LargeChange="{Binding PlaybackService.Animation.FrameFrequency}"
-                    SmallChange="1"
-                    IsSelectionRangeEnabled="False"
-                    IsSnapToTickEnabled="True"
-                    TickFrequency="1"
-                    TickPlacement="Both"
-                    Value="1"
-                    AutoToolTipPlacement="BottomRight" 
-                    AutoToolTipPrecision="2" />
+            <timeline:TimelineControl
+                Mode="Live"
+                TotalFrames="{Binding PlaybackService.Animation.FrameCount, FallbackValue=100}"
+                FrameTime="{Binding PlaybackService.Animation.FrameTime}"
+                CurrentFrame="{Binding PlaybackService.CurrentFrame, Mode=TwoWay}"
+                PlayheadChanged="OnPlayheadChanged" />
         </Grid>
         <!-- Lower control Bar -->
         <Grid>
@@ -111,6 +104,7 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <TextBlock Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" 
                                Text="{Binding PlaybackService.Animation.Name}" FontWeight="Bold" />
@@ -128,17 +122,28 @@
                         <TextBlock Text="{Binding PlaybackService.Animation.FrameFrequency}" 
                                    Foreground="Gray"/>
                     </WrapPanel>
-                    <WrapPanel Grid.Column="2" Grid.Row="2" 
+                    <WrapPanel Grid.Column="2" Grid.Row="2"
                                HorizontalAlignment="Right">
-                        <iconPacks:PackIconMaterialDesign 
-                            Kind="AccessTime" 
-                            Foreground="Gray" 
-                            Height="12" 
-                            Width="12" 
-                            VerticalAlignment="Center" 
+                        <iconPacks:PackIconMaterialDesign
+                            Kind="AccessTime"
+                            Foreground="Gray"
+                            Height="12"
+                            Width="12"
+                            VerticalAlignment="Center"
                             Margin="0,0,2,0"/>
                         <TextBlock Text="{Binding PlaybackService.Animation.AnimationLength}"
                                    Foreground="Gray"/>
+                    </WrapPanel>
+                    <!-- Frame / Time position row -->
+                    <WrapPanel Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="4"
+                               Orientation="Horizontal">
+                        <TextBlock Text="{Binding PlaybackService.CurrentFrame}" FontWeight="SemiBold"/>
+                        <TextBlock Text=" / " Foreground="Gray"/>
+                        <TextBlock Text="{Binding PlaybackService.Animation.FrameCount}" Foreground="Gray"/>
+                        <TextBlock Text="   "/>
+                        <TextBlock Text="{Binding PlaybackService.CurrentTime, StringFormat=hh\\:mm\\:ss\\.ff}" FontWeight="SemiBold"/>
+                        <TextBlock Text=" / " Foreground="Gray"/>
+                        <TextBlock Text="{Binding PlaybackService.Animation.TotalTime, StringFormat=hh\\:mm\\:ss\\.ff}" Foreground="Gray"/>
                     </WrapPanel>
                 </Grid>
                 <Grid>

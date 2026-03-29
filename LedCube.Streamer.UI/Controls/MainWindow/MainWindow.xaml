@@ -72,14 +72,21 @@
                 <!-- Left: Streaming + Animation List -->
                 <DockPanel Grid.Column="0">
                     <streamingControl:StreamingControl DockPanel.Dock="Top" DataContext="{Binding StreamingControlViewModel}" />
-                    <animationInstanceList:AnimationList DataContext="{Binding AnimationListViewModel}" />
                 </DockPanel>
 
                 <GridSplitter Grid.Column="1" VerticalAlignment="Stretch" ResizeBehavior="BasedOnAlignment"/>
 
                 <!-- Right: Playback -->
                 <DockPanel Grid.Column="2">
-                    <playbackControl:PlaybackControl DockPanel.Dock="Bottom" DataContext="{Binding PlaybackControlViewModel}" />
+                    <GroupBox Header="Active Animation">
+                        <StackPanel DockPanel.Dock="Bottom">
+                            
+                            <playbackControl:PlaybackControl DataContext="{Binding PlaybackControlViewModel}" />
+                        </StackPanel>
+                    </GroupBox>
+                    <GroupBox Header="Playlist">
+                        <animationInstanceList:AnimationList DataContext="{Binding AnimationListViewModel}" />
+                    </GroupBox>
                 </DockPanel>
             </Grid>
 

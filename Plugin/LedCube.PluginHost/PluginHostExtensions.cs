@@ -12,12 +12,19 @@ namespace LedCube.PluginHost;
 
 public static class PluginHostExtensions
 {
+    private static Assembly? TryLoadAssembly(string path)
+    {
+        try { return Assembly.LoadFrom(path); }
+        catch (BadImageFormatException) { return null; }
+    }
+
     public static void Initialize(this PluginHostContext pluginHostContext)
     {
         var pluginTypes = Directory
             .GetFiles(System.AppDomain.CurrentDomain.BaseDirectory, "*.dll", SearchOption.AllDirectories)
-            .Select(Assembly.LoadFrom)
-            .Select(a => a.DefinedTypes
+            .Select(TryLoadAssembly)
+            .Where(a => a is not null)
+            .Select(a => a!.DefinedTypes
                 .SingleOrDefault(x =>
                     typeof(IPlugin).IsAssignableFrom(x) &&
                     x is {IsInterface: false, IsAbstract: false}))

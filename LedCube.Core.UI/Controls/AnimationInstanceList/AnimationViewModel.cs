@@ -15,10 +15,12 @@ public partial class AnimationViewModel : ObservableObject
     private string _description = string.Empty;
     
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(TotalTime))]
     private int _frameCount = 0;
-    
+
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(FrameFrequency))]
+    [NotifyPropertyChangedFor(nameof(TotalTime))]
     private TimeSpan _frameTime = TimeSpan.Zero;
     
     [ObservableProperty]
@@ -28,6 +30,7 @@ public partial class AnimationViewModel : ObservableObject
     private TypeInfo? _typeInfo;
     
     public double FrameFrequency => FrameTime.TotalSeconds;
+    public TimeSpan TotalTime => TimeSpan.FromTicks((long)(FrameCount * FrameTime.Ticks));
 
     public AnimationViewModel()
     {

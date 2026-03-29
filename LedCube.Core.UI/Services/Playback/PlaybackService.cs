@@ -92,9 +92,22 @@ public partial class PlaybackService : BackgroundService, IPlaybackService
         _updateTimer = null;
     }
 
+    public void SeekToFrame(int frame)
+    {
+        CurrentFrame = frame;
+        CurrentTime = TimeSpan.FromTicks((long)(frame * _frameTime.Ticks));
+        _elapsedTicksUntilPause = (long)(frame * _frameTime.TotalSeconds * Stopwatch.Frequency);
+        if (PlaybackState == PlaybackState.Playing)
+        {
+            _stopwatch.Restart();
+        }
+    }
+
     public void StartPlayback()
     {
         PlaybackState = PlaybackState.Playing;
+        CurrentFrame = 0;
+        CurrentTime = TimeSpan.Zero;
         _elapsedTicksUntilPause = 0;
         _updateTimer = new PeriodicTimer(_frameTime);
         _stopwatch.Restart();
@@ -126,6 +139,8 @@ public partial class PlaybackService : BackgroundService, IPlaybackService
     public void StopPlayback()
     {
         PlaybackState = PlaybackState.Stopped;
+        CurrentFrame = 0;
+        CurrentTime = TimeSpan.Zero;
         _updateTimer?.Dispose();
         _updateTimer = null;
         _stopwatch.Stop();
@@ -187,6 +202,8 @@ public partial class PlaybackService : BackgroundService, IPlaybackService
                     var context = new FrameContext(_frameTime, _lastFrameTime, 
                         (ulong)StopwatchUtil.TicksToMicroseconds(_elapsedTicks), _cubeData);
                     var result = _frameGenerator.DrawFrame(context);
+                    CurrentFrame++;
+                    CurrentTime = TimeSpan.FromMicroseconds(StopwatchUtil.TicksToMicroseconds(_elapsedTicks));
                     if (result == DrawingResult.Finished)
                     {
                         _logger.LogInformation("Animation signalled finished.");
