@@ -249,7 +249,7 @@ public partial class App : Application,
     {
         Log.Information("Showing EditAnimationInstanceDialog");
         var viewModel = _host!.Services.GetService<EditAnimationInstanceDialogViewModel>();
-        viewModel.Message = message;
+        viewModel!.Message = message;
         var window = new EditAnimationInstanceDialog()
         {
             DataContext = viewModel

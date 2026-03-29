@@ -7,10 +7,10 @@ namespace LedCube.Core.UI.Dialog.SimpleDialog;
 public partial class SimpleDialogViewModel : ObservableObject
 {
     [ObservableProperty]
-    private string _title;
+    private string _title = string.Empty;
 
     [ObservableProperty]
-    private string _text;
+    private string _text = string.Empty;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(YesIsPrimary))]

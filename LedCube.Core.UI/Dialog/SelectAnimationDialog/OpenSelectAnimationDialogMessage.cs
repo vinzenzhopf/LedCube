@@ -2,5 +2,5 @@
 
 public record OpenSelectAnimationDialogMessage()
 {
-    public SelectAnimationDialogResult Result { get; set; }
+    public SelectAnimationDialogResult? Result { get; set; }
 };

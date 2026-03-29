@@ -15,9 +15,9 @@ public interface IUdpCommunication : IDisposable
     bool IsConnected { get; }
     
     /// <summary>
-    /// Gets information about the remote host.
+    /// Gets information about the remote host. Null when not connected.
     /// </summary>
-    HostAndPort RemoteHost { get; }
+    HostAndPort? RemoteHost { get; }
     
     /// <summary>
     /// Gets the current packet count.

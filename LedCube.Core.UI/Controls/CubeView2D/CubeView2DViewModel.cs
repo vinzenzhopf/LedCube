@@ -32,13 +32,13 @@ public partial class CubeView2DViewModel : ObservableObject
     private bool _showNumbers = true;
 
     [ObservableProperty]
-    private IPlaneData _planeData;
-    
+    private IPlaneData _planeData = null!;
+
     [ObservableProperty]
     private Orientation3D _viewDirection = Orientation3D.Front;
 
-    private readonly SimpleRotationCubeProjection _cubeProjection;
-    private readonly PlaneCubeProjection _planeCubeProjection;
+    private readonly SimpleRotationCubeProjection _cubeProjection = null!;
+    private readonly PlaneCubeProjection _planeCubeProjection = null!;
 
     public CubeView2DViewModel(ILoggerFactory loggerFactory, ICubeRepository cubeRepository)
     {

@@ -13,8 +13,8 @@ namespace LedCube.Streamer.DebugUI;
 /// </summary>
 public partial class MainWindow : Window
 {
-    private Task _receiver;
-    private CancellationTokenSource _receiverCancellationTks;
+    private Task? _receiver;
+    private CancellationTokenSource? _receiverCancellationTks;
 
     public ObservableCollection<string> Messages { get; }
 
@@ -43,7 +43,7 @@ public partial class MainWindow : Window
         {
             try
             {
-                var result = await _udpClient.ReceiveAsync(token);
+                var result = await _udpClient!.ReceiveAsync(token);
                 var datagram = result.Buffer;
 
                 CubeDatagramHeader header = default;
@@ -216,7 +216,7 @@ public partial class MainWindow : Window
         {
             Span<byte> buffer = new byte[TDatagram.Size];
             TDatagram.WriteTo(buffer, in datagram);
-            _udpClient.Connect(RemoteHost.Text, int.Parse(Port.Text));
+            _udpClient!.Connect(RemoteHost.Text, int.Parse(Port.Text));
             // Sends a message to the host to which you have connected.
             ushort.TryParse(Counter.Text, out var packetCount);
             Counter.Text = $"{packetCount+1}";
@@ -244,7 +244,7 @@ public partial class MainWindow : Window
     {
         try
         {
-            _udpClient.Connect(RemoteHost.Text, int.Parse(Port.Text));
+            _udpClient!.Connect(RemoteHost.Text, int.Parse(Port.Text));
             // Sends a message to the host to which you have connected.
             ushort.TryParse(Counter.Text, out var packetCount);
             Counter.Text = $"{packetCount+1}";
@@ -256,7 +256,7 @@ public partial class MainWindow : Window
     }
 
     private Timer? _timer;
-    private UdpClient _udpClient;
+    private UdpClient? _udpClient;
     private void StartTimer_OnClick(object sender, RoutedEventArgs e)
     {
         if (_timer is not null)
@@ -264,8 +264,8 @@ public partial class MainWindow : Window
             return;
         }
             
-        _udpClient.Connect(RemoteHost.Text, int.Parse(Port.Text));
-            
+        _udpClient!.Connect(RemoteHost.Text, int.Parse(Port.Text));
+
         ushort.TryParse(Counter.Text, out var packetCount);
         Counter.Text = $"{packetCount+1}";
             

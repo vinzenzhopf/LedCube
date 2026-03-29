@@ -228,7 +228,7 @@ public class UdpCommunication : IUdpCommunication
     /// </remarks>
     public Task SendDatagramAsync(ushort packetCount, DatagramType type, ReadOnlyMemory<byte> dataSpan,
         CancellationToken cts)
-        => SendDatagramAsync(packetCount, type, dataSpan, RemoteHost, cts);
+        => SendDatagramAsync(packetCount, type, dataSpan, RemoteHost ?? throw new InvalidOperationException("Not connected."), cts);
     
     /// <summary>
     /// Sends a datagram asynchronously.
@@ -268,7 +268,7 @@ public class UdpCommunication : IUdpCommunication
     /// <exception cref="TimeoutException">Thrown when the request timeouts and no response is received within the specified time span.</exception>
     public  Task<ReceivedDatagram?> SendAndReceiveDatagramAsync(DatagramType type, ReadOnlyMemory<byte> dataSpan,
         TimeSpan timeout, CancellationToken cts)
-        => SendAndReceiveDatagramAsync(type, dataSpan, RemoteHost, timeout, cts);
+        => SendAndReceiveDatagramAsync(type, dataSpan, RemoteHost ?? throw new InvalidOperationException("Not connected."), timeout, cts);
     
     /// <summary>
     /// Sends the provided datagram and waits for a response.
@@ -293,7 +293,7 @@ public class UdpCommunication : IUdpCommunication
     {
         Memory<byte> dataSpan = new byte[TDatagram.Size];
         TDatagram.WriteTo(dataSpan.Span, in datagram);
-        return SendAndReceiveDatagramAsync(type, dataSpan, RemoteHost, timeout, cts);
+        return SendAndReceiveDatagramAsync(type, dataSpan, RemoteHost ?? throw new InvalidOperationException("Not connected."), timeout, cts);
     }
 
     /// <summary>
@@ -401,7 +401,7 @@ public class UdpCommunication : IUdpCommunication
 
         yield break;
 
-        void OnMessageReceived(object sender, UnlistedMessageArgs args)
+        void OnMessageReceived(object? sender, UnlistedMessageArgs args)
         {
             if (args.Data.Header.PacketCount != packetCount) 
                 return;

@@ -22,10 +22,10 @@ public partial class BroadcastSearchDialogViewModel : ObservableObject
     private readonly ILogger _logger;
     
     [ObservableProperty]
-    private string _title;
+    private string _title = string.Empty;
 
     [ObservableProperty]
-    private string _text;
+    private string _text = string.Empty;
 
     [ObservableProperty]
     private bool _broadcastSearchRunning;

@@ -9,14 +9,14 @@ namespace LedCube.Core.UI.Dialog.BaseDialog;
 public partial class BaseDialogViewModel<T> : ObservableObject where T : BaseDialogMessage
 {
     [ObservableProperty]
-    private string _title;
+    private string _title = string.Empty;
 
     [ObservableProperty]
-    private string _text;
+    private string _text = string.Empty;
     
     public bool OkEnabled { get; }
 
-    protected BaseDialogMessage _dialogMessage; 
+    protected BaseDialogMessage _dialogMessage = null!;
     
     [RelayCommand(AllowConcurrentExecutions = false)]
     private Task Loaded(CancellationToken token)

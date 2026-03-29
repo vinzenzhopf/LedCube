@@ -4,7 +4,6 @@
         <OutputType>WinExe</OutputType>
         <TargetFramework>net10.0-windows</TargetFramework>
         <UseWPF>true</UseWPF>
-        <Nullable>enable</Nullable>
         
     </PropertyGroup>
 
@@ -52,12 +51,6 @@
       <Resource Include="Fonts\Font-Awesome-6-Free-Solid-900.otf">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Resource>
-    </ItemGroup>
-
-    <ItemGroup>
-      <Reference Include="LedCube.Core">
-        <HintPath>..\..\LedCube.Streamer.AnimationTestUI\bin\Debug\net7.0-windows\LedCube.Core.dll</HintPath>
-      </Reference>
     </ItemGroup>
 
     <ItemGroup>
