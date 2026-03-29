@@ -14,6 +14,8 @@ public abstract class FrameGeneratorBase : IFrameGenerator
 
     public virtual DrawingResult DrawFrame(FrameContext frameContext) => DrawingResult.Continue;
 
+    public virtual void Configure(AnimationConfig config) { }
+
     public virtual void Start(AnimationContext animationContext) { }
     public virtual void End(AnimationContext animationContext) { }
     public virtual void Pause(AnimationContext animationContext) { }

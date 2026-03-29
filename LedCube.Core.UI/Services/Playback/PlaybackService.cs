@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
@@ -23,8 +23,8 @@ public partial class PlaybackService : BackgroundService, IPlaybackService
     private readonly ICubeRepository _cubeRepository;
 
     public PlaybackService(
-        ILogger<PlaybackService> logger, 
-        IPluginManager pluginManager, 
+        ILogger<PlaybackService> logger,
+        IPluginManager pluginManager,
         ICubeRepository cubeRepository)
     {
         _logger = logger;
@@ -34,6 +34,7 @@ public partial class PlaybackService : BackgroundService, IPlaybackService
 
     private readonly Stopwatch _stopwatch = new Stopwatch();
     private IFrameGenerator? _frameGenerator;
+    private AnimationInstanceViewModel? _animationInstance;
     private ICubeData? _cubeData;
     private PeriodicTimer? _updateTimer;
 
@@ -43,13 +44,14 @@ public partial class PlaybackService : BackgroundService, IPlaybackService
     private long _elapsedTicks = 0;
     private long _lastFrameTicks = 0;
     private long _frameTicks = 0;
-    
+    private int _remainingRepeats = 1;
+
     [ObservableProperty]
     private FrameGeneratorEntry? _frameGeneratorEntry;
 
     [ObservableProperty]
     private AnimationViewModel? _animation;
-    
+
     [ObservableProperty]
     private PlaybackState _playbackState;
 
@@ -59,19 +61,24 @@ public partial class PlaybackService : BackgroundService, IPlaybackService
     [ObservableProperty]
     private TimeSpan _currentTime = TimeSpan.Zero;
 
-    public async Task UpdateFrameGeneratorAsync(FrameGeneratorEntry entry, AnimationViewModel animation, CancellationToken token)
+    public async Task UpdateFrameGeneratorAsync(FrameGeneratorEntry entry, AnimationInstanceViewModel animationInstance, CancellationToken token)
     {
         UnloadFrameGenerator();
-        
+
         FrameGeneratorEntry = entry;
         PlaybackState = PlaybackState.Stopped;
-        Animation = animation;
-        
+        _animationInstance = animationInstance;
+        Animation = animationInstance.Animation;
+
         _frameGenerator = _pluginManager.GetFrameGenerator(FrameGeneratorEntry);
         _cubeData = new CubeData<CubeDataBuffer16>();
         _cubeRepository.SetCubeData(_cubeData);
 
-        _frameTime = _frameGenerator.FrameTime ?? TimeSpan.FromMilliseconds(1);
+        _frameGenerator.Configure(animationInstance.Config);
+
+        _frameTime = animationInstance.FrameTimeOverride
+            ?? _frameGenerator.FrameTime
+            ?? TimeSpan.FromMilliseconds(1);
         _updateTimer = null;
 
         await _frameGenerator.InitializeAsync(token).ConfigureAwait(false);
@@ -83,10 +90,11 @@ public partial class PlaybackService : BackgroundService, IPlaybackService
         _lastFrameTicks = 0;
         _frameTicks = 0;
 
+        _animationInstance = null;
         Animation = null;
         FrameGeneratorEntry = null;
         PlaybackState = PlaybackState.Stopped;
-        
+
         (_frameGenerator as IDisposable)?.Dispose();
         _frameGenerator = null;
         _updateTimer = null;
@@ -109,13 +117,12 @@ public partial class PlaybackService : BackgroundService, IPlaybackService
         CurrentFrame = 0;
         CurrentTime = TimeSpan.Zero;
         _elapsedTicksUntilPause = 0;
+        _remainingRepeats = _animationInstance?.RepeatCount ?? 1;
         _updateTimer = new PeriodicTimer(_frameTime);
         _stopwatch.Restart();
 
         if (_cubeData is null || _frameGenerator is null)
-        {
             return;
-        }
 
         var context = new AnimationContext(_frameTime, _stopwatch.ElapsedTicks + _elapsedTicksUntilPause, _cubeData);
         _frameGenerator.Start(context);
@@ -128,14 +135,12 @@ public partial class PlaybackService : BackgroundService, IPlaybackService
         _stopwatch.Restart();
 
         if (_cubeData is null || _frameGenerator is null)
-        {
             return;
-        }
 
         var context = new AnimationContext(_frameTime, _stopwatch.ElapsedTicks + _elapsedTicksUntilPause, _cubeData);
         _frameGenerator.Continue(context);
     }
-    
+
     public void StopPlayback()
     {
         PlaybackState = PlaybackState.Stopped;
@@ -147,9 +152,7 @@ public partial class PlaybackService : BackgroundService, IPlaybackService
         _elapsedTicksUntilPause = 0;
 
         if (_cubeData is null || _frameGenerator is null)
-        {
             return;
-        }
 
         var context = new AnimationContext(_frameTime, _stopwatch.ElapsedTicks + _elapsedTicksUntilPause, _cubeData);
         _frameGenerator.End(context);
@@ -164,12 +167,27 @@ public partial class PlaybackService : BackgroundService, IPlaybackService
         _elapsedTicksUntilPause += _stopwatch.ElapsedTicks;
 
         if (_cubeData is null || _frameGenerator is null)
-        {
             return;
-        }
 
         var context = new AnimationContext(_frameTime, _stopwatch.ElapsedTicks + _elapsedTicksUntilPause, _cubeData);
         _frameGenerator.Pause(context);
+    }
+
+    private void HandleRepeat()
+    {
+        if (_remainingRepeats > 0) _remainingRepeats--;
+        CurrentFrame = 0;
+        CurrentTime = TimeSpan.Zero;
+        _elapsedTicksUntilPause = 0;
+        _lastFrameTicks = 0;
+        _frameTicks = 0;
+        _stopwatch.Restart();
+
+        if (_cubeData is null || _frameGenerator is null)
+            return;
+
+        var context = new AnimationContext(_frameTime, 0, _cubeData);
+        _frameGenerator.Start(context);
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -178,8 +196,8 @@ public partial class PlaybackService : BackgroundService, IPlaybackService
         {
             try
             {
-                if (_frameGenerator is null || 
-                    _updateTimer is null || 
+                if (_frameGenerator is null ||
+                    _updateTimer is null ||
                     _cubeData is null ||
                     PlaybackState != PlaybackState.Playing)
                 {
@@ -189,27 +207,33 @@ public partial class PlaybackService : BackgroundService, IPlaybackService
                 {
                     _lastFrameTicks = _frameTicks;
                     _frameTicks = _stopwatch.ElapsedTicks;
-                    if (_lastFrameTicks == 0)
-                    {
-                        _lastFrameTime = TimeSpan.Zero;
-                    }
-                    else
-                    {
-                        _lastFrameTime = TimeSpan.FromMicroseconds(
-                                StopwatchUtil.TicksToMicroseconds(_frameTicks - _lastFrameTicks));
-                    }
+                    _lastFrameTime = _lastFrameTicks == 0
+                        ? TimeSpan.Zero
+                        : TimeSpan.FromMicroseconds(StopwatchUtil.TicksToMicroseconds(_frameTicks - _lastFrameTicks));
+
                     _elapsedTicks = _stopwatch.ElapsedTicks + _elapsedTicksUntilPause;
-                    var context = new FrameContext(_frameTime, _lastFrameTime, 
+                    var context = new FrameContext(_frameTime, _lastFrameTime,
                         (ulong)StopwatchUtil.TicksToMicroseconds(_elapsedTicks), _cubeData);
                     var result = _frameGenerator.DrawFrame(context);
                     CurrentFrame++;
                     CurrentTime = TimeSpan.FromMicroseconds(StopwatchUtil.TicksToMicroseconds(_elapsedTicks));
+
                     if (result == DrawingResult.Finished)
                     {
                         _logger.LogInformation("Animation signalled finished.");
-                        StopPlayback();
+                        var count = _animationInstance?.RepeatCount ?? 1;
+                        if (count == 0 || _remainingRepeats > 1)
+                        {
+                            HandleRepeat();
+                        }
+                        else
+                        {
+                            StopPlayback();
+                        }
                     }
-                    await _updateTimer.WaitForNextTickAsync(stoppingToken).ConfigureAwait(false);
+
+                    if (_updateTimer is not null && PlaybackState == PlaybackState.Playing)
+                        await _updateTimer.WaitForNextTickAsync(stoppingToken).ConfigureAwait(false);
                 }
             }
             catch (Exception e)
@@ -218,5 +242,4 @@ public partial class PlaybackService : BackgroundService, IPlaybackService
             }
         }
     }
-
 }

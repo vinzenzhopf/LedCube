@@ -42,7 +42,8 @@ public partial class AnimationTestViewModel : ObservableObject
             {
                 Name = a.Info.Name,
                 Description = a.Info.Description,
-                TypeInfo = a.TypeInfo
+                TypeInfo = a.TypeInfo,
+                GeneratorInfo = a.Info,
             };
             Animations.Add(animation);
         }
@@ -58,7 +59,8 @@ public partial class AnimationTestViewModel : ObservableObject
             .FirstOrDefault(x => x.TypeInfo.Equals(SelectedAnimation.TypeInfo));
         if(entry is null)
             return;
-        await _playbackService.UpdateFrameGeneratorAsync(entry, SelectedAnimation, token);
+        var instance = new AnimationInstanceViewModel(SelectedAnimation);
+        await _playbackService.UpdateFrameGeneratorAsync(entry, instance, token);
     }
 
     [RelayCommand]

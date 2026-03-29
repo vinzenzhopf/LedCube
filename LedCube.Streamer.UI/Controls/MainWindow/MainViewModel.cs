@@ -7,6 +7,7 @@ using LedCube.Core.Common;
 using LedCube.Core.UI.Controls.AnimationInstanceList;
 using LedCube.Core.UI.Controls.LogAppender;
 using LedCube.Core.UI.Controls.PlaybackControl;
+using LedCube.Core.UI.Controls.PluginConfigControl;
 using LedCube.Core.UI.Controls.StreamingControl;
 using LedCube.Core.UI.Dialog.BroadcastSearchDialog;
 using LedCube.Streamer.UI.Controls.MenuBar;
@@ -22,6 +23,7 @@ public partial class MainViewModel : ObservableObject
     public LogAppenderViewModel LogAppenderViewModel { get; }
     public MenuBarViewModel MenuBarViewModel { get; }
     public AnimationListViewModel AnimationListViewModel { get; }
+    public PluginConfigControlViewModel PluginConfigViewModel { get; }
     public PlaybackControlViewModel PlaybackControlViewModel { get; }
     public StreamingControlViewModel StreamingControlViewModel { get; }
     public string TitleText => "LedCube Streamer";
@@ -34,6 +36,7 @@ public partial class MainViewModel : ObservableObject
         LogAppenderViewModel logAppenderViewModel,
         MenuBarViewModel menuBarViewModel,
         AnimationListViewModel animationListViewModel,
+        PluginConfigControlViewModel pluginConfigViewModel,
         PlaybackControlViewModel playbackControlViewModel,
         StreamingControlViewModel streamingControlViewModel)
     {
@@ -42,6 +45,7 @@ public partial class MainViewModel : ObservableObject
         LogAppenderViewModel = logAppenderViewModel;
         MenuBarViewModel = menuBarViewModel;
         AnimationListViewModel = animationListViewModel;
+        PluginConfigViewModel = pluginConfigViewModel;
         PlaybackControlViewModel = playbackControlViewModel;
         StreamingControlViewModel = streamingControlViewModel;
     }

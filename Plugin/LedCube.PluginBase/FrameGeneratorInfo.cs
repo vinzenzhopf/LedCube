@@ -1,5 +1,8 @@
-﻿namespace LedCube.PluginBase;
+﻿using System.Collections.Generic;
+
+namespace LedCube.PluginBase;
 
 public sealed record FrameGeneratorInfo(
     string Name,
-    string Description);
+    string Description,
+    IReadOnlyList<AnimationConfigDescriptor>? ConfigDescriptors = null);

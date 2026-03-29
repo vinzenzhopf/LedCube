@@ -11,6 +11,7 @@ using LedCube.Core.UI.Controls.AnimationInstanceList;
 using LedCube.Core.UI.Controls.LogAppender;
 using LedCube.Core.UI.Controls.PlaybackControl;
 using LedCube.Core.UI.Controls.SettingsDialog;
+using LedCube.Core.UI.Controls.PluginConfigControl;
 using LedCube.Core.UI.Controls.StreamingControl;
 using LedCube.Core.UI.Dialog.BroadcastSearchDialog;
 using LedCube.Core.UI.Dialog.EditAnimationInstanceDialog;
@@ -156,6 +157,8 @@ namespace LedCube.Streamer.UI
             services.AddSingleton<IPlaybackService, PlaybackService>();
             services.AddSingleton<AnimationListViewModel>();
             services.AddSingleton<AnimationList>();
+            services.AddSingleton<PluginConfigControlViewModel>();
+            services.AddSingleton<PluginConfigControl>();
             services.AddSingleton<PlaybackControlViewModel>();
             services.AddSingleton<PlaybackControl>();
             services.AddSingleton<IHotkeyService, HotkeyService>();

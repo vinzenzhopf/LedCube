@@ -12,7 +12,7 @@ public interface IPlaybackService
     public AnimationViewModel? Animation { get; }
     public int CurrentFrame { get; }
     public TimeSpan CurrentTime { get; }
-    public Task UpdateFrameGeneratorAsync(FrameGeneratorEntry entry, AnimationViewModel animation, CancellationToken token);
+    public Task UpdateFrameGeneratorAsync(FrameGeneratorEntry entry, AnimationInstanceViewModel animationInstance, CancellationToken token);
     public void StartPlayback();
     public void ContinuePlayback();
     public void StopPlayback();

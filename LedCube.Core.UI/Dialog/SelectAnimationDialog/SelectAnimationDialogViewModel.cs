@@ -55,6 +55,8 @@ public partial class SelectAnimationDialogViewModel : ObservableValidator
             {
                 Name = a.Info.Name,
                 Description = a.Info.Description,
+                TypeInfo = a.TypeInfo,
+                GeneratorInfo = a.Info,
             };
             Animations.Add(animation);
             FilteredAnimations.Add(animation);

@@ -24,6 +24,12 @@ public interface IFrameGenerator
     DrawingResult DrawFrame(FrameContext frameContext);
 
     /// <summary>
+    /// Called before <see cref="InitializeAsync"/> to apply per-instance configuration values.
+    /// </summary>
+    /// <param name="config">Config dictionary populated from <see cref="FrameGeneratorInfo.ConfigDescriptors"/>.</param>
+    void Configure(AnimationConfig config) {}
+
+    /// <summary>
     /// Called when the Animation has been started.
     /// </summary>
     /// <param name="animationContext">Current AnimationContext</param>

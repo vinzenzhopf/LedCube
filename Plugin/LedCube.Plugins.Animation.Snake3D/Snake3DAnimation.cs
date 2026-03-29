@@ -22,7 +22,19 @@ namespace LedCube.Plugins.Animation.Snake3D;
 public sealed class Snake3DAnimation(IOptions<Snake3DConfiguration> options, ILogger<Snake3DAnimation> logger)
     : IFrameGenerator, IRecipient<KeyEventMessage>, IDisposable
 {
-    public new static FrameGeneratorInfo Info => new("Snake-3D", "3D Snake Game adaptation");
+    public new static FrameGeneratorInfo Info => new(
+        "Snake-3D",
+        "3D Snake Game adaptation",
+        ConfigDescriptors:
+        [
+            new AnimationConfigDescriptor("EdgeBehaviour", "Edge Behaviour", AnimationConfigType.Enum,
+                DefaultValue: nameof(EdgeBehaviour.GameOver),
+                EnumValues: [nameof(EdgeBehaviour.GameOver), nameof(EdgeBehaviour.RollOver)]),
+            new AnimationConfigDescriptor("FoodGrowthFactor", "Food Growth Factor", AnimationConfigType.Float,
+                DefaultValue: 1.0f, MinValue: 0.1f, MaxValue: 10.0f),
+            new AnimationConfigDescriptor("ActiveFoodCount", "Active Food Count", AnimationConfigType.Int,
+                DefaultValue: 1, MinValue: 1, MaxValue: 20),
+        ]);
 
     private readonly Snake3DConfiguration _configuration = options.Value;
     
@@ -42,6 +54,19 @@ public sealed class Snake3DAnimation(IOptions<Snake3DConfiguration> options, ILo
     public void Dispose()
     {
         WeakReferenceMessenger.Default.UnregisterAll(this);
+    }
+
+    public void Configure(AnimationConfig config)
+    {
+        if (config.GetString("EdgeBehaviour") is { } edge &&
+            System.Enum.TryParse<EdgeBehaviour>(edge, out var edgeBehaviour))
+            _configuration.EdgeBehaviour = edgeBehaviour;
+
+        if (config.Get<float>("FoodGrowthFactor") is { } growth)
+            _configuration.FoodGrowthFactor = growth;
+
+        if (config.Get<int>("ActiveFoodCount") is { } foodCount)
+            _configuration.ActiveFoodCount = foodCount;
     }
 
     public Task InitializeAsync(CancellationToken token)

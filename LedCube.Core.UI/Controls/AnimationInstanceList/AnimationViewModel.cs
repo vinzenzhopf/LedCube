@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using CommunityToolkit.Mvvm.ComponentModel;
+using LedCube.PluginBase;
 
 namespace LedCube.Core.UI.Controls.AnimationInstanceList;
 
@@ -28,7 +29,10 @@ public partial class AnimationViewModel : ObservableObject
 
     [ObservableProperty]
     private TypeInfo? _typeInfo;
-    
+
+    [ObservableProperty]
+    private FrameGeneratorInfo? _generatorInfo;
+
     public double FrameFrequency => FrameTime.TotalSeconds;
     public TimeSpan TotalTime => TimeSpan.FromTicks((long)(FrameCount * FrameTime.Ticks));
 
