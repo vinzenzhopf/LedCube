@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using LedCube.Core.UI.Controls.AnimationInstanceList;
 using LedCube.Core.UI.Services;
+using LedCube.Core.UI.Services.Playback;
 using AnimationViewModel = LedCube.Core.UI.Controls.AnimationInstanceList.AnimationViewModel;
 
 namespace LedCube.Core.UI.Controls.PlaybackControl;

@@ -7,6 +7,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using LedCube.Core.UI.Dialog.EditAnimationInstanceDialog;
 using LedCube.Core.UI.Dialog.SelectAnimationDialog;
 using LedCube.Core.UI.Services;
+using LedCube.Core.UI.Services.Playback;
 using LedCube.PluginHost;
 using Microsoft.Extensions.Logging;
 

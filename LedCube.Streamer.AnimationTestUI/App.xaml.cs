@@ -4,7 +4,7 @@ using System.Reflection;
 using System.Windows;
 using CommunityToolkit.Mvvm.Messaging;
 using LedCube.Core.Common;
-using LedCube.Core.Common.Config.Config;
+using LedCube.Core.Common.Config;
 using LedCube.Core.Common.CubeData.Repository;
 using LedCube.Core.Common.Settings;
 using LedCube.Core.UI.Controls.AnimationInstanceList;
@@ -18,6 +18,7 @@ using LedCube.Core.UI.Dialog.EditAnimationInstanceDialog;
 using LedCube.Core.UI.Dialog.SelectAnimationDialog;
 using LedCube.Core.UI.Dialog.SimpleDialog;
 using LedCube.Core.UI.Services;
+using LedCube.Core.UI.Services.Playback;
 using LedCube.PluginHost;
 using LedCube.Streamer.AnimationTestUI.Controls.MainWindow;
 using LedCube.Streamer.AnimationTestUI.Controls.MenuBar;
@@ -105,7 +106,6 @@ public partial class App : Application,
                 // services.AddSingleton<IConfiguration>(_configurationRoot);
                 services.AddSingleton<ISettingsProvider<LedCubeStreamerSettings>>(settingsProvider);
                 services.AddSingleton<ISettings<LedCubeStreamerSettings>>(settingsProvider);
-                services.AddSingleton<ICubeConfigRepository>(settingsProvider.Settings);
                 services.AddSingleton<LogAppenderViewModel>();
                 // services.AddSingleton<NavigationController>();
                         

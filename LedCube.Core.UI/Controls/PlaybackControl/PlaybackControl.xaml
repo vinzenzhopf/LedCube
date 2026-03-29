@@ -7,6 +7,7 @@
              xmlns:local="clr-namespace:LedCube.Core.UI.Controls.PlaybackControl"
              xmlns:services="clr-namespace:LedCube.Core.UI.Services"
              xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:playback="clr-namespace:LedCube.Core.UI.Services.Playback"
              mc:Ignorable="d"
              d:DesignWidth="600"
              d:DataContext="{d:DesignInstance local:PlaybackControlViewModel, IsDesignTimeCreatable=True}">
@@ -180,7 +181,7 @@
                                 </Style.Setters>
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding PlaybackState}" 
-                                                 Value="{x:Static services:PlaybackState.Playing}">
+                                                 Value="{x:Static playback:PlaybackState.Playing}">
                                         <Setter Property="Visibility" Value="Collapsed" />
                                     </DataTrigger>
                                 </Style.Triggers>
@@ -196,7 +197,7 @@
                                 </Style.Setters>
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding PlaybackState}" 
-                                                 Value="{x:Static services:PlaybackState.Playing}">
+                                                 Value="{x:Static playback:PlaybackState.Playing}">
                                         <Setter Property="Visibility" Value="Visible" />
                                     </DataTrigger>
                                 </Style.Triggers>

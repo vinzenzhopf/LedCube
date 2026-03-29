@@ -4,19 +4,25 @@ using System.Reflection;
 using System.Windows;
 using CommunityToolkit.Mvvm.Messaging;
 using LedCube.Core.Common;
-using LedCube.Core.Common.Config.Config;
+using LedCube.Core.Common.Config;
 using LedCube.Core.Common.CubeData.Repository;
 using LedCube.Core.Common.Settings;
 using LedCube.Core.UI.Controls.AnimationInstanceList;
 using LedCube.Core.UI.Controls.LogAppender;
 using LedCube.Core.UI.Controls.PlaybackControl;
+using LedCube.Core.UI.Controls.SettingsDialog;
 using LedCube.Core.UI.Controls.StreamingControl;
 using LedCube.Core.UI.Dialog.BroadcastSearchDialog;
 using LedCube.Core.UI.Dialog.EditAnimationInstanceDialog;
 using LedCube.Core.UI.Dialog.SelectAnimationDialog;
 using LedCube.Core.UI.Dialog.SimpleDialog;
+using LedCube.Core.UI.Messages;
 using LedCube.Core.UI.Services;
+using LedCube.Core.UI.Services.Hotkey;
+using LedCube.Core.UI.Services.Playback;
+using LedCube.Core.UI.Settings;
 using LedCube.PluginHost;
+using LedCube.Streamer.UI.Settings;
 using LedCube.Streamer.CubeStreamer;
 using LedCube.Streamer.UdpCom;
 using Microsoft.Extensions.Configuration;
@@ -31,7 +37,10 @@ namespace LedCube.Streamer.UI
         IRecipient<OpenSimpleDialogMessage>,
         IRecipient<OpenBroadcastSearchDialogMessage>,
         IRecipient<OpenSelectAnimationDialogMessage>,
-        IRecipient<EditAnimationInstanceDialogMessage>
+        IRecipient<EditAnimationInstanceDialogMessage>,
+        IRecipient<OpenSettingsNavigationMessage>,
+        IRecipient<ExitApplicationNavigationMessage>,
+        IRecipient<OpenSettingsHotkeyInputDialogMessage>
     {
         private IHost? _host;
         private readonly PluginHostContext _pluginHostContext = new();
@@ -88,7 +97,11 @@ namespace LedCube.Streamer.UI
                     services.AddSingleton(appInfo);
                     services.AddSingleton<ISettingsProvider<LedCubeStreamerSettings>>(settingsProvider);
                     services.AddSingleton<ISettings<LedCubeStreamerSettings>>(settingsProvider);
-                    services.AddSingleton<ICubeConfigRepository>(settingsProvider.Settings);
+
+                    var hotkeySettingsProvider = new SettingsProvider<KeyboardControlConfig>("LedCube", "hotkeys.json");
+                    hotkeySettingsProvider.Load();
+                    services.AddSingleton<ISettingsProvider<KeyboardControlConfig>>(hotkeySettingsProvider);
+                    services.AddSingleton<ISettingsFacade, StreamerSettingsFacade>();
                     services.AddLogAppenderControlViewModel(logAppenderControlSink);
 
                     services.SetupPluginHost(_pluginHostContext);
@@ -107,6 +120,9 @@ namespace LedCube.Streamer.UI
             WeakReferenceMessenger.Default.Register<OpenBroadcastSearchDialogMessage>(this);
             WeakReferenceMessenger.Default.Register<OpenSelectAnimationDialogMessage>(this);
             WeakReferenceMessenger.Default.Register<EditAnimationInstanceDialogMessage>(this);
+            WeakReferenceMessenger.Default.Register<OpenSettingsNavigationMessage>(this);
+            WeakReferenceMessenger.Default.Register<ExitApplicationNavigationMessage>(this);
+            WeakReferenceMessenger.Default.Register<OpenSettingsHotkeyInputDialogMessage>(this);
 
             await _host!.StartAsync();
 
@@ -150,6 +166,10 @@ namespace LedCube.Streamer.UI
             services.AddSingleton<AnimationList>();
             services.AddSingleton<PlaybackControlViewModel>();
             services.AddSingleton<PlaybackControl>();
+            services.AddSingleton<IHotkeyService, HotkeyService>();
+            services.AddTransient<SettingsDialogViewModel>();
+            services.AddSingleton<SettingsHotkeyInputDialogViewModel>();
+            services.AddSingleton<SettingsHotkeyInputDialog>();
         }
 
         public static DateTime GetLinkerTime(Assembly? targetAssembly = null)
@@ -210,6 +230,34 @@ namespace LedCube.Streamer.UI
             var window = new EditAnimationInstanceDialog() { DataContext = viewModel };
             Dispatcher.Invoke(() => window.ShowDialog());
             message.Result = viewModel.DialogResult;
+        }
+
+        public void Receive(OpenSettingsNavigationMessage message)
+        {
+            Log.Information("Showing SettingsDialog");
+            var viewModel = _host!.Services.GetRequiredService<SettingsDialogViewModel>();
+            var window = new SettingsDialog() { DataContext = viewModel };
+            viewModel.CloseAction = window.Close;
+            Dispatcher.Invoke(() => window.ShowDialog());
+        }
+
+        public void Receive(OpenSettingsHotkeyInputDialogMessage message)
+        {
+            Log.Information("Showing SettingsHotkeyInputDialog");
+            var viewModel = _host!.Services.GetRequiredService<SettingsHotkeyInputDialogViewModel>();
+            viewModel.Function = message.Function;
+            viewModel.Description = message.Description;
+            viewModel.Reset();
+            var window = new SettingsHotkeyInputDialog() { DataContext = viewModel };
+            Dispatcher.Invoke(() => window.ShowDialog());
+            message.DialogResult = viewModel.DialogResult;
+            if (viewModel.DialogResult == true)
+                message.ResultBinding = viewModel.CapturedBinding;
+        }
+        
+        public void Receive(ExitApplicationNavigationMessage message)
+        {
+            this.Shutdown();
         }
     }
 }

@@ -112,12 +112,18 @@ public sealed class RenderResources : IDisposable
         Style = SKPaintStyle.Stroke,
         StrokeWidth = 1f
     };
-
+    
     public SKFont FlagFont { get; } = new SKFont(SKTypeface.Default, 9f);
 
-    public SKPaint FlagTextPaint { get; } = new SKPaint { Color = SKColors.White };
+    public SKPaint FlagTextPaint { get; } = new SKPaint
+    {
+        Color = SKColors.White
+    };
 
-    public SKPaint FlagBackgroundPaint { get; } = new SKPaint { Style = SKPaintStyle.Fill };
+    public SKPaint FlagBackgroundPaint { get; } = new SKPaint
+    {
+        Style = SKPaintStyle.Fill
+    };
 
     private bool _disposed;
 

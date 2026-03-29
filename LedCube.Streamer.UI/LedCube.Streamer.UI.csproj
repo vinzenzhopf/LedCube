@@ -27,7 +27,6 @@
         <PackageReference Include="Serilog.Sinks.Debug" />
         <PackageReference Include="Serilog.Sinks.File" />
         <PackageReference Include="Serilog.Sinks.RichTextBox.Wpf" />
-        <PackageReference Include="System.Text.Json" />
     </ItemGroup>
 
     <ItemGroup>

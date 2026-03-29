@@ -7,6 +7,7 @@ using CommunityToolkit.Mvvm.Input;
 using LedCube.Core.UI.Controls.AnimationInstanceList;
 using LedCube.Core.UI.Controls.PlaybackControl;
 using LedCube.Core.UI.Services;
+using LedCube.Core.UI.Services.Playback;
 using LedCube.PluginHost;
 using Microsoft.Extensions.Logging;
 
