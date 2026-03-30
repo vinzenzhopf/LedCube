@@ -1,11 +1,14 @@
 using System;
 using CommunityToolkit.Mvvm.ComponentModel;
+using LedCube.Core.UI.Services.Playlist;
 using LedCube.PluginBase;
 
-namespace LedCube.Core.UI.Controls.AnimationInstanceList;
+namespace LedCube.Core.UI.Controls.PlaylistControl;
 
-public partial class AnimationInstanceViewModel : ObservableObject
+public partial class PlaylistEntryControlViewModel : ObservableObject
 {
+    public PlaylistEntry? Entry { get; }
+
     [ObservableProperty]
     private AnimationViewModel _animation;
 
@@ -14,6 +17,9 @@ public partial class AnimationInstanceViewModel : ObservableObject
 
     [ObservableProperty]
     private bool _isSelected;
+
+    [ObservableProperty]
+    private EntryDisplayState _displayState;
 
     [ObservableProperty]
     private string _instanceName = string.Empty;
@@ -38,7 +44,23 @@ public partial class AnimationInstanceViewModel : ObservableObject
 
     public double FrameFrequency => FrameTime.TotalSeconds;
 
-    public AnimationInstanceViewModel(AnimationViewModel animation)
+    public PlaylistEntryControlViewModel(PlaylistEntry entry)
+    {
+        Entry = entry;
+        _instanceName = entry.InstanceName;
+        _repeatCount = entry.RepeatCount;
+        _frameTimeOverride = entry.FrameTimeOverride;
+        Config = entry.Config;
+        _animation = new AnimationViewModel
+        {
+            Name = entry.Info.Name,
+            Description = entry.Info.Description,
+            TypeInfo = entry.TypeInfo,
+            GeneratorInfo = entry.Info,
+        };
+    }
+
+    public PlaylistEntryControlViewModel(AnimationViewModel animation)
     {
         _animation = animation;
         var descriptors = animation.GeneratorInfo?.ConfigDescriptors;
@@ -47,11 +69,13 @@ public partial class AnimationInstanceViewModel : ObservableObject
             : new AnimationConfig();
     }
 
-    public AnimationInstanceViewModel(AnimationInstanceViewModel other)
+    public PlaylistEntryControlViewModel(PlaylistEntryControlViewModel other)
     {
+        Entry = other.Entry;
         _animation = other.Animation;
         _index = other.Index;
         _isSelected = other.IsSelected;
+        _instanceName = other.InstanceName;
         _frameCount = other.FrameCount;
         _animationLength = other.AnimationLength;
         _repeatCount = other.RepeatCount;

@@ -6,7 +6,7 @@
              xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              xmlns:local="clr-namespace:LedCube.Core.UI.Controls.AnimationTest"
-             xmlns:animationInstanceList="clr-namespace:LedCube.Core.UI.Controls.AnimationInstanceList"
+             xmlns:playlistControl="clr-namespace:LedCube.Core.UI.Controls.PlaylistControl"
              mc:Ignorable="d"
              d:DesignHeight="300"
              d:DesignWidth="300" 
@@ -55,7 +55,7 @@
                     </Style>
                 </ComboBox.ItemContainerStyle>
                 <ComboBox.ItemTemplate>
-                    <DataTemplate DataType="{x:Type animationInstanceList:AnimationViewModel}">
+                    <DataTemplate DataType="{x:Type playlistControl:AnimationViewModel}">
                         <Border>
                             <Grid Margin="2">
                                 <Grid.ColumnDefinitions>

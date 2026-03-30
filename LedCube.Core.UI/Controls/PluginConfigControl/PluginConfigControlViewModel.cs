@@ -1,14 +1,15 @@
+using System;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
+using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
-using LedCube.Core.UI.Controls.AnimationInstanceList;
+using CommunityToolkit.Mvvm.Messaging;
+using LedCube.Core.UI.Services.Playlist;
 
 namespace LedCube.Core.UI.Controls.PluginConfigControl;
 
-public partial class PluginConfigControlViewModel : ObservableObject
+public partial class PluginConfigControlViewModel : ObservableObject, IRecipient<PlaylistSelectionChangedMessage>
 {
-    private readonly AnimationListViewModel _animationList;
-    private AnimationInstanceViewModel? _selectedInstance;
+    private PlaylistEntry? _selectedEntry;
 
     public ObservableCollection<ConfigEntryViewModel> ConfigEntries { get; } = [];
 
@@ -20,59 +21,55 @@ public partial class PluginConfigControlViewModel : ObservableObject
 
     public int RepeatCount
     {
-        get => _selectedInstance?.RepeatCount ?? 1;
+        get => _selectedEntry?.RepeatCount ?? 1;
         set
         {
-            if (_selectedInstance is not null)
-                _selectedInstance.RepeatCount = value;
+            if (_selectedEntry is not null)
+                _selectedEntry.RepeatCount = value;
             OnPropertyChanged();
         }
     }
 
     public string FrameTimeOverrideMs
     {
-        get => _selectedInstance?.FrameTimeOverride?.TotalMilliseconds.ToString("G") ?? string.Empty;
+        get => _selectedEntry?.FrameTimeOverride?.TotalMilliseconds.ToString("G") ?? string.Empty;
         set
         {
-            if (_selectedInstance is null) return;
+            if (_selectedEntry is null) return;
             if (string.IsNullOrWhiteSpace(value))
-                _selectedInstance.FrameTimeOverride = null;
-            else if (double.TryParse(value, System.Globalization.NumberStyles.Float,
-                         System.Globalization.CultureInfo.InvariantCulture, out var ms))
-                _selectedInstance.FrameTimeOverride = System.TimeSpan.FromMilliseconds(ms);
+                _selectedEntry.FrameTimeOverride = null;
+            else if (double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out var ms))
+                _selectedEntry.FrameTimeOverride = TimeSpan.FromMilliseconds(ms);
             OnPropertyChanged();
         }
     }
 
-    public PluginConfigControlViewModel(AnimationListViewModel animationList)
+    public PluginConfigControlViewModel()
     {
-        _animationList = animationList;
-        animationList.PropertyChanged += OnAnimationListPropertyChanged;
-        UpdateEntries(animationList.SelectedInstance);
+        WeakReferenceMessenger.Default.Register(this);
     }
 
-    private void OnAnimationListPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    public void Receive(PlaylistSelectionChangedMessage message)
     {
-        if (e.PropertyName == nameof(AnimationListViewModel.SelectedInstance))
-            UpdateEntries(_animationList.SelectedInstance);
+        UpdateEntries(message.Entry);
     }
 
-    private void UpdateEntries(AnimationInstanceViewModel? instance)
+    private void UpdateEntries(PlaylistEntry? entry)
     {
-        _selectedInstance = instance;
+        _selectedEntry = entry;
         ConfigEntries.Clear();
 
-        HasSelection = instance is not null;
+        HasSelection = entry is not null;
         OnPropertyChanged(nameof(RepeatCount));
         OnPropertyChanged(nameof(FrameTimeOverrideMs));
 
-        var descriptors = instance?.Animation.GeneratorInfo?.ConfigDescriptors;
+        var descriptors = entry?.Info.ConfigDescriptors;
         HasConfigDescriptors = descriptors is { Count: > 0 };
 
-        if (descriptors is null || instance is null)
+        if (descriptors is null || entry is null)
             return;
 
         foreach (var descriptor in descriptors)
-            ConfigEntries.Add(new ConfigEntryViewModel(descriptor, instance.Config));
+            ConfigEntries.Add(new ConfigEntryViewModel(descriptor, entry.Config));
     }
 }

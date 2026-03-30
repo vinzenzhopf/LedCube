@@ -6,7 +6,7 @@
                  xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
                  xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
                  xmlns:local="clr-namespace:LedCube.Core.UI.Dialog.SelectAnimationDialog"
-                 xmlns:animationInstanceList="clr-namespace:LedCube.Core.UI.Controls.AnimationInstanceList"
+                 xmlns:playlistControl="clr-namespace:LedCube.Core.UI.Controls.PlaylistControl"
                  mc:Ignorable="d"
                  d:DataContext="{d:DesignInstance local:SelectAnimationDialogViewModel, IsDesignTimeCreatable=True}"
                  Height="400"
@@ -91,7 +91,7 @@
                     </Style>
                 </ListBox.ItemContainerStyle>
                 <ListBox.ItemTemplate>
-                    <DataTemplate DataType="{x:Type animationInstanceList:AnimationViewModel}">
+                    <DataTemplate DataType="{x:Type playlistControl:AnimationViewModel}">
                         <Border>
                             <Grid>
                                 <Grid.ColumnDefinitions>

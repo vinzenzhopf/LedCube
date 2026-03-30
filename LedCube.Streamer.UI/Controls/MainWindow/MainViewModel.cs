@@ -4,9 +4,9 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using LedCube.Core.Common;
-using LedCube.Core.UI.Controls.AnimationInstanceList;
 using LedCube.Core.UI.Controls.LogAppender;
 using LedCube.Core.UI.Controls.PlaybackControl;
+using LedCube.Core.UI.Controls.PlaylistControl;
 using LedCube.Core.UI.Controls.PluginConfigControl;
 using LedCube.Core.UI.Controls.StreamingControl;
 using LedCube.Core.UI.Dialog.BroadcastSearchDialog;
@@ -22,7 +22,7 @@ public partial class MainViewModel : ObservableObject
     private readonly AppInfo _appInfo;
     public LogAppenderViewModel LogAppenderViewModel { get; }
     public MenuBarViewModel MenuBarViewModel { get; }
-    public AnimationListViewModel AnimationListViewModel { get; }
+    public PlaylistControlViewModel PlaylistControlViewModel { get; }
     public PluginConfigControlViewModel PluginConfigViewModel { get; }
     public PlaybackControlViewModel PlaybackControlViewModel { get; }
     public StreamingControlViewModel StreamingControlViewModel { get; }
@@ -35,7 +35,7 @@ public partial class MainViewModel : ObservableObject
         AppInfo appInfo,
         LogAppenderViewModel logAppenderViewModel,
         MenuBarViewModel menuBarViewModel,
-        AnimationListViewModel animationListViewModel,
+        PlaylistControlViewModel playlistControlViewModel,
         PluginConfigControlViewModel pluginConfigViewModel,
         PlaybackControlViewModel playbackControlViewModel,
         StreamingControlViewModel streamingControlViewModel)
@@ -44,7 +44,7 @@ public partial class MainViewModel : ObservableObject
         _appInfo = appInfo;
         LogAppenderViewModel = logAppenderViewModel;
         MenuBarViewModel = menuBarViewModel;
-        AnimationListViewModel = animationListViewModel;
+        PlaylistControlViewModel = playlistControlViewModel;
         PluginConfigViewModel = pluginConfigViewModel;
         PlaybackControlViewModel = playbackControlViewModel;
         StreamingControlViewModel = streamingControlViewModel;

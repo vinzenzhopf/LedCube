@@ -40,7 +40,7 @@
       <Page Update="Dialog\BroadcastSearchDialog\BroadcastSearchDialogWindow.xaml">
         <Generator>MSBuild:Compile</Generator>
       </Page>
-      <Page Update="Controls\AnimationList\AnimationList.xaml">
+      <Page Update="Controls\AnimationList\PlaylistControl.xaml">
         <Generator>MSBuild:Compile</Generator>
       </Page>
       <Page Update="Controls\AnimationList\AnimationInstanceListEntry.xaml">

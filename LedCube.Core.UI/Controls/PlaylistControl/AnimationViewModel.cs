@@ -3,7 +3,7 @@ using System.Reflection;
 using CommunityToolkit.Mvvm.ComponentModel;
 using LedCube.PluginBase;
 
-namespace LedCube.Core.UI.Controls.AnimationInstanceList;
+namespace LedCube.Core.UI.Controls.PlaylistControl;
 
 public partial class AnimationViewModel : ObservableObject
 {

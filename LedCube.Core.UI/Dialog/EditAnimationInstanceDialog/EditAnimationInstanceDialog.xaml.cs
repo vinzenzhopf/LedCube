@@ -1,6 +1,5 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
+using CommunityToolkit.Mvvm.Messaging;
 using LedCube.Core.UI.Dialog.BaseDialog;
-using LedCube.Core.UI.Dialog.SelectAnimationDialog;
 using MahApps.Metro.Controls;
 
 namespace LedCube.Core.UI.Dialog.EditAnimationInstanceDialog;
@@ -15,9 +14,7 @@ public partial class EditAnimationInstanceDialog : MetroWindow, IRecipient<Close
 
     public void Receive(CloseDialogMessage message)
     {
-        if (message.Name != nameof(SelectAnimationDialogViewModel)) return;
-        
-        // DialogResult = message.Result;
+        if (message.Name != nameof(EditAnimationInstanceDialogViewModel)) return;
         Close();
     }
 }

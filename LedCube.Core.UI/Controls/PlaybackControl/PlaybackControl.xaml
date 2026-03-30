@@ -67,9 +67,9 @@
         <Grid>
             <timeline:TimelineControl
                 Mode="Live"
-                TotalFrames="{Binding PlaybackService.Animation.FrameCount, FallbackValue=100}"
-                FrameTime="{Binding PlaybackService.Animation.FrameTime}"
-                CurrentFrame="{Binding PlaybackService.CurrentFrame, Mode=TwoWay}"
+                TotalFrames="{Binding Animation.FrameCount, FallbackValue=100}"
+                FrameTime="{Binding Animation.FrameTime}"
+                CurrentFrame="{Binding CurrentFrame, Mode=TwoWay}"
                 PlayheadChanged="OnPlayheadChanged" />
         </Grid>
         <!-- Lower control Bar -->
@@ -107,19 +107,19 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <TextBlock Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" 
-                               Text="{Binding PlaybackService.Animation.Name}" FontWeight="Bold" />
+                               Text="{Binding Animation.Name}" FontWeight="Bold" />
                     <TextBlock Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="4" 
-                               Text="{Binding PlaybackService.Animation.Description}"/>
+                               Text="{Binding Animation.Description}"/>
                     <WrapPanel Grid.Column="0" Grid.Row="2">
                         <TextBlock Text="Frames: " 
                                    Foreground="Gray" />
-                        <TextBlock Text="{Binding PlaybackService.Animation.FrameCount}" 
+                        <TextBlock Text="{Binding Animation.FrameCount}" 
                                    Foreground="Gray"/>
                     </WrapPanel>
                     <WrapPanel Grid.Column="1" Grid.Row="2">
                         <TextBlock Text="FPS: " 
                                    Foreground="Gray" />
-                        <TextBlock Text="{Binding PlaybackService.Animation.FrameFrequency}" 
+                        <TextBlock Text="{Binding Animation.FrameFrequency}" 
                                    Foreground="Gray"/>
                     </WrapPanel>
                     <WrapPanel Grid.Column="2" Grid.Row="2"
@@ -131,19 +131,19 @@
                             Width="12"
                             VerticalAlignment="Center"
                             Margin="0,0,2,0"/>
-                        <TextBlock Text="{Binding PlaybackService.Animation.AnimationLength}"
+                        <TextBlock Text="{Binding Animation.AnimationLength}"
                                    Foreground="Gray"/>
                     </WrapPanel>
                     <!-- Frame / Time position row -->
                     <WrapPanel Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="4"
                                Orientation="Horizontal">
-                        <TextBlock Text="{Binding PlaybackService.CurrentFrame}" FontWeight="SemiBold"/>
+                        <TextBlock Text="{Binding CurrentFrame}" FontWeight="SemiBold"/>
                         <TextBlock Text=" / " Foreground="Gray"/>
-                        <TextBlock Text="{Binding PlaybackService.Animation.FrameCount}" Foreground="Gray"/>
+                        <TextBlock Text="{Binding Animation.FrameCount}" Foreground="Gray"/>
                         <TextBlock Text="   "/>
-                        <TextBlock Text="{Binding PlaybackService.CurrentTime, StringFormat=hh\\:mm\\:ss\\.ff}" FontWeight="SemiBold"/>
+                        <TextBlock Text="{Binding CurrentTime, StringFormat=hh\\:mm\\:ss\\.ff}" FontWeight="SemiBold"/>
                         <TextBlock Text=" / " Foreground="Gray"/>
-                        <TextBlock Text="{Binding PlaybackService.Animation.TotalTime, StringFormat=hh\\:mm\\:ss\\.ff}" Foreground="Gray"/>
+                        <TextBlock Text="{Binding Animation.TotalTime, StringFormat=hh\\:mm\\:ss\\.ff}" Foreground="Gray"/>
                     </WrapPanel>
                 </Grid>
                 <Grid>

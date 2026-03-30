@@ -13,6 +13,6 @@ public partial class PlaybackControl : UserControl
     private void OnPlayheadChanged(object sender, PlayheadChangedEventArgs e)
     {
         if (DataContext is PlaybackControlViewModel vm)
-            vm.PlaybackService.SeekToFrame(e.NewFrame);
+            vm.SeekToFrame(e.NewFrame);
     }
 }

@@ -8,7 +8,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using LedCube.Core.UI.Dialog.BaseDialog;
 using LedCube.PluginHost;
 using Microsoft.Extensions.Logging;
-using AnimationViewModel = LedCube.Core.UI.Controls.AnimationInstanceList.AnimationViewModel;
+using AnimationViewModel = LedCube.Core.UI.Controls.PlaylistControl.AnimationViewModel;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace LedCube.Core.UI.Dialog.SelectAnimationDialog;

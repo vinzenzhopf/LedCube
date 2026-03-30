@@ -1,10 +1,10 @@
-﻿using LedCube.Core.UI.Dialog.BaseDialog;
-using AnimationInstanceViewModel = LedCube.Core.UI.Controls.AnimationInstanceList.AnimationInstanceViewModel;
+﻿using LedCube.Core.UI.Controls.PlaylistControl;
+using LedCube.Core.UI.Dialog.BaseDialog;
 
 namespace LedCube.Core.UI.Dialog.EditAnimationInstanceDialog;
 
 public record EditAnimationInstanceDialogMessage(
-    AnimationInstanceViewModel Instance
+    PlaylistEntryControlViewModel Instance
 )
 {
     public DialogResult? Result { get; set; }

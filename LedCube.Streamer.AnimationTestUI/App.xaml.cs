@@ -12,6 +12,7 @@ using LedCube.Core.UI.Controls.AnimationTest;
 using LedCube.Core.UI.Controls.CubeView2D;
 using LedCube.Core.UI.Controls.LogAppender;
 using LedCube.Core.UI.Controls.PlaybackControl;
+using LedCube.Core.UI.Controls.PlaylistControl;
 using LedCube.Core.UI.Controls.StreamingControl;
 using LedCube.Core.UI.Dialog.BroadcastSearchDialog;
 using LedCube.Core.UI.Dialog.EditAnimationInstanceDialog;
@@ -19,6 +20,7 @@ using LedCube.Core.UI.Dialog.SelectAnimationDialog;
 using LedCube.Core.UI.Dialog.SimpleDialog;
 using LedCube.Core.UI.Services;
 using LedCube.Core.UI.Services.Playback;
+using LedCube.Core.UI.Services.Playlist;
 using LedCube.PluginHost;
 using LedCube.Streamer.AnimationTestUI.Controls.MainWindow;
 using LedCube.Streamer.AnimationTestUI.Controls.MenuBar;
@@ -173,9 +175,10 @@ public partial class App : Application,
             
         services.AddSingleton<PlaybackService>();
         services.AddSingleton<IPlaybackService>(p => p.GetService<PlaybackService>()!);
+        services.AddSingleton<IPlaylistService, PlaylistService>();
         services.AddHostedService(p => p.GetService<PlaybackService>()!);
-        services.AddSingleton<AnimationListViewModel>();
-        services.AddSingleton<AnimationList>();
+        services.AddSingleton<PlaylistControlViewModel>();
+        services.AddSingleton<PlaylistControl>();
         services.AddSingleton<PlaybackControlViewModel>();
         services.AddSingleton<PlaybackControl>();
 

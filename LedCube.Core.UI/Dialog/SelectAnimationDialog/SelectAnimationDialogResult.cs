@@ -1,5 +1,5 @@
 ﻿using LedCube.Core.UI.Dialog.BaseDialog;
-using AnimationViewModel = LedCube.Core.UI.Controls.AnimationInstanceList.AnimationViewModel;
+using AnimationViewModel = LedCube.Core.UI.Controls.PlaylistControl.AnimationViewModel;
 
 namespace LedCube.Core.UI.Dialog.SelectAnimationDialog;
 
