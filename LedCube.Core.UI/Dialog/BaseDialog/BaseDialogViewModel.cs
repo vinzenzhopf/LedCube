@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
+using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
@@ -29,24 +29,21 @@ public partial class BaseDialogViewModel<T> : ObservableObject where T : BaseDia
     {
         if (window is not Window w) return;
         _dialogMessage.DialogResult = true;
-        w.DialogResult = true;
-        w.Close();
-    } 
-    
+        w.Close(true);
+    }
+
     [RelayCommand]
     private void OnCancelClicked(object window)
     {
         if (window is not Window w) return;
         _dialogMessage.DialogResult = false;
-        w.DialogResult = false;
-        w.Close();
+        w.Close(false);
     }
-    
+
     [RelayCommand]
     private void OnClosed(object window)
     {
         if (window is not Window w) return;
         _dialogMessage.DialogResult = null;
-        w.DialogResult = null;
     }
 }

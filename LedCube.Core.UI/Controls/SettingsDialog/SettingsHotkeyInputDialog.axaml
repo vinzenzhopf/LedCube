@@ -1,0 +1,32 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:LedCube.Core.UI.Controls.SettingsDialog"
+        x:Class="LedCube.Core.UI.Controls.SettingsDialog.SettingsHotkeyInputDialog"
+        Title="{Binding Description}"
+        Height="160" Width="400"
+        CanResize="False"
+        WindowStartupLocation="CenterOwner">
+    <Window.Resources>
+        <DataTemplate x:Key="KeyChipTemplate">
+            <Border CornerRadius="6" BorderThickness="1" BorderBrush="Gray"
+                    Background="#FAFAFA" Padding="8,4" Margin="0,0,6,0">
+                <TextBlock FontWeight="SemiBold" VerticalAlignment="Center" Text="{Binding}"/>
+            </Border>
+        </DataTemplate>
+    </Window.Resources>
+    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+        <TextBlock HorizontalAlignment="Center" Text="Press the key combination you want to set:"/>
+        <TextBlock HorizontalAlignment="Center" Text="(ESC to cancel)" Classes="muted" FontSize="11" Margin="0,2,0,8"/>
+        <ItemsControl Height="40"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center"
+                      ItemsSource="{Binding HotkeyTokens}"
+                      ItemTemplate="{StaticResource KeyChipTemplate}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel HorizontalAlignment="Center"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+        </ItemsControl>
+    </StackPanel>
+</Window>

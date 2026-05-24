@@ -1,0 +1,109 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:LedCube.Core.UI.Controls.LogAppender"
+             xmlns:helpers="clr-namespace:LedCube.Core.UI.Helpers"
+             xmlns:serilog="clr-namespace:Serilog.Events;assembly=Serilog"
+             xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             x:Class="LedCube.Core.UI.Controls.LogAppender.LogAppenderControl">
+    <UserControl.Resources>
+        <!-- Per-column header template — full control over padding/font/color. -->
+        <DataTemplate x:Key="LogHeader" x:DataType="x:String">
+            <TextBlock Text="{Binding}"
+                       Padding="2,2"
+                       VerticalAlignment="Center"
+                       Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
+        </DataTemplate>
+    </UserControl.Resources>
+    <UserControl.Styles>
+        <Style Selector="DataGridCell">
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="MinHeight" Value="0"/>
+        </Style>
+        <!-- Kill the default Margin that DataGridTextColumn applies to its generated TextBlock. -->
+        <Style Selector="DataGridCell TextBlock">
+            <Setter Property="Margin" Value="2,0"/>
+        </Style>
+        <Style Selector="DataGridRow">
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="MinHeight" Value="0"/>
+            <Setter Property="Foreground" Value="{Binding Color}"/>
+        </Style>
+    </UserControl.Styles>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+
+        <DataGrid Grid.Column="0"
+                  ItemsSource="{Binding LogEntries}"
+                  AutoGenerateColumns="False"
+                  CanUserResizeColumns="True"
+                  CanUserSortColumns="False"
+                  IsReadOnly="True"
+                  HeadersVisibility="Column"
+                  GridLinesVisibility="Vertical"
+                  VerticalGridLinesBrush="{DynamicResource DividerStrokeColorDefaultBrush}"
+                  >
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Time"
+                                    HeaderTemplate="{StaticResource LogHeader}"
+                                    Binding="{Binding Time, StringFormat='{}{0:HH:mm:ss.fff}'}"
+                                    Width="100"/>
+                <DataGridTextColumn Header="Level"
+                                    HeaderTemplate="{StaticResource LogHeader}"
+                                    Binding="{Binding Level}"
+                                    Width="90"/>
+                <DataGridTextColumn Header="Message"
+                                    HeaderTemplate="{StaticResource LogHeader}"
+                                    Binding="{Binding Message}"
+                                    Width="*"/>
+                <DataGridTextColumn Header="Logger"
+                                    HeaderTemplate="{StaticResource LogHeader}"
+                                    Binding="{Binding Logger}"
+                                    Width="350"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <StackPanel Grid.Column="1" Classes="toolbar vertical">
+            <Button Classes="icon sm"
+                    Command="{Binding CloseCommand}"
+                    ToolTip.Tip="Hide log">
+                <materialIcons:MaterialIcon Kind="ChevronDown"/>
+            </Button>
+            <Button Classes="icon sm"
+                    Command="{Binding ClearCommand}"
+                    ToolTip.Tip="Clear log">
+                <materialIcons:MaterialIcon Kind="Delete"/>
+            </Button>
+            <Button Classes="icon sm"
+                    ToolTip.Tip="{Binding MinLevel, StringFormat='Minimum level: {0}'}">
+                <materialIcons:MaterialIcon Kind="FilterVariant"/>
+                <Button.Flyout>
+                    <MenuFlyout>
+                        <MenuItem Header="Verbose"
+                                  Command="{Binding SetMinLevelCommand}"
+                                  CommandParameter="{x:Static serilog:LogEventLevel.Verbose}"/>
+                        <MenuItem Header="Debug"
+                                  Command="{Binding SetMinLevelCommand}"
+                                  CommandParameter="{x:Static serilog:LogEventLevel.Debug}"/>
+                        <MenuItem Header="Information"
+                                  Command="{Binding SetMinLevelCommand}"
+                                  CommandParameter="{x:Static serilog:LogEventLevel.Information}"/>
+                        <MenuItem Header="Warning"
+                                  Command="{Binding SetMinLevelCommand}"
+                                  CommandParameter="{x:Static serilog:LogEventLevel.Warning}"/>
+                        <MenuItem Header="Error"
+                                  Command="{Binding SetMinLevelCommand}"
+                                  CommandParameter="{x:Static serilog:LogEventLevel.Error}"/>
+                        <MenuItem Header="Fatal"
+                                  Command="{Binding SetMinLevelCommand}"
+                                  CommandParameter="{x:Static serilog:LogEventLevel.Fatal}"/>
+                    </MenuFlyout>
+                </Button.Flyout>
+            </Button>
+        </StackPanel>
+    </Grid>
+</UserControl>

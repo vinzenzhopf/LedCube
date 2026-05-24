@@ -1,0 +1,25 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:material="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             x:Class="LedCube.Animator.Controls.MenuBar.MenuBar">
+
+    <Menu>
+        <MenuItem Header="_File">
+            <MenuItem Header="_Settings" Command="{Binding OpenSettingsCommand}">
+                <MenuItem.Icon>
+                    <material:MaterialIcon Kind="Wrench" Width="16" Height="16" />
+                </MenuItem.Icon>
+            </MenuItem>
+            <Separator />
+            <MenuItem Header="E_xit" Command="{Binding ExitApplicationCommand}">
+                <MenuItem.Icon>
+                    <material:MaterialIcon Kind="ExitToApp" Width="16" Height="16" />
+                </MenuItem.Icon>
+            </MenuItem>
+        </MenuItem>
+        <MenuItem Header="_Tools">
+            <MenuItem Header="Show Debug _Log" IsChecked="{Binding AppenderViewModel.ShowLog, Mode=TwoWay}"
+                      ToggleType="CheckBox" />
+        </MenuItem>
+    </Menu>
+</UserControl>

@@ -2,7 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Windows.Media;
+using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -28,7 +28,7 @@ public partial class CubeStreamerViewModel : ObservableObject
     private int _selectedPlane = 0;
 
     [ObservableProperty]
-    private Brush _ledBrush = Brushes.Blue;
+    private IBrush _ledBrush = Brushes.Blue;
 
     [ObservableProperty]
     private bool _showNumbers = true;

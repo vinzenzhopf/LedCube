@@ -1,4 +1,4 @@
-using System.Windows.Input;
+using Avalonia.Input;
 
 namespace LedCube.Core.UI.Services.Hotkey;
 
@@ -16,13 +16,13 @@ public enum HotkeyFunction
     [Hotkey("Timeline.Playback.FrameBackward", "Frame Backward", Key.Left)]
     TimelinePlaybackFrameBackward,
 
-    [Hotkey("Timeline.Zoom.In", "Zoom In", InputType.MouseScrollUp, ModifierKeys.Control)]
+    [Hotkey("Timeline.Zoom.In", "Zoom In", InputType.MouseScrollUp, KeyModifiers.Control)]
     TimelineZoomIn,
 
-    [Hotkey("Timeline.Zoom.Out", "Zoom Out", InputType.MouseScrollDown, ModifierKeys.Control)]
+    [Hotkey("Timeline.Zoom.Out", "Zoom Out", InputType.MouseScrollDown, KeyModifiers.Control)]
     TimelineZoomOut,
 
-    [Hotkey("Timeline.Zoom.Reset", "Reset Zoom", Key.NumPad0, ModifierKeys.Control)]
+    [Hotkey("Timeline.Zoom.Reset", "Reset Zoom", Key.NumPad0, KeyModifiers.Control)]
     TimelineZoomReset,
 
     [Hotkey("Timeline.Selection.Delete", "Delete Selection", Key.Delete)]

@@ -1,0 +1,40 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:LedCube.Core.UI.Dialog.SimpleDialog"
+        x:Class="LedCube.Core.UI.Dialog.SimpleDialog.SimpleDialogWindow"
+        x:Name="DialogWindow"
+        Height="200" Width="350"
+        Title="{Binding Title}"
+        CanResize="False">
+    <DockPanel Margin="20">
+        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Margin="5,0,0,0" Padding="8" MinWidth="50"
+                    Content="Cancel"
+                    Command="{Binding CancelClickedCommand}"
+                    CommandParameter="{Binding #DialogWindow}"
+                    IsVisible="{Binding ShowCancelButton}"
+                    IsDefault="{Binding CancelIsPrimary}"/>
+            <Button Margin="5,0,0,0" Padding="8" MinWidth="50"
+                    Content="No"
+                    Command="{Binding NoClickedCommand}"
+                    CommandParameter="{Binding #DialogWindow}"
+                    IsVisible="{Binding ShowNoButton}"/>
+            <Button Margin="5,0,0,0" Padding="8" MinWidth="50"
+                    Content="Yes"
+                    Command="{Binding YesClickedCommand}"
+                    CommandParameter="{Binding #DialogWindow}"
+                    IsVisible="{Binding ShowYesButton}"
+                    IsDefault="{Binding YesIsPrimary}"/>
+            <Button Margin="5,0,0,0" Padding="8" MinWidth="50"
+                    Content="Ok"
+                    Command="{Binding OkClickedCommand}"
+                    CommandParameter="{Binding #DialogWindow}"
+                    IsVisible="{Binding ShowOkButton}"
+                    IsDefault="{Binding OkIsPrimary}"/>
+        </StackPanel>
+        <TextBlock Text="{Binding Text}"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Center"
+                   TextWrapping="Wrap"/>
+    </DockPanel>
+</Window>

@@ -1,0 +1,62 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:LedCube.Core.UI.Controls.SettingsDialog"
+        x:Class="LedCube.Core.UI.Controls.SettingsDialog.SettingsDialog"
+        Title="Settings"
+        Height="500" Width="800"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="2"/>
+            <ColumnDefinition Width="2*"/>
+        </Grid.ColumnDefinitions>
+
+        <TreeView Grid.Row="0" Grid.Column="0"
+                  ItemsSource="{Binding Nodes}"
+                  SelectedItem="{Binding SelectedNode, Mode=TwoWay}">
+            <TreeView.ItemTemplate>
+                <TreeDataTemplate DataType="{x:Type local:SettingsNodeViewModel}"
+                                  ItemsSource="{Binding Children}">
+                    <TextBlock Text="{Binding Title}" FontWeight="SemiBold"/>
+                </TreeDataTemplate>
+            </TreeView.ItemTemplate>
+        </TreeView>
+
+        <GridSplitter Grid.Row="0" Grid.Column="1" Width="2" HorizontalAlignment="Stretch"/>
+
+        <Border Grid.Row="0" Grid.Column="2" Padding="16">
+            <ContentControl Content="{Binding SelectedNode.Editor}">
+                <ContentControl.DataTemplates>
+                    <DataTemplate DataType="{x:Type local:GeneralCubeSettingsViewModel}">
+                        <local:SettingsPage_GeneralConfig/>
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type local:CubeStreamerSettingsViewModel}">
+                        <local:SettingsPage_StreamerSettings/>
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type local:CubeDisplaySettingsViewModel}">
+                        <local:SettingsPage_CubeDisplaySettings/>
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type local:KeyboardControlSettingViewModel}">
+                        <local:SettingsPage_KeyboardControlSettings/>
+                    </DataTemplate>
+                </ContentControl.DataTemplates>
+            </ContentControl>
+        </Border>
+
+        <StackPanel Grid.Row="1" Grid.ColumnSpan="3"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Margin="8">
+            <Button Content="OK" Width="90" Margin="0,0,8,0"
+                    Command="{Binding AcceptCommand}"/>
+            <Button Content="Cancel" Width="90"
+                    Command="{Binding CancelCommand}"/>
+        </StackPanel>
+    </Grid>
+</Window>

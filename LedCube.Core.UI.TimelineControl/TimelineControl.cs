@@ -2,47 +2,48 @@ using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Windows;
-using System.Windows.Input;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Input;
+using Avalonia.Interactivity;
+using Avalonia.Media;
+using Avalonia.Media.Immutable;
+using Avalonia.Platform;
+using Avalonia.Rendering.SceneGraph;
+using Avalonia.Skia;
 using SkiaSharp;
-using SkiaSharp.Views.Desktop;
-using SkiaSharp.Views.WPF;
 
 namespace LedCube.Core.UI.TimelineControl;
 
 /// <summary>
 /// SkiaSharp-based timeline control. TimelineState is the single source of truth;
-/// DependencyProperties are a thin sync layer on top.
+/// AvaloniaProperties are a thin sync layer on top.
 /// </summary>
-public class TimelineControl : System.Windows.Controls.Control
+public class TimelineControl : Control
 {
     // ──────────────────────────────────────────────────────────────────────────
-    // Static ctor / routed events / dependency properties
+    // Routed Events
     // ──────────────────────────────────────────────────────────────────────────
 
-    static TimelineControl()
-    {
-        DefaultStyleKeyProperty.OverrideMetadata(
-            typeof(TimelineControl),
-            new FrameworkPropertyMetadata(typeof(TimelineControl)));
-    }
+    public static readonly RoutedEvent<PlayheadChangedEventArgs> PlayheadChangedEvent =
+        RoutedEvent.Register<TimelineControl, PlayheadChangedEventArgs>(
+            nameof(PlayheadChanged), RoutingStrategies.Bubble);
 
-    #region Routed Events
+    public static readonly RoutedEvent<SelectionChangedEventArgs> SelectionChangedEvent =
+        RoutedEvent.Register<TimelineControl, SelectionChangedEventArgs>(
+            nameof(SelectionChanged), RoutingStrategies.Bubble);
 
-    public static readonly RoutedEvent PlayheadChangedEvent = EventManager.RegisterRoutedEvent(
-        nameof(PlayheadChanged), RoutingStrategy.Bubble, typeof(EventHandler<PlayheadChangedEventArgs>), typeof(TimelineControl));
+    public static readonly RoutedEvent<MarkerDragStartedEventArgs> MarkerDragStartedEvent =
+        RoutedEvent.Register<TimelineControl, MarkerDragStartedEventArgs>(
+            nameof(MarkerDragStarted), RoutingStrategies.Bubble);
 
-    public static readonly RoutedEvent SelectionChangedEvent = EventManager.RegisterRoutedEvent(
-        nameof(SelectionChanged), RoutingStrategy.Bubble, typeof(EventHandler<SelectionChangedEventArgs>), typeof(TimelineControl));
+    public static readonly RoutedEvent<MarkerDraggingEventArgs> MarkerDraggingEvent =
+        RoutedEvent.Register<TimelineControl, MarkerDraggingEventArgs>(
+            nameof(MarkerDragging), RoutingStrategies.Bubble);
 
-    public static readonly RoutedEvent MarkerDragStartedEvent = EventManager.RegisterRoutedEvent(
-        nameof(MarkerDragStarted), RoutingStrategy.Bubble, typeof(EventHandler<MarkerDragStartedEventArgs>), typeof(TimelineControl));
-
-    public static readonly RoutedEvent MarkerDraggingEvent = EventManager.RegisterRoutedEvent(
-        nameof(MarkerDragging), RoutingStrategy.Bubble, typeof(EventHandler<MarkerDraggingEventArgs>), typeof(TimelineControl));
-
-    public static readonly RoutedEvent MarkerDragCompletedEvent = EventManager.RegisterRoutedEvent(
-        nameof(MarkerDragCompleted), RoutingStrategy.Bubble, typeof(EventHandler<MarkerDragCompletedEventArgs>), typeof(TimelineControl));
+    public static readonly RoutedEvent<MarkerDragCompletedEventArgs> MarkerDragCompletedEvent =
+        RoutedEvent.Register<TimelineControl, MarkerDragCompletedEventArgs>(
+            nameof(MarkerDragCompleted), RoutingStrategies.Bubble);
 
     public event EventHandler<PlayheadChangedEventArgs> PlayheadChanged
     {
@@ -74,221 +75,188 @@ public class TimelineControl : System.Windows.Controls.Control
         remove => RemoveHandler(MarkerDragCompletedEvent, value);
     }
 
-    #endregion
+    // ──────────────────────────────────────────────────────────────────────────
+    // Avalonia Properties
+    // ──────────────────────────────────────────────────────────────────────────
 
-    #region Dependency Properties
+    public static readonly StyledProperty<TimelineMode> ModeProperty =
+        AvaloniaProperty.Register<TimelineControl, TimelineMode>(nameof(Mode), TimelineMode.Edit);
 
-    public static readonly DependencyProperty ModeProperty = DependencyProperty.Register(
-        nameof(Mode), typeof(TimelineMode), typeof(TimelineControl),
-        new PropertyMetadata(TimelineMode.Edit, OnModeChanged));
+    public static readonly StyledProperty<int> TotalFramesProperty =
+        AvaloniaProperty.Register<TimelineControl, int>(nameof(TotalFrames), 100);
 
-    public static readonly DependencyProperty TotalFramesProperty = DependencyProperty.Register(
-        nameof(TotalFrames), typeof(int), typeof(TimelineControl),
-        new PropertyMetadata(100, OnTotalFramesChanged));
+    public static readonly StyledProperty<TimeSpan?> FrameTimeProperty =
+        AvaloniaProperty.Register<TimelineControl, TimeSpan?>(nameof(FrameTime), null);
 
-    public static readonly DependencyProperty FrameTimeProperty = DependencyProperty.Register(
-        nameof(FrameTime), typeof(TimeSpan?), typeof(TimelineControl),
-        new PropertyMetadata(null, OnFrameTimeChanged));
+    public static readonly StyledProperty<int> CurrentFrameProperty =
+        AvaloniaProperty.Register<TimelineControl, int>(nameof(CurrentFrame), 0);
 
-    public static readonly DependencyProperty CurrentFrameProperty = DependencyProperty.Register(
-        nameof(CurrentFrame), typeof(int), typeof(TimelineControl),
-        new PropertyMetadata(0, OnCurrentFrameChanged));
+    public static readonly StyledProperty<int?> SelectionStartProperty =
+        AvaloniaProperty.Register<TimelineControl, int?>(nameof(SelectionStart), null);
 
-    public static readonly DependencyProperty SelectionStartProperty = DependencyProperty.Register(
-        nameof(SelectionStart), typeof(int?), typeof(TimelineControl),
-        new PropertyMetadata(null, OnSelectionStartChanged));
+    public static readonly StyledProperty<int?> SelectionEndProperty =
+        AvaloniaProperty.Register<TimelineControl, int?>(nameof(SelectionEnd), null);
 
-    public static readonly DependencyProperty SelectionEndProperty = DependencyProperty.Register(
-        nameof(SelectionEnd), typeof(int?), typeof(TimelineControl),
-        new PropertyMetadata(null, OnSelectionEndChanged));
+    public static readonly StyledProperty<int?> LoopStartProperty =
+        AvaloniaProperty.Register<TimelineControl, int?>(nameof(LoopStart), null);
 
-    public static readonly DependencyProperty LoopStartProperty = DependencyProperty.Register(
-        nameof(LoopStart), typeof(int?), typeof(TimelineControl),
-        new PropertyMetadata(null, OnLoopStartChanged));
+    public static readonly StyledProperty<int?> LoopEndProperty =
+        AvaloniaProperty.Register<TimelineControl, int?>(nameof(LoopEnd), null);
 
-    public static readonly DependencyProperty LoopEndProperty = DependencyProperty.Register(
-        nameof(LoopEnd), typeof(int?), typeof(TimelineControl),
-        new PropertyMetadata(null, OnLoopEndChanged));
+    public static readonly StyledProperty<bool> LoopEnabledProperty =
+        AvaloniaProperty.Register<TimelineControl, bool>(nameof(LoopEnabled), false);
 
-    public static readonly DependencyProperty LoopEnabledProperty = DependencyProperty.Register(
-        nameof(LoopEnabled), typeof(bool), typeof(TimelineControl),
-        new PropertyMetadata(false, OnLoopEnabledChanged));
-
-    public static readonly DependencyProperty MarkersProperty = DependencyProperty.Register(
-        nameof(Markers), typeof(ObservableCollection<MarkerBase>), typeof(TimelineControl),
-        new PropertyMetadata(null, OnMarkersChanged));
+    public static readonly StyledProperty<ObservableCollection<MarkerBase>> MarkersProperty =
+        AvaloniaProperty.Register<TimelineControl, ObservableCollection<MarkerBase>>(nameof(Markers));
 
     public TimelineMode Mode
     {
-        get => (TimelineMode)GetValue(ModeProperty);
+        get => GetValue(ModeProperty);
         set => SetValue(ModeProperty, value);
     }
 
     public int TotalFrames
     {
-        get => (int)GetValue(TotalFramesProperty);
+        get => GetValue(TotalFramesProperty);
         set => SetValue(TotalFramesProperty, value);
     }
 
     public TimeSpan? FrameTime
     {
-        get => (TimeSpan?)GetValue(FrameTimeProperty);
+        get => GetValue(FrameTimeProperty);
         set => SetValue(FrameTimeProperty, value);
     }
 
     public int CurrentFrame
     {
-        get => (int)GetValue(CurrentFrameProperty);
+        get => GetValue(CurrentFrameProperty);
         set => SetValue(CurrentFrameProperty, value);
     }
 
     public int? SelectionStart
     {
-        get => (int?)GetValue(SelectionStartProperty);
+        get => GetValue(SelectionStartProperty);
         set => SetValue(SelectionStartProperty, value);
     }
 
     public int? SelectionEnd
     {
-        get => (int?)GetValue(SelectionEndProperty);
+        get => GetValue(SelectionEndProperty);
         set => SetValue(SelectionEndProperty, value);
     }
 
     public int? LoopStart
     {
-        get => (int?)GetValue(LoopStartProperty);
+        get => GetValue(LoopStartProperty);
         set => SetValue(LoopStartProperty, value);
     }
 
     public int? LoopEnd
     {
-        get => (int?)GetValue(LoopEndProperty);
+        get => GetValue(LoopEndProperty);
         set => SetValue(LoopEndProperty, value);
     }
 
     public bool LoopEnabled
     {
-        get => (bool)GetValue(LoopEnabledProperty);
+        get => GetValue(LoopEnabledProperty);
         set => SetValue(LoopEnabledProperty, value);
     }
 
     public ObservableCollection<MarkerBase> Markers
     {
-        get => (ObservableCollection<MarkerBase>)GetValue(MarkersProperty);
+        get => GetValue(MarkersProperty);
         set => SetValue(MarkersProperty, value);
     }
 
-    #endregion
+    // ──────────────────────────────────────────────────────────────────────────
+    // Property changed
+    // ──────────────────────────────────────────────────────────────────────────
 
-    #region DP Callbacks
-
-    private static void OnModeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
-        var ctrl = (TimelineControl)d;
-        if (ctrl._isSyncingState) return;
-        ctrl._isSyncingState = true;
-        ctrl._state.Mode = (TimelineMode)e.NewValue;
-        ctrl._isSyncingState = false;
-        ctrl._element?.InvalidateVisual();
-    }
+        base.OnPropertyChanged(change);
+        if (_isSyncingState) return;
 
-    private static void OnTotalFramesChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-    {
-        var ctrl = (TimelineControl)d;
-        if (ctrl._isSyncingState) return;
-        ctrl._isSyncingState = true;
-        ctrl._state.TotalFrames = (int)e.NewValue;
-        ctrl._isSyncingState = false;
-        ctrl._element?.InvalidateVisual();
-    }
-
-    private static void OnFrameTimeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-    {
-        var ctrl = (TimelineControl)d;
-        if (ctrl._isSyncingState) return;
-        ctrl._isSyncingState = true;
-        ctrl._state.FrameTime = (TimeSpan?)e.NewValue;
-        ctrl._isSyncingState = false;
-        ctrl._element?.InvalidateVisual();
-    }
-
-    private static void OnCurrentFrameChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-    {
-        var ctrl = (TimelineControl)d;
-        if (ctrl._isSyncingState) return;
-        ctrl._isSyncingState = true;
-        ctrl._state.CurrentFrame = (int)e.NewValue;
-        ctrl._isSyncingState = false;
-        ctrl.AutoScrollToPlayheadIfLive();
-        ctrl._element?.InvalidateVisual();
-    }
-
-    private static void OnSelectionStartChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-    {
-        var ctrl = (TimelineControl)d;
-        if (ctrl._isSyncingState) return;
-        ctrl._isSyncingState = true;
-        ctrl._state.SelectionStart = (int?)e.NewValue;
-        ctrl._isSyncingState = false;
-        ctrl._element?.InvalidateVisual();
-    }
-
-    private static void OnSelectionEndChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-    {
-        var ctrl = (TimelineControl)d;
-        if (ctrl._isSyncingState) return;
-        ctrl._isSyncingState = true;
-        ctrl._state.SelectionEnd = (int?)e.NewValue;
-        ctrl._isSyncingState = false;
-        ctrl._element?.InvalidateVisual();
-    }
-
-    private static void OnLoopStartChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-    {
-        var ctrl = (TimelineControl)d;
-        if (ctrl._isSyncingState) return;
-        ctrl._isSyncingState = true;
-        ctrl._state.LoopStart = (int?)e.NewValue;
-        ctrl._isSyncingState = false;
-        ctrl._element?.InvalidateVisual();
-    }
-
-    private static void OnLoopEndChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-    {
-        var ctrl = (TimelineControl)d;
-        if (ctrl._isSyncingState) return;
-        ctrl._isSyncingState = true;
-        ctrl._state.LoopEnd = (int?)e.NewValue;
-        ctrl._isSyncingState = false;
-        ctrl._element?.InvalidateVisual();
-    }
-
-    private static void OnLoopEnabledChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-    {
-        var ctrl = (TimelineControl)d;
-        if (ctrl._isSyncingState) return;
-        ctrl._isSyncingState = true;
-        ctrl._state.LoopEnabled = (bool)e.NewValue;
-        ctrl._isSyncingState = false;
-        ctrl._element?.InvalidateVisual();
-    }
-
-    private static void OnMarkersChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-    {
-        var ctrl = (TimelineControl)d;
-        if (e.OldValue is ObservableCollection<MarkerBase> old)
-            old.CollectionChanged -= ctrl.OnMarkersCollectionChanged;
-
-        if (e.NewValue is ObservableCollection<MarkerBase> newCol)
+        if (change.Property == ModeProperty)
         {
-            newCol.CollectionChanged += ctrl.OnMarkersCollectionChanged;
-            // Sync state markers to match
-            ctrl._state.Markers.Clear();
-            foreach (var m in newCol)
-                ctrl._state.Markers.Add(m);
+            _isSyncingState = true;
+            _state.Mode = change.GetNewValue<TimelineMode>();
+            _isSyncingState = false;
+            InvalidateVisual();
         }
+        else if (change.Property == TotalFramesProperty)
+        {
+            _isSyncingState = true;
+            _state.TotalFrames = change.GetNewValue<int>();
+            _isSyncingState = false;
+            InvalidateVisual();
+        }
+        else if (change.Property == FrameTimeProperty)
+        {
+            _isSyncingState = true;
+            _state.FrameTime = change.GetNewValue<TimeSpan?>();
+            _isSyncingState = false;
+            InvalidateVisual();
+        }
+        else if (change.Property == CurrentFrameProperty)
+        {
+            _isSyncingState = true;
+            _state.CurrentFrame = change.GetNewValue<int>();
+            _isSyncingState = false;
+            AutoScrollToPlayheadIfLive();
+            InvalidateVisual();
+        }
+        else if (change.Property == SelectionStartProperty)
+        {
+            _isSyncingState = true;
+            _state.SelectionStart = change.GetNewValue<int?>();
+            _isSyncingState = false;
+            InvalidateVisual();
+        }
+        else if (change.Property == SelectionEndProperty)
+        {
+            _isSyncingState = true;
+            _state.SelectionEnd = change.GetNewValue<int?>();
+            _isSyncingState = false;
+            InvalidateVisual();
+        }
+        else if (change.Property == LoopStartProperty)
+        {
+            _isSyncingState = true;
+            _state.LoopStart = change.GetNewValue<int?>();
+            _isSyncingState = false;
+            InvalidateVisual();
+        }
+        else if (change.Property == LoopEndProperty)
+        {
+            _isSyncingState = true;
+            _state.LoopEnd = change.GetNewValue<int?>();
+            _isSyncingState = false;
+            InvalidateVisual();
+        }
+        else if (change.Property == LoopEnabledProperty)
+        {
+            _isSyncingState = true;
+            _state.LoopEnabled = change.GetNewValue<bool>();
+            _isSyncingState = false;
+            InvalidateVisual();
+        }
+        else if (change.Property == MarkersProperty)
+        {
+            if (change.OldValue is ObservableCollection<MarkerBase> old)
+                old.CollectionChanged -= OnMarkersCollectionChanged;
 
-        ctrl._element?.InvalidateVisual();
+            if (change.NewValue is ObservableCollection<MarkerBase> newCol)
+            {
+                newCol.CollectionChanged += OnMarkersCollectionChanged;
+                _state.Markers.Clear();
+                foreach (var m in newCol)
+                    _state.Markers.Add(m);
+            }
+
+            InvalidateVisual();
+        }
     }
 
     private void OnMarkersCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
@@ -324,20 +292,18 @@ public class TimelineControl : System.Windows.Controls.Control
                 // Order doesn't affect rendering meaningfully
                 break;
         }
-        _element?.InvalidateVisual();
+        InvalidateVisual();
     }
-
-    #endregion
 
     // ──────────────────────────────────────────────────────────────────────────
     // Instance state
     // ──────────────────────────────────────────────────────────────────────────
 
     private readonly TimelineState _state = new();
-    private SKElement? _element;
     private RenderResources? _resources;
     private DragOperation? _activeDrag;
     private bool _isSyncingState;
+    private IPointer? _capturedPointer;
 
     // Saved state at drag start for event raising
     private int _dragStartFrame;
@@ -356,27 +322,8 @@ public class TimelineControl : System.Windows.Controls.Control
         var defaultMarkers = new ObservableCollection<MarkerBase>();
         SetValue(MarkersProperty, defaultMarkers);
 
-        _element = new SKElement();
-        _element.PaintSurface += OnPaintSurface;
-
-        // Host the SKElement as a visual child via AddVisualChild
-        AddVisualChild(_element);
-        AddLogicalChild(_element);
-
         Loaded += OnLoaded;
         Unloaded += OnUnloaded;
-    }
-
-    // ──────────────────────────────────────────────────────────────────────────
-    // Visual children override (Control has no Panel, so we manage visuals)
-    // ──────────────────────────────────────────────────────────────────────────
-
-    protected override int VisualChildrenCount => 1;
-
-    protected override System.Windows.Media.Visual GetVisualChild(int index)
-    {
-        if (index != 0) throw new ArgumentOutOfRangeException(nameof(index));
-        return _element!;
     }
 
     // ──────────────────────────────────────────────────────────────────────────
@@ -389,14 +336,12 @@ public class TimelineControl : System.Windows.Controls.Control
     {
         double w = double.IsInfinity(availableSize.Width) ? 0 : availableSize.Width;
         double h = double.IsInfinity(availableSize.Height) ? MinControlHeight : Math.Max(MinControlHeight, availableSize.Height);
-        _element?.Measure(new Size(w, h));
         return new Size(w, h);
     }
 
     protected override Size ArrangeOverride(Size finalSize)
     {
         double h = Math.Max(MinControlHeight, finalSize.Height);
-        _element?.Arrange(new Rect(0, 0, finalSize.Width, h));
         return new Size(finalSize.Width, h);
     }
 
@@ -404,20 +349,20 @@ public class TimelineControl : System.Windows.Controls.Control
     // Lifecycle
     // ──────────────────────────────────────────────────────────────────────────
 
-    private void OnLoaded(object sender, RoutedEventArgs e)
+    private void OnLoaded(object? sender, RoutedEventArgs e)
     {
         _resources = new RenderResources();
-        _element?.InvalidateVisual();
+        InvalidateVisual();
     }
 
-    private void OnUnloaded(object sender, RoutedEventArgs e)
+    private void OnUnloaded(object? sender, RoutedEventArgs e)
     {
         _resources?.Dispose();
         _resources = null;
     }
 
     // ──────────────────────────────────────────────────────────────────────────
-    // State → DP sync
+    // State → property sync
     // ──────────────────────────────────────────────────────────────────────────
 
     private void OnStatePropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -437,11 +382,11 @@ public class TimelineControl : System.Windows.Controls.Control
                 SetValue(FrameTimeProperty, _state.FrameTime);
                 break;
             case nameof(TimelineState.CurrentFrame):
-                var oldFrame = (int)GetValue(CurrentFrameProperty);
+                var oldFrame = GetValue(CurrentFrameProperty);
                 SetValue(CurrentFrameProperty, _state.CurrentFrame);
                 if (oldFrame != _state.CurrentFrame)
                 {
-                    RaiseEvent(new PlayheadChangedEventArgs(PlayheadChangedEvent, oldFrame, _state.CurrentFrame));
+                    RaiseEvent(new PlayheadChangedEventArgs(oldFrame, _state.CurrentFrame) { RoutedEvent = PlayheadChangedEvent });
                     AutoScrollToPlayheadIfLive();
                 }
                 break;
@@ -463,20 +408,62 @@ public class TimelineControl : System.Windows.Controls.Control
         }
 
         _isSyncingState = false;
-        _element?.InvalidateVisual();
+        InvalidateVisual();
     }
 
     // ──────────────────────────────────────────────────────────────────────────
-    // Paint
+    // Render
     // ──────────────────────────────────────────────────────────────────────────
 
-    private void OnPaintSurface(object? sender, SKPaintSurfaceEventArgs e)
+    public override void Render(DrawingContext context)
     {
         if (_resources is null) return;
-        var canvas = e.Surface.Canvas;
-        canvas.Clear();
-        var layout = _state.BuildLayout(e.Info.Width, e.Info.Height);
-        TimelineRenderer.Draw(canvas, layout, _state, _activeDrag, _resources);
+        context.Custom(new SkiaDrawOp(new Rect(Bounds.Size), _state, _activeDrag, _resources));
+    }
+
+    private sealed class SkiaDrawOp : ICustomDrawOperation
+    {
+        private readonly Rect _bounds;
+        private readonly TimelineState _state;
+        private readonly DragOperation? _drag;
+        private readonly RenderResources _resources;
+
+        public SkiaDrawOp(Rect bounds, TimelineState state, DragOperation? drag, RenderResources resources)
+        {
+            _bounds = bounds;
+            _state = state;
+            _drag = drag;
+            _resources = resources;
+        }
+
+        public Rect Bounds => _bounds;
+        public bool Equals(ICustomDrawOperation? other) => false;
+        public bool HitTest(Point p) => _bounds.Contains(p);
+        public void Dispose() { }
+
+        public void Render(ImmediateDrawingContext context)
+        {
+            var leaseFeature = context.TryGetFeature<ISkiaSharpApiLeaseFeature>();
+            using var lease = leaseFeature?.Lease();
+            if (lease?.SkCanvas is not SKCanvas canvas) return;
+
+            // The leased SkCanvas is the window's shared surface — DO NOT call
+            // canvas.Clear() (would wipe the entire window's rendering).
+            // Isolate state so nothing leaks out of our bounds either.
+            var savePoint = canvas.Save();
+            try
+            {
+                canvas.ClipRect(SKRect.Create(
+                    (float)_bounds.X, (float)_bounds.Y,
+                    (float)_bounds.Width, (float)_bounds.Height));
+                var layout = _state.BuildLayout(_bounds.Width, _bounds.Height);
+                TimelineRenderer.Draw(canvas, layout, _state, _drag, _resources);
+            }
+            finally
+            {
+                canvas.RestoreToCount(savePoint);
+            }
+        }
     }
 
     // ──────────────────────────────────────────────────────────────────────────
@@ -510,21 +497,21 @@ public class TimelineControl : System.Windows.Controls.Control
     }
 
     // ──────────────────────────────────────────────────────────────────────────
-    // Mouse — scroll & zoom (all modes)
+    // Pointer — scroll & zoom (all modes)
     // ──────────────────────────────────────────────────────────────────────────
 
-    protected override void OnMouseWheel(MouseWheelEventArgs e)
+    protected override void OnPointerWheelChanged(PointerWheelEventArgs e)
     {
-        base.OnMouseWheel(e);
+        base.OnPointerWheelChanged(e);
 
-        if (Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
+        if (e.KeyModifiers.HasFlag(KeyModifiers.Shift))
         {
             // Zoom centred on cursor
-            var layout = _state.BuildLayout(ActualWidth, ActualHeight);
+            var layout = _state.BuildLayout(Bounds.Width, Bounds.Height);
             double mouseX = e.GetPosition(this).X;
             int frameUnderCursor = layout.PixelToFrame(mouseX);
 
-            double zoomDelta = e.Delta > 0 ? 1.2 : 1.0 / 1.2;
+            double zoomDelta = e.Delta.Y > 0 ? 1.2 : 1.0 / 1.2;
             double newZoom = Math.Clamp(_state.ZoomScale * zoomDelta, 1.0, 100.0);
 
             // Compute new scroll so that frameUnderCursor stays at mouseX
@@ -536,28 +523,29 @@ public class TimelineControl : System.Windows.Controls.Control
         else
         {
             // Horizontal scroll
-            double delta = e.Delta > 0 ? -30.0 : 30.0;
+            double delta = e.Delta.Y > 0 ? -30.0 : 30.0;
             _state.ScrollOffsetPx = Math.Max(0, _state.ScrollOffsetPx + delta);
         }
 
-        _element?.InvalidateVisual();
+        InvalidateVisual();
         e.Handled = true;
     }
 
     // ──────────────────────────────────────────────────────────────────────────
-    // Mouse — drag interaction (Edit mode only)
+    // Pointer — drag interaction (Edit mode only)
     // ──────────────────────────────────────────────────────────────────────────
 
-    protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
+    protected override void OnPointerPressed(PointerPressedEventArgs e)
     {
-        base.OnMouseLeftButtonDown(e);
+        base.OnPointerPressed(e);
 
         Focus();
 
+        if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed) return;
         if (_state.Mode != TimelineMode.Edit) return;
 
         var pos = e.GetPosition(this);
-        var layout = _state.BuildLayout(ActualWidth, ActualHeight);
+        var layout = _state.BuildLayout(Bounds.Width, Bounds.Height);
         int frame = layout.PixelToFrame(pos.X);
         bool inRuler = pos.Y < TimelineRenderer.RulerHeight;
 
@@ -569,7 +557,8 @@ public class TimelineControl : System.Windows.Controls.Control
             {
                 _activeDrag = new DragOperation { Target = DragTarget.LoopIn, GhostFrame = _state.LoopStart.Value };
                 _dragStartFrame = _state.LoopStart.Value;
-                Mouse.Capture(this);
+                _capturedPointer = e.Pointer;
+                e.Pointer.Capture(this);
                 e.Handled = true;
                 return;
             }
@@ -582,7 +571,8 @@ public class TimelineControl : System.Windows.Controls.Control
             {
                 _activeDrag = new DragOperation { Target = DragTarget.LoopOut, GhostFrame = _state.LoopEnd.Value };
                 _dragStartFrame = _state.LoopEnd.Value;
-                Mouse.Capture(this);
+                _capturedPointer = e.Pointer;
+                e.Pointer.Capture(this);
                 e.Handled = true;
                 return;
             }
@@ -601,8 +591,9 @@ public class TimelineControl : System.Windows.Controls.Control
                     _activeDrag = new DragOperation { Target = DragTarget.MarkerPoint, Marker = marker, GhostFrame = point.Frame };
                     _dragStartFrame = point.Frame;
                     _dragStartEndFrame = -1;
-                    Mouse.Capture(this);
-                    RaiseEvent(new MarkerDragStartedEventArgs(MarkerDragStartedEvent, marker));
+                    _capturedPointer = e.Pointer;
+                    e.Pointer.Capture(this);
+                    RaiseEvent(new MarkerDragStartedEventArgs(marker) { RoutedEvent = MarkerDragStartedEvent });
                     e.Handled = true;
                     return;
                 }
@@ -617,8 +608,9 @@ public class TimelineControl : System.Windows.Controls.Control
                     _activeDrag = new DragOperation { Target = DragTarget.MarkerRangeStart, Marker = marker, GhostFrame = range.StartFrame };
                     _dragStartFrame = range.StartFrame;
                     _dragStartEndFrame = range.EndFrame;
-                    Mouse.Capture(this);
-                    RaiseEvent(new MarkerDragStartedEventArgs(MarkerDragStartedEvent, marker));
+                    _capturedPointer = e.Pointer;
+                    e.Pointer.Capture(this);
+                    RaiseEvent(new MarkerDragStartedEventArgs(marker) { RoutedEvent = MarkerDragStartedEvent });
                     e.Handled = true;
                     return;
                 }
@@ -628,8 +620,9 @@ public class TimelineControl : System.Windows.Controls.Control
                     _activeDrag = new DragOperation { Target = DragTarget.MarkerRangeEnd, Marker = marker, GhostFrame = range.EndFrame };
                     _dragStartFrame = range.StartFrame;
                     _dragStartEndFrame = range.EndFrame;
-                    Mouse.Capture(this);
-                    RaiseEvent(new MarkerDragStartedEventArgs(MarkerDragStartedEvent, marker));
+                    _capturedPointer = e.Pointer;
+                    e.Pointer.Capture(this);
+                    RaiseEvent(new MarkerDragStartedEventArgs(marker) { RoutedEvent = MarkerDragStartedEvent });
                     e.Handled = true;
                     return;
                 }
@@ -640,8 +633,9 @@ public class TimelineControl : System.Windows.Controls.Control
                     _activeDrag = new DragOperation { Target = DragTarget.MarkerRangeBody, Marker = marker, GhostFrame = frame };
                     _dragStartFrame = range.StartFrame;
                     _dragStartEndFrame = range.EndFrame;
-                    Mouse.Capture(this);
-                    RaiseEvent(new MarkerDragStartedEventArgs(MarkerDragStartedEvent, marker));
+                    _capturedPointer = e.Pointer;
+                    e.Pointer.Capture(this);
+                    RaiseEvent(new MarkerDragStartedEventArgs(marker) { RoutedEvent = MarkerDragStartedEvent });
                     e.Handled = true;
                     return;
                 }
@@ -657,11 +651,12 @@ public class TimelineControl : System.Windows.Controls.Control
             _state.SelectionEnd = null;
             _selectionDragAnchor = null;
             if (oldFrame != frame)
-                RaiseEvent(new PlayheadChangedEventArgs(PlayheadChangedEvent, oldFrame, frame));
+                RaiseEvent(new PlayheadChangedEventArgs(oldFrame, frame) { RoutedEvent = PlayheadChangedEvent });
 
             _activeDrag = new DragOperation { Target = DragTarget.Playhead, GhostFrame = frame };
             _dragStartFrame = frame;
-            Mouse.Capture(this);
+            _capturedPointer = e.Pointer;
+            e.Pointer.Capture(this);
             e.Handled = true;
             return;
         }
@@ -674,34 +669,33 @@ public class TimelineControl : System.Windows.Controls.Control
         _selectionDragAnchor = frame;
 
         if (oldSelStart != frame || oldSelEnd != frame)
-            RaiseEvent(new SelectionChangedEventArgs(SelectionChangedEvent, oldSelStart, oldSelEnd, frame, frame));
+            RaiseEvent(new SelectionChangedEventArgs(oldSelStart, oldSelEnd, frame, frame) { RoutedEvent = SelectionChangedEvent });
 
         _activeDrag = new DragOperation { Target = DragTarget.SelectionEnd, GhostFrame = frame };
         _dragStartFrame = frame;
-        Mouse.Capture(this);
+        _capturedPointer = e.Pointer;
+        e.Pointer.Capture(this);
         e.Handled = true;
     }
 
-    protected override void OnMouseMove(MouseEventArgs e)
+    protected override void OnPointerMoved(PointerEventArgs e)
     {
-        base.OnMouseMove(e);
+        base.OnPointerMoved(e);
         if (_activeDrag is null) return;
 
         var pos = e.GetPosition(this);
-        var layout = _state.BuildLayout(ActualWidth, ActualHeight);
+        var layout = _state.BuildLayout(Bounds.Width, Bounds.Height);
         int frame = layout.PixelToFrame(pos.X);
 
         _activeDrag.GhostFrame = frame;
 
-        // For live feedback during drags, update state without committing
         switch (_activeDrag.Target)
         {
             case DragTarget.Playhead:
-                // Update playhead live during ruler drag
                 int oldFrame = _state.CurrentFrame;
                 _state.CurrentFrame = frame;
                 if (oldFrame != frame)
-                    RaiseEvent(new PlayheadChangedEventArgs(PlayheadChangedEvent, oldFrame, frame));
+                    RaiseEvent(new PlayheadChangedEventArgs(oldFrame, frame) { RoutedEvent = PlayheadChangedEvent });
                 break;
 
             case DragTarget.SelectionEnd:
@@ -713,7 +707,7 @@ public class TimelineControl : System.Windows.Controls.Control
                     _state.SelectionStart = Math.Min(anchor, frame);
                     _state.SelectionEnd = Math.Max(anchor, frame);
                     if (oldStart != _state.SelectionStart || oldEnd != _state.SelectionEnd)
-                        RaiseEvent(new SelectionChangedEventArgs(SelectionChangedEvent, oldStart, oldEnd, _state.SelectionStart, _state.SelectionEnd));
+                        RaiseEvent(new SelectionChangedEventArgs(oldStart, oldEnd, _state.SelectionStart, _state.SelectionEnd) { RoutedEvent = SelectionChangedEvent });
                 }
                 break;
 
@@ -722,29 +716,31 @@ public class TimelineControl : System.Windows.Controls.Control
             case DragTarget.MarkerRangeEnd:
             case DragTarget.MarkerRangeBody:
                 if (_activeDrag.Marker is not null)
-                    RaiseEvent(new MarkerDraggingEventArgs(MarkerDraggingEvent, _activeDrag.Marker, frame));
+                    RaiseEvent(new MarkerDraggingEventArgs(_activeDrag.Marker, frame) { RoutedEvent = MarkerDraggingEvent });
                 break;
         }
 
-        _element?.InvalidateVisual();
+        InvalidateVisual();
         e.Handled = true;
     }
 
-    protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
+    protected override void OnPointerReleased(PointerReleasedEventArgs e)
     {
-        base.OnMouseLeftButtonUp(e);
+        base.OnPointerReleased(e);
         if (_activeDrag is null) return;
+        if (e.InitialPressMouseButton != MouseButton.Left) return;
 
         var pos = e.GetPosition(this);
-        var layout = _state.BuildLayout(ActualWidth, ActualHeight);
+        var layout = _state.BuildLayout(Bounds.Width, Bounds.Height);
         int frame = layout.PixelToFrame(pos.X);
 
         CommitDrag(frame);
 
         _activeDrag = null;
         _selectionDragAnchor = null;
-        Mouse.Capture(null);
-        _element?.InvalidateVisual();
+        _capturedPointer?.Capture(null);
+        _capturedPointer = null;
+        InvalidateVisual();
         e.Handled = true;
     }
 
@@ -766,7 +762,9 @@ public class TimelineControl : System.Windows.Controls.Control
             {
                 int oldFrame = _dragStartFrame;
                 point.Frame = frame;
-                RaiseEvent(MarkerDragCompletedEventArgs.ForPoint(MarkerDragCompletedEvent, point, oldFrame, frame));
+                var pointArgs = MarkerDragCompletedEventArgs.ForPoint(point, oldFrame, frame);
+                pointArgs.RoutedEvent = MarkerDragCompletedEvent;
+                RaiseEvent(pointArgs);
                 break;
             }
 
@@ -774,8 +772,10 @@ public class TimelineControl : System.Windows.Controls.Control
             {
                 int newStart = Math.Min(frame, range.EndFrame);
                 range.StartFrame = newStart;
-                RaiseEvent(MarkerDragCompletedEventArgs.ForRange(MarkerDragCompletedEvent, range,
-                    _dragStartFrame, _dragStartEndFrame, range.StartFrame, range.EndFrame));
+                var rangeStartArgs = MarkerDragCompletedEventArgs.ForRange(range,
+                    _dragStartFrame, _dragStartEndFrame, range.StartFrame, range.EndFrame);
+                rangeStartArgs.RoutedEvent = MarkerDragCompletedEvent;
+                RaiseEvent(rangeStartArgs);
                 break;
             }
 
@@ -783,8 +783,10 @@ public class TimelineControl : System.Windows.Controls.Control
             {
                 int newEnd = Math.Max(frame, range.StartFrame);
                 range.EndFrame = newEnd;
-                RaiseEvent(MarkerDragCompletedEventArgs.ForRange(MarkerDragCompletedEvent, range,
-                    _dragStartFrame, _dragStartEndFrame, range.StartFrame, range.EndFrame));
+                var rangeEndArgs = MarkerDragCompletedEventArgs.ForRange(range,
+                    _dragStartFrame, _dragStartEndFrame, range.StartFrame, range.EndFrame);
+                rangeEndArgs.RoutedEvent = MarkerDragCompletedEvent;
+                RaiseEvent(rangeEndArgs);
                 break;
             }
 
@@ -796,8 +798,10 @@ public class TimelineControl : System.Windows.Controls.Control
                 int newEnd = Math.Min(_state.TotalFrames - 1, newStart + width);
                 range.StartFrame = newStart;
                 range.EndFrame = newEnd;
-                RaiseEvent(MarkerDragCompletedEventArgs.ForRange(MarkerDragCompletedEvent, range,
-                    _dragStartFrame, _dragStartEndFrame, newStart, newEnd));
+                var rangeBodyArgs = MarkerDragCompletedEventArgs.ForRange(range,
+                    _dragStartFrame, _dragStartEndFrame, newStart, newEnd);
+                rangeBodyArgs.RoutedEvent = MarkerDragCompletedEvent;
+                RaiseEvent(rangeBodyArgs);
                 break;
             }
         }
@@ -811,7 +815,7 @@ public class TimelineControl : System.Windows.Controls.Control
     {
         if (_state.Mode != TimelineMode.Live) return;
 
-        var layout = _state.BuildLayout(ActualWidth, ActualHeight);
+        var layout = _state.BuildLayout(Bounds.Width, Bounds.Height);
         double playheadPx = layout.FrameToPixel(_state.CurrentFrame);
 
         if (playheadPx < 0 || playheadPx > layout.ViewportWidth)

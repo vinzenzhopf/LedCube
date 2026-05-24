@@ -5,7 +5,7 @@ using System.Linq;
 using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Input;
+using Avalonia.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using LedCube.Core.Common.Model;
 using LedCube.Core.Common.Model.Cube;

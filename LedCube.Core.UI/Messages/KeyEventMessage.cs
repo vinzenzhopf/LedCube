@@ -1,5 +1,5 @@
-﻿using System.Windows.Input;
+﻿using Avalonia.Input;
 
 namespace LedCube.Core.UI.Messages;
 
-public record KeyEventMessage(int Timestamp, Key Key, KeyStates KeyStates, ModifierKeys Modifiers);
+public record KeyEventMessage(int Timestamp, Key Key, bool IsDown, KeyModifiers Modifiers);

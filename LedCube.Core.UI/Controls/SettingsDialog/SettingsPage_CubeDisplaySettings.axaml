@@ -1,0 +1,66 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:helpers="clr-namespace:LedCube.Core.UI.Helpers"
+             x:Class="LedCube.Core.UI.Controls.SettingsDialog.SettingsPage_CubeDisplaySettings">
+    <StackPanel>
+        <TextBlock FontSize="16" FontWeight="SemiBold" Text="3D Drawing" Margin="0,0,0,12"/>
+
+        <HeaderedContentControl Header="LED" Margin="0,0,0,12">
+            <Grid Margin="12">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="180"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="LED Dimensions"/>
+                <TextBox   Grid.Row="0" Grid.Column="1" Text="{Binding LedType.LedDimensions}"/>
+
+                <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Text="Shape" Margin="0,8,0,0"/>
+                <ComboBox  Grid.Row="1" Grid.Column="1" Margin="0,8,0,0"
+                           ItemsSource="{x:Static helpers:EnumValues.LedShapes}"
+                           SelectedItem="{Binding LedType.Shape}"/>
+
+                <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="Tint" Margin="0,8,0,0"/>
+                <TextBox   Grid.Row="2" Grid.Column="1" Margin="0,8,0,0"
+                           Text="{Binding LedType.Tint}"/>
+            </Grid>
+        </HeaderedContentControl>
+
+        <HeaderedContentControl Header="Rendering" Margin="0,0,0,12">
+            <StackPanel Margin="12">
+                <CheckBox Content="Draw wireframe" IsChecked="{Binding DrawWireframe}"/>
+            </StackPanel>
+        </HeaderedContentControl>
+
+        <StackPanel>
+            <TextBlock FontSize="16" FontWeight="SemiBold" Text="LED Type" Margin="0,0,0,12"/>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="180"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="LED Dimensions"/>
+                <TextBox   Grid.Row="0" Grid.Column="1" Text="{Binding LedDimensions}"/>
+
+                <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Text="Shape" Margin="0,8,0,0"/>
+                <ComboBox  Grid.Row="1" Grid.Column="1" Margin="0,8,0,0"
+                           ItemsSource="{x:Static helpers:EnumValues.LedShapes}"
+                           SelectedItem="{Binding Shape}"/>
+
+                <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="Tint" Margin="0,8,0,0"/>
+                <TextBox   Grid.Row="2" Grid.Column="1" Margin="0,8,0,0" Text="{Binding Tint}"/>
+            </Grid>
+        </StackPanel>
+    </StackPanel>
+</UserControl>

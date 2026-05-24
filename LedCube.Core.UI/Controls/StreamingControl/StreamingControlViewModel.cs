@@ -2,8 +2,7 @@
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Threading;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -76,11 +75,11 @@ public partial class StreamingControlViewModel : ObservableObject
         _logger.LogInformation("Dialog Result {DialogResult}: Destination: {destination}", message.DialogResult?.DialogResult, message.DialogResult?.HostAndPort);
         if (message.DialogResult is {DialogResult: true, HostAndPort: not null})
         {
-            Application.Current.Dispatcher.Invoke((Action) (() =>
+            Dispatcher.UIThread.Invoke(() =>
             {
                 Host = message.DialogResult.HostAndPort.Hostname;
                 Port = message.DialogResult.HostAndPort.Port;
-            }));
+            });
         }
     }
 
@@ -95,12 +94,12 @@ public partial class StreamingControlViewModel : ObservableObject
                 return;
             }
 
-            await Application.Current.Dispatcher.InvokeAsync(() => { ConnectionState = ConnectionState.Connecting; },
-                DispatcherPriority.Normal, token);
+            await Dispatcher.UIThread.InvokeAsync(() => { ConnectionState = ConnectionState.Connecting; },
+                DispatcherPriority.Normal);
             var connected = await CubeStreamer.ConnectAsync(4242, IPAddress.Any, HostAndPort, token);
-            await Application.Current.Dispatcher.InvokeAsync(
+            await Dispatcher.UIThread.InvokeAsync(
                 () => { ConnectionState = connected ? ConnectionState.Connected : ConnectionState.Disconnected; },
-                DispatcherPriority.Normal, token);
+                DispatcherPriority.Normal);
         }
         catch (Exception e)
         {
@@ -113,10 +112,10 @@ public partial class StreamingControlViewModel : ObservableObject
     {
         try{
             await CubeStreamer.DisconnectAsync(token);
-            await Application.Current.Dispatcher.InvokeAsync(() =>
+            await Dispatcher.UIThread.InvokeAsync(() =>
             {
                 ConnectionState = ConnectionState.Disconnected;
-            }, DispatcherPriority.Normal, token);
+            }, DispatcherPriority.Normal);
         }
         catch (Exception e)
         {
@@ -132,10 +131,10 @@ public partial class StreamingControlViewModel : ObservableObject
             var frameTimeUs = (uint)(FrameTimeMs * 1000);
             await CubeStreamer.StartAnimationAsync(frameTimeUs, AnimationName, token);
             await CubeStreamer.StartStreaming(token);
-            await Application.Current.Dispatcher.InvokeAsync(() =>
+            await Dispatcher.UIThread.InvokeAsync(() =>
             {
                 IsStreamActive = true;
-            }, DispatcherPriority.Normal, token);
+            }, DispatcherPriority.Normal);
         }
         catch (Exception e)
         {
@@ -150,10 +149,10 @@ public partial class StreamingControlViewModel : ObservableObject
         {
             await CubeStreamer.StopStreaming(token);
             await CubeStreamer.EndAnimationAsync(token);
-            await Application.Current.Dispatcher.InvokeAsync(() =>
+            await Dispatcher.UIThread.InvokeAsync(() =>
             {
                 IsStreamActive = false;
-            }, DispatcherPriority.Normal, token);
+            }, DispatcherPriority.Normal);
         }
         catch (Exception e)
         {

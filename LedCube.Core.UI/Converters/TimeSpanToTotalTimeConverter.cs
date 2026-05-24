@@ -1,13 +1,12 @@
-﻿using System;
+using System;
 using System.Globalization;
-using System.Windows.Data;
+using Avalonia.Data.Converters;
 
 namespace LedCube.Core.UI.Converters;
 
-[ValueConversion(typeof(TimeSpan), typeof(double))]
 public class TimeSpanToTotalTimeConverter : IValueConverter
 {
-    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is TimeSpan timeSpan)
         {
@@ -19,14 +18,9 @@ public class TimeSpanToTotalTimeConverter : IValueConverter
                 _ => timeSpan.TotalSeconds
             };
         }
-        else
-        {
-            return 0.0;
-        }
+        return 0.0;
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-    {
-        throw new NotImplementedException();
-    }
+    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        => throw new NotImplementedException();
 }

@@ -1,4 +1,4 @@
-using System.Windows;
+using Avalonia.Interactivity;
 
 namespace LedCube.Core.UI.TimelineControl;
 
@@ -7,8 +7,7 @@ public class PlayheadChangedEventArgs : RoutedEventArgs
     public int OldFrame { get; }
     public int NewFrame { get; }
 
-    public PlayheadChangedEventArgs(RoutedEvent routedEvent, int oldFrame, int newFrame)
-        : base(routedEvent)
+    public PlayheadChangedEventArgs(int oldFrame, int newFrame)
     {
         OldFrame = oldFrame;
         NewFrame = newFrame;
@@ -22,8 +21,7 @@ public class SelectionChangedEventArgs : RoutedEventArgs
     public int? NewStart { get; }
     public int? NewEnd { get; }
 
-    public SelectionChangedEventArgs(RoutedEvent routedEvent, int? oldStart, int? oldEnd, int? newStart, int? newEnd)
-        : base(routedEvent)
+    public SelectionChangedEventArgs(int? oldStart, int? oldEnd, int? newStart, int? newEnd)
     {
         OldStart = oldStart;
         OldEnd = oldEnd;
@@ -36,8 +34,7 @@ public class MarkerDragStartedEventArgs : RoutedEventArgs
 {
     public MarkerBase Marker { get; }
 
-    public MarkerDragStartedEventArgs(RoutedEvent routedEvent, MarkerBase marker)
-        : base(routedEvent)
+    public MarkerDragStartedEventArgs(MarkerBase marker)
     {
         Marker = marker;
     }
@@ -48,8 +45,7 @@ public class MarkerDraggingEventArgs : RoutedEventArgs
     public MarkerBase Marker { get; }
     public int CurrentFrame { get; }
 
-    public MarkerDraggingEventArgs(RoutedEvent routedEvent, MarkerBase marker, int currentFrame)
-        : base(routedEvent)
+    public MarkerDraggingEventArgs(MarkerBase marker, int currentFrame)
     {
         Marker = marker;
         CurrentFrame = currentFrame;
@@ -76,9 +72,8 @@ public class MarkerDragCompletedEventArgs : RoutedEventArgs
     public int OldFrame => OldStartFrame;
     public int NewFrame => NewStartFrame;
 
-    public MarkerDragCompletedEventArgs(RoutedEvent routedEvent, MarkerBase marker,
+    public MarkerDragCompletedEventArgs(MarkerBase marker,
         int oldStartFrame, int oldEndFrame, int newStartFrame, int newEndFrame)
-        : base(routedEvent)
     {
         Marker = marker;
         OldStartFrame = oldStartFrame;
@@ -87,10 +82,10 @@ public class MarkerDragCompletedEventArgs : RoutedEventArgs
         NewEndFrame = newEndFrame;
     }
 
-    public static MarkerDragCompletedEventArgs ForPoint(RoutedEvent routedEvent, PointMarker marker, int oldFrame, int newFrame)
-        => new(routedEvent, marker, oldFrame, -1, newFrame, -1);
+    public static MarkerDragCompletedEventArgs ForPoint(PointMarker marker, int oldFrame, int newFrame)
+        => new(marker, oldFrame, -1, newFrame, -1);
 
-    public static MarkerDragCompletedEventArgs ForRange(RoutedEvent routedEvent, RangeMarker marker,
+    public static MarkerDragCompletedEventArgs ForRange(RangeMarker marker,
         int oldStart, int oldEnd, int newStart, int newEnd)
-        => new(routedEvent, marker, oldStart, oldEnd, newStart, newEnd);
+        => new(marker, oldStart, oldEnd, newStart, newEnd);
 }

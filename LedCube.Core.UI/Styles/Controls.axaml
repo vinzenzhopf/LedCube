@@ -1,0 +1,105 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:converters="clr-namespace:LedCube.Core.UI.Converters"
+        xmlns:controls="clr-namespace:LedCube.Core.UI.Controls.CubeView2D">
+    <Styles.Resources>
+        <ResourceDictionary>
+            <!-- Collapse the sort-icon reservation inside DataGridColumnHeader so HeaderTemplates can use full width. -->
+            <x:Double x:Key="DataGridSortIconMinWidth">0</x:Double>
+        </ResourceDictionary>
+    </Styles.Resources>
+
+    <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
+
+    <!-- Let the per-column HeaderTemplate fill the entire header cell.
+         Padding=0 kills the theme's 12px left inset. -->
+    <Style Selector="DataGridColumnHeader">
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="Padding" Value="0"/>
+    </Style>
+
+    <!-- HeaderedContentControl has no default template in Avalonia.
+         Render it as a bordered "group box" with a header band. -->
+    <Style Selector="HeaderedContentControl">
+        <Setter Property="Background" Value="{DynamicResource LayerFillColorDefaultBrush}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource CardStrokeColorDefaultBrush}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="4"/>
+        <Setter Property="Padding" Value="6"/>
+        <Setter Property="Margin" Value="3,2"/>
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}">
+                    <DockPanel>
+                        <Border DockPanel.Dock="Top"
+                                Background="{DynamicResource LayerFillColorAltBrush}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="0,0,0,1"
+                                Padding="6,3"
+                                CornerRadius="4,4,0,0">
+                            <TextBlock Text="{TemplateBinding Header}"
+                                       FontWeight="SemiBold"
+                                       Foreground="{TemplateBinding Foreground}"/>
+                        </Border>
+                        <ContentPresenter Margin="{TemplateBinding Padding}"
+                                          Content="{TemplateBinding Content}"
+                                          ContentTemplate="{TemplateBinding ContentTemplate}"
+                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                    </DockPanel>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+    </Style>
+
+    <Style Selector="controls|Led">
+        <Setter Property="IsHitTestVisible" Value="False" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="Padding" Value="2" />
+        <Setter Property="Size" Value="28" />
+        <Setter Property="Foreground" Value="{DynamicResource CubeGreenBrush}" />
+        <Setter Property="Template">
+            <ControlTemplate TargetType="controls:Led">
+                <Border Padding="{TemplateBinding Padding}">
+                    <DockPanel>
+                        <Ellipse
+                            Width="{TemplateBinding Size}"
+                            Height="{TemplateBinding Size}"
+                            Margin="1"
+                            DockPanel.Dock="Left"
+                            Fill="{TemplateBinding Background}"
+                            Stroke="{Binding Foreground,
+                                     RelativeSource={RelativeSource TemplatedParent},
+                                     Converter={converters:BrushBrightnessConverter},
+                                     ConverterParameter=-0.2}"
+                            StrokeThickness="1" />
+                        <TextBlock
+                            Margin="4,0,0,0"
+                            VerticalAlignment="Center"
+                            Text="{TemplateBinding Content}" />
+                    </DockPanel>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+    </Style>
+    <Style Selector="controls|Led">
+        <Setter Property="Background">
+            <Setter.Value>
+                <Binding Path="Foreground" RelativeSource="{RelativeSource Self}"
+                         Converter="{converters:BrushBrightnessConverter}"
+                         ConverterParameter="0.9" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style Selector="controls|Led:checked">
+        <Setter Property="Background">
+            <Setter.Value>
+                <Binding Path="Foreground" RelativeSource="{RelativeSource Self}" />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="FontWeight" Value="Bold" />
+    </Style>
+</Styles>

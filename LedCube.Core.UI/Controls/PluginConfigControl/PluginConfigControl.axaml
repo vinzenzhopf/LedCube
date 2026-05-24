@@ -1,0 +1,65 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:LedCube.Core.UI.Controls.PluginConfigControl"
+             xmlns:converters="clr-namespace:LedCube.Core.UI.Converters"
+             x:Class="LedCube.Core.UI.Controls.PluginConfigControl.PluginConfigControl">
+    <UserControl.Resources>
+        <converters:VisibleWhenIntConverter x:Key="VisibleWhenInt"/>
+        <converters:BooleanToVisibilityConverterEx x:Key="InvertBool" TrueValue="False" FalseValue="True"/>
+    </UserControl.Resources>
+
+    <Grid>
+        <!-- No-selection placeholder -->
+        <TextBlock Classes="muted"
+                   Text="No animation selected."
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Center"
+                   IsVisible="{Binding HasSelection, Converter={StaticResource InvertBool}}"/>
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                      IsVisible="{Binding HasSelection}">
+            <StackPanel Margin="4">
+                <!-- General settings -->
+                <HeaderedContentControl Header="General" Margin="0,0,0,4">
+                    <Grid Margin="4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="80"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Grid.Column="0"
+                                   Text="Repeat (0=∞)"
+                                   VerticalAlignment="Center"
+                                   Margin="0,3,8,3"/>
+                        <TextBox Grid.Row="0" Grid.Column="1"
+                                 Margin="0,3,0,3"
+                                 Text="{Binding RepeatCount}"/>
+                        <TextBlock Grid.Row="1" Grid.Column="0"
+                                   Text="Frame Time (ms)"
+                                   VerticalAlignment="Center"
+                                   Margin="0,3,8,3"
+                                   ToolTip.Tip="Override the animation's default frame time. Leave empty to use plugin default."/>
+                        <TextBox Grid.Row="1" Grid.Column="1"
+                                 Margin="0,3,0,3"
+                                 Text="{Binding FrameTimeOverrideMs}"/>
+                    </Grid>
+                </HeaderedContentControl>
+
+                <!-- Animation-specific settings -->
+                <HeaderedContentControl Header="Animation Settings"
+                          Margin="0,0,0,4"
+                          IsVisible="{Binding HasConfigDescriptors}">
+                    <ItemsControl ItemsSource="{Binding ConfigEntries}"
+                                  Margin="4">
+                        <ItemsControl.ItemTemplate>
+                            <local:ConfigEntryDataTemplate/>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </HeaderedContentControl>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

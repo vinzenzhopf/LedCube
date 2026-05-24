@@ -1,0 +1,79 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:converters="clr-namespace:LedCube.Core.UI.Converters;assembly=LedCube.Core.UI"
+        xmlns:logAppender="clr-namespace:LedCube.Core.UI.Controls.LogAppender;assembly=LedCube.Core.UI"
+        xmlns:mainWindow="clr-namespace:LedCube.Streamer.UI.Controls.MainWindow"
+        xmlns:menuBar="clr-namespace:LedCube.Streamer.UI.Controls.MenuBar"
+        xmlns:playbackControl="clr-namespace:LedCube.Core.UI.Controls.PlaybackControl;assembly=LedCube.Core.UI"
+        xmlns:streamingControl="clr-namespace:LedCube.Core.UI.Controls.StreamingControl;assembly=LedCube.Core.UI"
+        xmlns:pluginConfigControl="clr-namespace:LedCube.Core.UI.Controls.PluginConfigControl;assembly=LedCube.Core.UI"
+        xmlns:playlistControl="clr-namespace:LedCube.Core.UI.Controls.PlaylistControl;assembly=LedCube.Core.UI"
+        x:Class="LedCube.Streamer.UI.Controls.MainWindow.MainWindow"
+        Title="{Binding TitleText}"
+        Height="800" Width="1200"
+        TransparencyLevelHint="None"
+        Background="{DynamicResource SolidBackgroundFillColorBaseBrush}">
+    <DockPanel>
+        <!-- Menu Bar -->
+        <menuBar:MenuBar DockPanel.Dock="Top" DataContext="{Binding MenuBarViewModel}"/>
+
+        <!-- Status Bar -->
+        <Border DockPanel.Dock="Bottom" BorderThickness="0,1,0,0" Padding="4,2">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{Binding BuildInfo}" VerticalAlignment="Center"/>
+                <Separator Margin="4,0"/>
+                <TextBlock Text="{Binding BuildInfoDebug}" VerticalAlignment="Center"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Content -->
+        <Grid x:Name="ContentGrid">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="2*" MinHeight="100"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="{Binding LogAppenderViewModel.ShowLog,
+                                       Converter={converters:BoolToGridLengthConverter TrueValue=1*, FalseValue=0}}"
+                               MinHeight="0"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="4"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Left: Streaming -->
+                <DockPanel Grid.Column="0">
+                    <streamingControl:StreamingControl DockPanel.Dock="Top" DataContext="{Binding StreamingControlViewModel}"/>
+                </DockPanel>
+
+                <GridSplitter Grid.Column="1" VerticalAlignment="Stretch" ResizeBehavior="BasedOnAlignment"/>
+
+                <!-- Right: Playback + Playlist -->
+                <DockPanel Grid.Column="2">
+                    <HeaderedContentControl DockPanel.Dock="Bottom" Header="Active Animation">
+                        <StackPanel>
+                            <pluginConfigControl:PluginConfigControl DataContext="{Binding PluginConfigViewModel}"/>
+                            <playbackControl:PlaybackControl DataContext="{Binding PlaybackControlViewModel}"/>
+                        </StackPanel>
+                    </HeaderedContentControl>
+                    <HeaderedContentControl Header="Playlist">
+                        <playlistControl:PlaylistControl DataContext="{Binding PlaylistControlViewModel}"/>
+                    </HeaderedContentControl>
+                </DockPanel>
+            </Grid>
+
+            <!-- Log splitter (hidden when ShowLog=false) -->
+            <GridSplitter Grid.Row="1"
+                          HorizontalAlignment="Stretch" Height="4"
+                          IsVisible="{Binding LogAppenderViewModel.ShowLog}"/>
+
+            <!-- Log panel (hidden when ShowLog=false) -->
+            <logAppender:LogAppenderControl Grid.Row="2"
+                                            MinHeight="150"
+                                            DataContext="{Binding LogAppenderViewModel}"
+                                            IsVisible="{Binding ShowLog}"/>
+        </Grid>
+    </DockPanel>
+</Window>

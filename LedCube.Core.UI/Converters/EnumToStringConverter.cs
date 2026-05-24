@@ -1,24 +1,23 @@
-﻿using System;
-using System.Windows.Data;
+using System;
+using System.Globalization;
+using Avalonia.Data.Converters;
 
 namespace LedCube.Core.UI.Converters;
 
 public class EnumToStringConverter : IValueConverter
 {
-    public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         try
         {
-            return Enum.GetName((value.GetType()), value) ?? string.Empty;
+            return value is null ? string.Empty : Enum.GetName(value.GetType(), value) ?? string.Empty;
         }
         catch
         {
             return string.Empty;
         }
     }
-    
-    public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-    {
-        throw new NotImplementedException();
-    }
+
+    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        => throw new NotImplementedException();
 }

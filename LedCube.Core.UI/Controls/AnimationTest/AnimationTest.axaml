@@ -1,0 +1,59 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:LedCube.Core.UI.Controls.AnimationTest"
+             xmlns:playlistControl="clr-namespace:LedCube.Core.UI.Controls.PlaylistControl"
+             x:Class="LedCube.Core.UI.Controls.AnimationTest.AnimationTest">
+    <DockPanel>
+        <StackPanel DockPanel.Dock="Top">
+            <ComboBox ItemsSource="{Binding Animations}"
+                      SelectedItem="{Binding SelectedAnimation, Mode=TwoWay}"
+                      SelectionChanged="OnSelectedAnimationChanged">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate DataType="{x:Type playlistControl:AnimationViewModel}">
+                        <Border>
+                            <Grid Margin="2">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0" Grid.Column="0" FontSize="10" Foreground="DimGray" Text="Name:" />
+                                <TextBlock Grid.Row="1" Grid.Column="0" FontSize="10" Foreground="DimGray" Text="Description:" />
+                                <TextBlock Grid.Row="0" Grid.Column="1" FontSize="10" Text="{Binding Name}" />
+                                <TextBlock Grid.Row="1" Grid.Column="1" FontSize="10" Text="{Binding Description}" />
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+        </StackPanel>
+        <StackPanel>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Animation Name:" />
+                <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding SelectedAnimation.Name}" />
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="Description:" />
+                <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SelectedAnimation.Description}" />
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="Frame Count:" />
+                <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding SelectedAnimation.FrameCount}" />
+                <TextBlock Grid.Row="3" Grid.Column="0" Text="Frame Frequency:" />
+                <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding SelectedAnimation.FrameFrequency}" />
+                <TextBlock Grid.Row="4" Grid.Column="0" Text="AnimationLength:" />
+                <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding SelectedAnimation.AnimationLength}" />
+            </Grid>
+        </StackPanel>
+    </DockPanel>
+</UserControl>

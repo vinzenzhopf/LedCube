@@ -1,0 +1,65 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia">
+
+    <!--
+        Icon button
+        Use:
+            <Button Classes="icon">         (medium / default)
+            <Button Classes="icon sm">      (compact)
+            <Button Classes="icon lg">      (primary / play button)
+    -->
+    <Style Selector="Button.icon">
+        <Setter Property="Width" Value="{StaticResource IconBtnSizeM}"/>
+        <Setter Property="Height" Value="{StaticResource IconBtnSizeM}"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Margin" Value="{StaticResource IconBtnMargin}"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+    </Style>
+    <Style Selector="Button.icon.sm">
+        <Setter Property="Width" Value="{StaticResource IconBtnSizeS}"/>
+        <Setter Property="Height" Value="{StaticResource IconBtnSizeS}"/>
+    </Style>
+    <Style Selector="Button.icon.lg">
+        <Setter Property="Width" Value="{StaticResource IconBtnSizeL}"/>
+        <Setter Property="Height" Value="{StaticResource IconBtnSizeL}"/>
+    </Style>
+
+    <!-- Default icon size inside icon buttons (the MaterialIcon child). -->
+    <Style Selector="Button.icon > materialIcons|MaterialIcon">
+        <Setter Property="Width" Value="{StaticResource IconSizeM}"/>
+        <Setter Property="Height" Value="{StaticResource IconSizeM}"/>
+    </Style>
+    <Style Selector="Button.icon.sm > materialIcons|MaterialIcon">
+        <Setter Property="Width" Value="{StaticResource IconSizeS}"/>
+        <Setter Property="Height" Value="{StaticResource IconSizeS}"/>
+    </Style>
+    <Style Selector="Button.icon.lg > materialIcons|MaterialIcon">
+        <Setter Property="Width" Value="{StaticResource IconSizeL}"/>
+        <Setter Property="Height" Value="{StaticResource IconSizeL}"/>
+    </Style>
+
+    <!--
+        Toolbar — horizontal strip of icon buttons.
+        Use: <StackPanel Classes="toolbar"> ... </StackPanel>
+    -->
+    <Style Selector="StackPanel.toolbar">
+        <Setter Property="Orientation" Value="Horizontal"/>
+    </Style>
+    <Style Selector="StackPanel.toolbar.vertical">
+        <Setter Property="Orientation" Value="Vertical"/>
+    </Style>
+
+    <!--
+        Muted text / icons — secondary labels, captions, placeholders.
+        Replaces the legacy Foreground="Gray" pattern with a theme-aware FAU 2 brush.
+        Use: <TextBlock Classes="muted"> or <MaterialIcon Classes="muted">.
+    -->
+    <Style Selector="TextBlock.muted">
+        <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}"/>
+    </Style>
+    <Style Selector="materialIcons|MaterialIcon.muted">
+        <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}"/>
+    </Style>
+</Styles>

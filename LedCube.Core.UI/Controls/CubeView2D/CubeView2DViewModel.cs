@@ -1,7 +1,9 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Windows.Media;
+using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -19,6 +21,8 @@ public partial class CubeView2DViewModel : ObservableObject
     
     private ICubeRepository _cubeRepository;
 
+    public static IEnumerable<Orientation3D> AllOrientations { get; } = Enum.GetValues<Orientation3D>();
+
     public ObservableCollection<int> AllPlanes { get; } = new();
     public ObservableCollection<int> SelectedPlanes { get; } = new();
 
@@ -26,7 +30,7 @@ public partial class CubeView2DViewModel : ObservableObject
     private int _selectedPlane = 0;
 
     [ObservableProperty]
-    private Brush _ledBrush = Brushes.Blue;
+    private IBrush _ledBrush = Brushes.Blue;
 
     [ObservableProperty]
     private bool _showNumbers = true;

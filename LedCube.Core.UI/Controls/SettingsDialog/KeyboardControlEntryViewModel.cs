@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using System.Windows.Input;
+using Avalonia.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -44,10 +44,10 @@ public partial class KeyboardControlEntryViewModel : ObservableObject
     private IReadOnlyList<string> BuildTokens()
     {
         var tokens = new List<string>();
-        if (Binding.Modifiers.HasFlag(ModifierKeys.Control)) tokens.Add("Ctrl");
-        if (Binding.Modifiers.HasFlag(ModifierKeys.Shift)) tokens.Add("Shift");
-        if (Binding.Modifiers.HasFlag(ModifierKeys.Alt)) tokens.Add("Alt");
-        if (Binding.Modifiers.HasFlag(ModifierKeys.Windows)) tokens.Add("Win");
+        if (Binding.Modifiers.HasFlag(KeyModifiers.Control)) tokens.Add("Ctrl");
+        if (Binding.Modifiers.HasFlag(KeyModifiers.Shift)) tokens.Add("Shift");
+        if (Binding.Modifiers.HasFlag(KeyModifiers.Alt)) tokens.Add("Alt");
+        if (Binding.Modifiers.HasFlag(KeyModifiers.Meta)) tokens.Add("Win");
         switch (Binding.Type)
         {
             case HotkeyInputType.Keyboard when Binding.Key != Key.None:

@@ -1,8 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <UseWpf>true</UseWpf>
-        <TargetFramework>net10.0-windows</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
@@ -21,6 +20,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="Avalonia" />
       <PackageReference Include="CommunityToolkit.Mvvm" />
       <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
     </ItemGroup>

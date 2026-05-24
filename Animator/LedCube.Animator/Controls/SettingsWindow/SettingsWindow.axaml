@@ -1,0 +1,22 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="LedCube.Animator.Controls.SettingsWindow.SettingsWindow"
+        Title="Settings"
+        Width="500" Height="400"
+        CanResize="False"
+        WindowStartupLocation="CenterOwner">
+
+    <Grid RowDefinitions="*,Auto">
+
+        <TextBlock Grid.Row="0" Text="Work in Progress! Settings will be implemented here."
+                   HorizontalAlignment="Center" VerticalAlignment="Center"
+                   TextWrapping="Wrap" Margin="20" />
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right"
+                    Spacing="5" Margin="10">
+            <Button Content="Save" Width="100" Command="{Binding SaveCommand}" />
+            <Button Content="Cancel" Width="100" Command="{Binding CancelCommand}" />
+        </StackPanel>
+
+    </Grid>
+</Window>

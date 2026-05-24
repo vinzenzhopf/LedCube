@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using System.Windows.Input;
+using Avalonia.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using HotkeyInputBinding = LedCube.Core.UI.Services.Hotkey.InputBinding;
 using HotkeyInputType = LedCube.Core.UI.Services.Hotkey.InputType;
@@ -38,10 +38,10 @@ public partial class SettingsHotkeyInputDialogViewModel : ObservableObject
     private static IReadOnlyList<string> BuildTokens(HotkeyInputBinding binding)
     {
         var tokens = new List<string>();
-        if (binding.Modifiers.HasFlag(ModifierKeys.Control)) tokens.Add("Ctrl");
-        if (binding.Modifiers.HasFlag(ModifierKeys.Shift)) tokens.Add("Shift");
-        if (binding.Modifiers.HasFlag(ModifierKeys.Alt)) tokens.Add("Alt");
-        if (binding.Modifiers.HasFlag(ModifierKeys.Windows)) tokens.Add("Win");
+        if (binding.Modifiers.HasFlag(KeyModifiers.Control)) tokens.Add("Ctrl");
+        if (binding.Modifiers.HasFlag(KeyModifiers.Shift)) tokens.Add("Shift");
+        if (binding.Modifiers.HasFlag(KeyModifiers.Alt)) tokens.Add("Alt");
+        if (binding.Modifiers.HasFlag(KeyModifiers.Meta)) tokens.Add("Win");
         switch (binding.Type)
         {
             case HotkeyInputType.Keyboard when binding.Key != Key.None:

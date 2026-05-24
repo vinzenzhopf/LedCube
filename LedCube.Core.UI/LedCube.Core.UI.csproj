@@ -1,16 +1,18 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net10.0-windows</TargetFramework>
-        <UseWPF>true</UseWPF>
+        <TargetFramework>net10.0</TargetFramework>
         <LangVersion>preview</LangVersion>
+        <Nullable>enable</Nullable>
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Avalonia" />
+        <PackageReference Include="Avalonia.Themes.Fluent" />
+        <PackageReference Include="Avalonia.Controls.DataGrid" />
+        <PackageReference Include="FluentAvaloniaUI" />
+        <PackageReference Include="Material.Icons.Avalonia" />
         <PackageReference Include="CommunityToolkit.Mvvm" />
-        <PackageReference Include="MahApps.Metro" />
-        <PackageReference Include="MahApps.Metro.IconPacks" />
-        <PackageReference Include="MahApps.Metro.IconPacks.FontAwesome" />
         <PackageReference Include="Microsoft.Extensions.Configuration" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
@@ -18,86 +20,14 @@
         <PackageReference Include="Serilog.Enrichers.Thread" />
         <PackageReference Include="Serilog.Sinks.Debug" />
         <PackageReference Include="Serilog.Sinks.File" />
-        <PackageReference Include="Serilog.Sinks.RichTextBox.Wpf" />
     </ItemGroup>
-    
+
     <ItemGroup>
-      <Page Update="Controls\LogAppender\LogAppenderControl.xaml">
-        <Generator>MSBuild:Compile</Generator>
-        <XamlRuntime>Wpf</XamlRuntime>
-        <SubType>Designer</SubType>
-      </Page>
-      <Page Update="Styles\Controls.xaml">
-        <Generator>MSBuild:Compile</Generator>
-        <XamlRuntime>Wpf</XamlRuntime>
-        <SubType>Designer</SubType>
-      </Page>
-      <Page Update="Styles\General.xaml">
-        <Generator>MSBuild:Compile</Generator>
-        <XamlRuntime>Wpf</XamlRuntime>
-        <SubType>Designer</SubType>
-      </Page>
-      <Page Update="Dialog\BroadcastSearchDialog\BroadcastSearchDialogWindow.xaml">
-        <Generator>MSBuild:Compile</Generator>
-      </Page>
-      <Page Update="Controls\AnimationList\PlaylistControl.xaml">
-        <Generator>MSBuild:Compile</Generator>
-      </Page>
-      <Page Update="Controls\AnimationList\AnimationInstanceListEntry.xaml">
-        <Generator>MSBuild:Compile</Generator>
-      </Page>
-      <Page Update="Controls\PlaybackControl\PlaybackControl.xaml">
-        <Generator>MSBuild:Compile</Generator>
-      </Page>
-      <Page Update="Dialog\SelectAnimationDialog\SelectAnimationDialog.xaml">
-        <Generator>MSBuild:Compile</Generator>
-        <XamlRuntime>Wpf</XamlRuntime>
-        <SubType>Designer</SubType>
-      </Page>
-      <Page Update="Dialog\EditAnimationInstanceDialog\EditAnimationInstanceDialog.xaml">
-        <Generator>MSBuild:Compile</Generator>
-        <XamlRuntime>Wpf</XamlRuntime>
-        <SubType>Designer</SubType>
-      </Page>
-      <Page Update="Controls\AnimationTest\AnimationTest.xaml">
-        <Generator>MSBuild:Compile</Generator>
-        <XamlRuntime>Wpf</XamlRuntime>
-        <SubType>Designer</SubType>
-      </Page>
-      <Page Update="Controls\StreamingControl\StreamingControl.xaml">
-        <Generator>MSBuild:Compile</Generator>
-        <XamlRuntime>Wpf</XamlRuntime>
-        <SubType>Designer</SubType>
-      </Page>
-      <Page Update="Controls\SettingsDialog\SettingsPage_StreamerSettings.xaml">
-        <Generator>MSBuild:Compile</Generator>
-        <XamlRuntime>Wpf</XamlRuntime>
-        <SubType>Designer</SubType>
-      </Page>
-      <Page Update="Controls\SettingsDialog\SettingsPage_CubeDisplaySettings.xaml">
-        <Generator>MSBuild:Compile</Generator>
-        <XamlRuntime>Wpf</XamlRuntime>
-        <SubType>Designer</SubType>
-      </Page>
-      <Page Update="Controls\SettingsDialog\SettingsPage_KeyboardControlSettings.xaml">
-        <Generator>MSBuild:Compile</Generator>
-        <XamlRuntime>Wpf</XamlRuntime>
-        <SubType>Designer</SubType>
-      </Page>
-      <Page Update="Controls\SettingsDialog\SettingsHotkeyInputDialog.xaml">
-        <Generator>MSBuild:Compile</Generator>
-        <XamlRuntime>Wpf</XamlRuntime>
-        <SubType>Designer</SubType>
-      </Page>
+        <ProjectReference Include="..\LedCube.Core.Common\LedCube.Core.Common.csproj" />
+        <ProjectReference Include="..\LedCube.Core.UI.TimelineControl.Core\LedCube.Core.UI.TimelineControl.Core.csproj" />
+        <ProjectReference Include="..\LedCube.Core.UI.TimelineControl\LedCube.Core.UI.TimelineControl.csproj" />
+        <ProjectReference Include="..\LedCube.Streamer\LedCube.Streamer.csproj" />
+        <ProjectReference Include="..\Plugin\LedCube.PluginHost\LedCube.PluginHost.csproj" />
     </ItemGroup>
-    
-    <ItemGroup>
-      <ProjectReference Include="..\LedCube.Core.Common\LedCube.Core.Common.csproj" />
-      <ProjectReference Include="..\LedCube.Core.UI.TimelineControl.Core\LedCube.Core.UI.TimelineControl.Core.csproj" />
-      <ProjectReference Include="..\LedCube.Core.UI.TimelineControl\LedCube.Core.UI.TimelineControl.csproj" />
-      <ProjectReference Include="..\LedCube.Streamer\LedCube.Streamer.csproj" />
-      <ProjectReference Include="..\Plugin\LedCube.PluginHost\LedCube.PluginHost.csproj" />
-    </ItemGroup>
-    
-    
+
 </Project>

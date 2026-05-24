@@ -1,0 +1,35 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="LedCube.Animator.Controls.LogAppender.LogAppenderControl">
+
+    <Grid RowDefinitions="Auto,*">
+
+        <!-- Toolbar -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="4" Margin="4,2">
+            <TextBlock Text="Log" FontWeight="Bold" VerticalAlignment="Center" />
+            <Button Content="Clear" Command="{Binding ClearCommand}" Padding="6,2" />
+            <Button Content="✕" Command="{Binding CloseCommand}" Padding="6,2" />
+        </StackPanel>
+
+        <!-- Log entries -->
+        <ListBox Grid.Row="1" ItemsSource="{Binding LogEntries}"
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                 FontFamily="Consolas,Menlo,monospace" FontSize="11">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid ColumnDefinitions="70,60,*,3*">
+                        <TextBlock Grid.Column="0" Text="{Binding Time, StringFormat=HH:mm:ss.fff}"
+                                   Foreground="{Binding Color}" />
+                        <TextBlock Grid.Column="1" Text="{Binding Level}"
+                                   Foreground="{Binding Color}" FontWeight="Bold" />
+                        <TextBlock Grid.Column="2" Text="{Binding Logger}"
+                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextTrimming="CharacterEllipsis" />
+                        <TextBlock Grid.Column="3" Text="{Binding Message}"
+                                   TextWrapping="Wrap" />
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+    </Grid>
+</UserControl>

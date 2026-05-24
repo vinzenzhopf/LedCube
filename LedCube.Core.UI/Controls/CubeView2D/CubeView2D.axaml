@@ -1,0 +1,48 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:LedCube.Core.UI.Controls.CubeView2D"
+             x:Class="LedCube.Core.UI.Controls.CubeView2D.CubeView2D">
+    <DockPanel>
+        <Grid DockPanel.Dock="Top">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <ComboBox Margin="2"
+                      ItemsSource="{Binding AllOrientations}"
+                      SelectedItem="{Binding ViewDirection}"
+                      PlaceholderText="Orientation" />
+            <Button Grid.Column="1"
+                    Content="Clear"
+                    Margin="2"
+                    Command="{Binding ClearSelectedPlanesClickedCommand}" />
+            <Button Grid.Column="2"
+                    Content="Set"
+                    Margin="2"
+                    Command="{Binding SetSelectedPlanesClickedCommand}" />
+            <Button Grid.Column="3"
+                    Content="Toggle"
+                    Margin="2"
+                    Command="{Binding ToggleSelectedPlanesClickedCommand}" />
+        </Grid>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0" Margin="2" VerticalAlignment="Center">
+                <Label Content="Plane" />
+                <ListBox MinWidth="60"
+                         ItemsSource="{Binding AllPlanes}"
+                         BorderThickness="1"
+                         SelectedItem="{Binding SelectedPlane}" />
+            </StackPanel>
+            <local:CubeView2DGrid Grid.Column="1"
+                PlaneData="{Binding PlaneData, Mode=OneWay}"
+                LedBrush="{Binding LedBrush, Mode=OneWay}"
+                ShowNumbers="{Binding ShowNumbers}" />
+        </Grid>
+    </DockPanel>
+</UserControl>

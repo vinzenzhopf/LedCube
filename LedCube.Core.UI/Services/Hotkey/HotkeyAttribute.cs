@@ -1,5 +1,5 @@
 using System;
-using System.Windows.Input;
+using Avalonia.Input;
 
 namespace LedCube.Core.UI.Services.Hotkey;
 
@@ -14,10 +14,10 @@ public class HotkeyAttribute : Attribute
     public InputType InputType { get; }
     public Key DefaultKey { get; }
     public ExtendedMouseButton DefaultMouseButton { get; }
-    public ModifierKeys DefaultModifiers { get; }
+    public KeyModifiers DefaultModifiers { get; }
 
     // Keyboard binding
-    public HotkeyAttribute(string id, string description, Key defaultKey, ModifierKeys defaultModifiers = ModifierKeys.None)
+    public HotkeyAttribute(string id, string description, Key defaultKey, KeyModifiers defaultModifiers = KeyModifiers.None)
     {
         Id = id;
         Description = description;
@@ -27,7 +27,7 @@ public class HotkeyAttribute : Attribute
     }
 
     // Mouse button binding
-    public HotkeyAttribute(string id, string description, ExtendedMouseButton mouseButton, ModifierKeys defaultModifiers = ModifierKeys.None)
+    public HotkeyAttribute(string id, string description, ExtendedMouseButton mouseButton, KeyModifiers defaultModifiers = KeyModifiers.None)
     {
         Id = id;
         Description = description;
@@ -37,7 +37,7 @@ public class HotkeyAttribute : Attribute
     }
 
     // Scroll wheel binding
-    public HotkeyAttribute(string id, string description, InputType scrollType, ModifierKeys defaultModifiers = ModifierKeys.None)
+    public HotkeyAttribute(string id, string description, InputType scrollType, KeyModifiers defaultModifiers = KeyModifiers.None)
     {
         if (scrollType is not (InputType.MouseScrollUp or InputType.MouseScrollDown))
             throw new ArgumentException("Use this constructor only for scroll types", nameof(scrollType));

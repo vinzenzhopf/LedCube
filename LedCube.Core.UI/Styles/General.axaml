@@ -1,0 +1,33 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:system="clr-namespace:System;assembly=System.Runtime">
+
+    <!-- ===== Domain colors / brushes ===== -->
+    <Color x:Key="CubeRedColor">#b42127</Color>
+    <Color x:Key="CubeYellowColor">#b5b521</Color>
+    <Color x:Key="CubeGreenColor">#21b521</Color>
+    <Color x:Key="CubeBlueColor">#216bb5</Color>
+
+    <SolidColorBrush x:Key="CubeRedBrush" Color="{StaticResource CubeRedColor}" />
+    <SolidColorBrush x:Key="CubeYellowBrush" Color="{StaticResource CubeYellowColor}" />
+    <SolidColorBrush x:Key="CubeGreenBrush" Color="{StaticResource CubeGreenColor}" />
+    <SolidColorBrush x:Key="CubeBlueBrush" Color="{StaticResource CubeBlueColor}" />
+
+    <!-- ===== Icon sizes ===== -->
+    <system:Double x:Key="IconSizeS">12</system:Double>
+    <system:Double x:Key="IconSizeM">16</system:Double>
+    <system:Double x:Key="IconSizeL">22</system:Double>
+
+    <!-- ===== Icon button sizes (square Width=Height) ===== -->
+    <system:Double x:Key="IconBtnSizeS">24</system:Double>
+    <system:Double x:Key="IconBtnSizeM">32</system:Double>
+    <system:Double x:Key="IconBtnSizeL">44</system:Double>
+
+    <!-- ===== Spacing / padding ===== -->
+    <system:Double x:Key="PadXS">2</system:Double>
+    <system:Double x:Key="PadS">4</system:Double>
+    <system:Double x:Key="PadM">8</system:Double>
+    <system:Double x:Key="PadL">12</system:Double>
+
+    <Thickness x:Key="IconBtnMargin">2</Thickness>
+</ResourceDictionary>

@@ -1,22 +1,16 @@
-﻿using System.Windows;
-using System.Windows.Controls;
+using Avalonia;
+using Avalonia.Controls;
 
 namespace LedCube.Core.UI.Controls;
 
 public class Led : CheckBox
 {
-    public static readonly DependencyProperty SizeProperty = DependencyProperty.Register(
-        nameof(Size), typeof(double), typeof(Led));
-
-    static Led()
-    {
-        DefaultStyleKeyProperty.OverrideMetadata(typeof(Led),
-            new FrameworkPropertyMetadata(typeof(Led)));
-    }
+    public static readonly StyledProperty<double> SizeProperty =
+        AvaloniaProperty.Register<Led, double>(nameof(Size));
 
     public double Size
     {
-        get => (double) GetValue(SizeProperty);
+        get => GetValue(SizeProperty);
         set => SetValue(SizeProperty, value);
     }
 }

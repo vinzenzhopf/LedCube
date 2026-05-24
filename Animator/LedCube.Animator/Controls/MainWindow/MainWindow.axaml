@@ -1,0 +1,64 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:LedCube.Animator.Controls.MainWindow"
+        xmlns:menuBar="clr-namespace:LedCube.Animator.Controls.MenuBar"
+        xmlns:logAppender="clr-namespace:LedCube.Animator.Controls.LogAppender"
+        x:Class="LedCube.Animator.Controls.MainWindow.MainWindow"
+        Title="{Binding TitleText}"
+        Width="1200" Height="800"
+        MinWidth="800" MinHeight="600"
+        TransparencyLevelHint="None"
+        Background="{DynamicResource SolidBackgroundFillColorBaseBrush}">
+
+    <Grid RowDefinitions="Auto,*,Auto">
+
+        <!-- Menu Bar -->
+        <menuBar:MenuBar Grid.Row="0" DataContext="{Binding MenuBarViewModel}" />
+
+        <!-- Main Content -->
+        <Grid Grid.Row="1" ColumnDefinitions="200,4,*,4,200">
+
+            <!-- Left sidebar placeholder -->
+            <Border Grid.Column="0" Background="#1E1E1E">
+                <TextBlock Text="[Layers]" HorizontalAlignment="Center" VerticalAlignment="Center"
+                           Foreground="{DynamicResource TextFillColorSecondaryBrush}" FontStyle="Italic" />
+            </Border>
+
+            <GridSplitter Grid.Column="1" ResizeDirection="Columns" />
+
+            <!-- Center area -->
+            <Grid Grid.Column="2" RowDefinitions="*,4,Auto">
+
+                <!-- 3D view placeholder -->
+                <Border Grid.Row="0" Background="#1E3A5F">
+                    <TextBlock Text="[3D Cube View]" HorizontalAlignment="Center" VerticalAlignment="Center"
+                               Foreground="White" FontStyle="Italic" />
+                </Border>
+
+                <!-- Log splitter and panel -->
+                <GridSplitter Grid.Row="1" ResizeDirection="Rows"
+                              IsVisible="{Binding LogAppenderViewModel.ShowLog}" />
+                <logAppender:LogAppenderControl Grid.Row="2" Height="180"
+                    DataContext="{Binding LogAppenderViewModel}"
+                    IsVisible="{Binding LogAppenderViewModel.ShowLog}" />
+            </Grid>
+
+            <GridSplitter Grid.Column="3" ResizeDirection="Columns" />
+
+            <!-- Right sidebar placeholder -->
+            <Border Grid.Column="4" Background="#1E1E1E">
+                <TextBlock Text="[Properties]" HorizontalAlignment="Center" VerticalAlignment="Center"
+                           Foreground="{DynamicResource TextFillColorSecondaryBrush}" FontStyle="Italic" />
+            </Border>
+        </Grid>
+
+        <!-- Status Bar -->
+        <Border Grid.Row="2" Background="#007ACC" Padding="4,2">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{Binding BuildInfo}" Foreground="White" FontSize="11" />
+                <TextBlock Text="{Binding BuildInfoDebug}" Foreground="Yellow" FontSize="11" />
+            </StackPanel>
+        </Border>
+
+    </Grid>
+</Window>

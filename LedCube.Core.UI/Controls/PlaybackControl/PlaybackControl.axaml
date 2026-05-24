@@ -1,0 +1,113 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:LedCube.Core.UI.Controls.PlaybackControl"
+             xmlns:converters="clr-namespace:LedCube.Core.UI.Converters"
+             xmlns:playback="clr-namespace:LedCube.Core.UI.Services.Playback"
+             xmlns:timeline="clr-namespace:LedCube.Core.UI.TimelineControl;assembly=LedCube.Core.UI.TimelineControl"
+             xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             x:Class="LedCube.Core.UI.Controls.PlaybackControl.PlaybackControl">
+    <UserControl.Resources>
+        <converters:VisibleWhenIntConverter x:Key="VisWhenPlaying"/>
+        <converters:VisibleWhenIntConverter x:Key="VisWhenNotPlaying" TrueValue="False" FalseValue="True"/>
+    </UserControl.Resources>
+    <StackPanel>
+        <!-- Timeline Bar -->
+        <timeline:TimelineControl
+            Mode="Live"
+            TotalFrames="{Binding Animation.FrameCount, FallbackValue=100}"
+            FrameTime="{Binding Animation.FrameTime}"
+            CurrentFrame="{Binding CurrentFrame, Mode=TwoWay}"
+            PlayheadChanged="OnPlayheadChanged"/>
+
+        <!-- Lower control bar -->
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="2*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Animation info panel -->
+            <Grid Grid.Column="0">
+                <!-- Info when animation selected -->
+                <Grid IsVisible="{Binding IsAnimationSelected}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3"
+                               Text="{Binding Animation.Name}" FontWeight="Bold"/>
+                    <TextBlock Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3"
+                               Text="{Binding Animation.Description}"/>
+                    <StackPanel Grid.Column="0" Grid.Row="2" Orientation="Horizontal">
+                        <TextBlock Text="Frames: " Classes="muted"/>
+                        <TextBlock Text="{Binding Animation.FrameCount}" Classes="muted"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Grid.Row="2" Orientation="Horizontal">
+                        <TextBlock Text="FPS: " Classes="muted"/>
+                        <TextBlock Text="{Binding Animation.FrameFrequency}" Classes="muted"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="2" Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                        <materialIcons:MaterialIcon Kind="ClockOutline" Width="12" Height="12"
+                                                    Classes="muted" VerticalAlignment="Center" Margin="0,0,2,0"/>
+                        <TextBlock Text="{Binding Animation.AnimationLength}" Classes="muted"/>
+                    </StackPanel>
+                    <!-- Frame / time position row -->
+                    <WrapPanel Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="3" Orientation="Horizontal">
+                        <TextBlock Text="{Binding CurrentFrame}" FontWeight="SemiBold"/>
+                        <TextBlock Text=" / " Classes="muted"/>
+                        <TextBlock Text="{Binding Animation.FrameCount}" Classes="muted"/>
+                        <TextBlock Text="   "/>
+                        <TextBlock Text="{Binding CurrentTime, StringFormat='hh\\:mm\\:ss\\.ff'}" FontWeight="SemiBold"/>
+                        <TextBlock Text=" / " Classes="muted"/>
+                        <TextBlock Text="{Binding Animation.TotalTime, StringFormat='hh\\:mm\\:ss\\.ff'}" Classes="muted"/>
+                    </WrapPanel>
+                </Grid>
+                <!-- Placeholder when no animation -->
+                <TextBlock Classes="muted"
+                           Text="No Animation selected."
+                           IsVisible="{Binding IsAnimationSelected, Converter={StaticResource VisWhenNotPlaying}}"/>
+            </Grid>
+
+            <!-- Playback buttons -->
+            <StackPanel Grid.Column="1"
+                        Classes="toolbar"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Margin="5">
+                <Button Classes="icon" Command="{Binding BackwardCommand}">
+                    <materialIcons:MaterialIcon Kind="Rewind"/>
+                </Button>
+                <Button Classes="icon" Command="{Binding RestartCommand}">
+                    <materialIcons:MaterialIcon Kind="SkipPrevious"/>
+                </Button>
+
+                <!-- Play button (visible when NOT playing) -->
+                <Button Classes="icon lg"
+                        Command="{Binding PlayContinueCommand}"
+                        IsVisible="{Binding PlaybackState, Converter={StaticResource VisWhenNotPlaying}, ConverterParameter=1}">
+                    <materialIcons:MaterialIcon Kind="Play"/>
+                </Button>
+                <!-- Pause button (visible when playing) -->
+                <Button Classes="icon lg"
+                        Command="{Binding PauseCommand}"
+                        IsVisible="{Binding PlaybackState, Converter={StaticResource VisWhenPlaying}, ConverterParameter=1}">
+                    <materialIcons:MaterialIcon Kind="Pause"/>
+                </Button>
+
+                <Button Classes="icon" Command="{Binding StopCommand}">
+                    <materialIcons:MaterialIcon Kind="Stop"/>
+                </Button>
+                <Button Classes="icon" Command="{Binding ForwardCommand}">
+                    <materialIcons:MaterialIcon Kind="FastForward"/>
+                </Button>
+            </StackPanel>
+        </Grid>
+    </StackPanel>
+</UserControl>

@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using LedCube.Streamer.CubeStreamer;
 using LedCube.Streamer.Datagram;
 using Microsoft.Extensions.Logging;
-using DispatcherPriority = System.Windows.Threading.DispatcherPriority;
 
 namespace LedCube.Core.UI.Controls.StreamingControl;
 
@@ -69,10 +68,10 @@ public partial class CubeStreamingStatusViewModel : ObservableObject, ICubeStrea
         {
             try
             {
-                await Application.Current.Dispatcher.InvokeAsync( () =>
+                await Dispatcher.UIThread.InvokeAsync(() =>
                 {
                     Update(_cubeStreamingStatus);
-                }, DispatcherPriority.Background, token);
+                }, DispatcherPriority.Background);
                 await _timer.WaitForNextTickAsync(token);
             }
             catch (Exception e)

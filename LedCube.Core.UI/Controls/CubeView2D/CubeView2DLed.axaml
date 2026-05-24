@@ -1,0 +1,37 @@
+<ToggleButton xmlns="https://github.com/avaloniaui"
+              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+              xmlns:local="clr-namespace:LedCube.Core.UI.Controls.CubeView2D"
+              xmlns:converters="clr-namespace:LedCube.Core.UI.Converters"
+              x:Class="LedCube.Core.UI.Controls.CubeView2D.CubeView2DLed"
+              VerticalAlignment="Stretch"
+              HorizontalAlignment="Stretch">
+    <ToggleButton.Styles>
+        <Style Selector="local|CubeView2DLed">
+            <Setter Property="IsTabStop" Value="False" />
+            <Setter Property="Padding" Value="1" />
+            <Setter Property="Template">
+                <ControlTemplate TargetType="local:CubeView2DLed">
+                    <Border Padding="{TemplateBinding Padding}">
+                        <Ellipse
+                            Width="{TemplateBinding Size}"
+                            Height="{TemplateBinding Size}"
+                            Margin="0"
+                            Fill="{TemplateBinding Background}"
+                            Stroke="{Binding Foreground,
+                                     RelativeSource={RelativeSource TemplatedParent},
+                                     Converter={converters:BrushBrightnessConverter},
+                                     ConverterParameter=-0.2}"
+                            StrokeThickness="1" />
+                    </Border>
+                </ControlTemplate>
+            </Setter>
+        </Style>
+        <Style Selector="local|CubeView2DLed:checked">
+            <Setter Property="Background">
+                <Setter.Value>
+                    <Binding Path="Foreground" RelativeSource="{RelativeSource Self}" />
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </ToggleButton.Styles>
+</ToggleButton>

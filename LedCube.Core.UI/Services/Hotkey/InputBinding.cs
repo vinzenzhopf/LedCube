@@ -1,5 +1,5 @@
 using System;
-using System.Windows.Input;
+using Avalonia.Input;
 
 namespace LedCube.Core.UI.Services.Hotkey;
 
@@ -11,26 +11,26 @@ public readonly record struct InputBinding
     public InputType Type { get; init; }
     public Key Key { get; init; }
     public ExtendedMouseButton MouseButton { get; init; }
-    public ModifierKeys Modifiers { get; init; }
+    public KeyModifiers Modifiers { get; init; }
 
     // Factory methods for cleaner construction
-    public static InputBinding FromKey(Key key, ModifierKeys modifiers = ModifierKeys.None) =>
+    public static InputBinding FromKey(Key key, KeyModifiers modifiers = KeyModifiers.None) =>
         new() { Type = InputType.Keyboard, Key = key, Modifiers = modifiers };
 
-    public static InputBinding FromMouseButton(ExtendedMouseButton button, ModifierKeys modifiers = ModifierKeys.None) =>
+    public static InputBinding FromMouseButton(ExtendedMouseButton button, KeyModifiers modifiers = KeyModifiers.None) =>
         new() { Type = InputType.MouseButton, MouseButton = button, Modifiers = modifiers };
 
-    public static InputBinding FromScrollUp(ModifierKeys modifiers = ModifierKeys.None) =>
+    public static InputBinding FromScrollUp(KeyModifiers modifiers = KeyModifiers.None) =>
         new() { Type = InputType.MouseScrollUp, Modifiers = modifiers };
 
-    public static InputBinding FromScrollDown(ModifierKeys modifiers = ModifierKeys.None) =>
+    public static InputBinding FromScrollDown(KeyModifiers modifiers = KeyModifiers.None) =>
         new() { Type = InputType.MouseScrollDown, Modifiers = modifiers };
 
     public static readonly InputBinding Empty = new() { Type = InputType.None };
 
     public override string ToString()
     {
-        var modifierStr = Modifiers != ModifierKeys.None ? $"{Modifiers} + " : "";
+        var modifierStr = Modifiers != KeyModifiers.None ? $"{Modifiers} + " : "";
         return Type switch
         {
             InputType.Keyboard => $"{modifierStr}{Key}",
@@ -57,7 +57,7 @@ public readonly record struct InputBinding
         var parts = s.Split(':');
         if (parts.Length < 3) return false;
         if (!Enum.TryParse<InputType>(parts[0], out var type)) return false;
-        if (!Enum.TryParse<ModifierKeys>(parts[2], out var modifiers)) return false;
+        if (!Enum.TryParse<KeyModifiers>(parts[2], out var modifiers)) return false;
         switch (type)
         {
             case InputType.Keyboard:

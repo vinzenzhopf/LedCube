@@ -1,0 +1,34 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:LedCube.Core.UI.Controls.PlaylistControl"
+             xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             x:Class="LedCube.Core.UI.Controls.PlaylistControl.PlaylistControl">
+    <DockPanel>
+        <StackPanel DockPanel.Dock="Top" Classes="toolbar">
+            <Button Classes="icon" Command="{Binding AddAnimationCommand}">
+                <materialIcons:MaterialIcon Kind="Plus"/>
+            </Button>
+            <Button Classes="icon" Command="{Binding DeleteAnimationCommand}">
+                <materialIcons:MaterialIcon Kind="Delete"/>
+            </Button>
+            <Button Classes="icon" Command="{Binding CopyAnimationCommand}">
+                <materialIcons:MaterialIcon Kind="ContentCopy"/>
+            </Button>
+            <Button Classes="icon" Command="{Binding MoveAnimationUpCommand}">
+                <materialIcons:MaterialIcon Kind="ArrowUp"/>
+            </Button>
+            <Button Classes="icon" Command="{Binding MoveAnimationDownCommand}">
+                <materialIcons:MaterialIcon Kind="ArrowDown"/>
+            </Button>
+        </StackPanel>
+        <ListBox ItemsSource="{Binding Instances}"
+                 SelectedItem="{Binding SelectedInstance}"
+                 DoubleTapped="OnItemDoubleTapped">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <local:PlaylistEntryControl/>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </DockPanel>
+</UserControl>

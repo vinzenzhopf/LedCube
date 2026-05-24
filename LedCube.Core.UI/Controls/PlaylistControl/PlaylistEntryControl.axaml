@@ -1,0 +1,65 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:LedCube.Core.UI.Controls.PlaylistControl"
+             xmlns:converters="clr-namespace:LedCube.Core.UI.Converters"
+             xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             x:Class="LedCube.Core.UI.Controls.PlaylistControl.PlaylistEntryControl">
+    <UserControl.Resources>
+        <converters:VisibleWhenIntConverter x:Key="VisWhenInt"/>
+    </UserControl.Resources>
+    <StackPanel>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="16"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- State indicator: Active=1 dot, Playing=2 play icon, Paused=3 pause icon -->
+            <Panel Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" VerticalAlignment="Center">
+                <Ellipse Width="6" Height="6" Fill="CornflowerBlue"
+                         IsVisible="{Binding DisplayState, Converter={StaticResource VisWhenInt}, ConverterParameter=1}"/>
+                <materialIcons:MaterialIcon Kind="Play" Width="12" Height="12" Foreground="CornflowerBlue"
+                         IsVisible="{Binding DisplayState, Converter={StaticResource VisWhenInt}, ConverterParameter=2}"/>
+                <materialIcons:MaterialIcon Kind="Pause" Width="12" Height="12" Classes="muted"
+                         IsVisible="{Binding DisplayState, Converter={StaticResource VisWhenInt}, ConverterParameter=3}"/>
+            </Panel>
+
+            <!-- Instance name -->
+            <TextBlock Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="2"
+                       Text="{Binding InstanceName}" FontWeight="Bold"/>
+            <StackPanel Grid.Column="3" Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right">
+                <TextBlock Text="#" Classes="muted"/>
+                <TextBlock Text="{Binding Index}" Classes="muted"/>
+            </StackPanel>
+            <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Animation.Name}"/>
+            <TextBlock Grid.Column="2" Grid.Row="1" Grid.ColumnSpan="2"
+                       Text="{Binding Animation.Description}"/>
+        </Grid>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0" Orientation="Horizontal">
+                <TextBlock Text="Frames: " Classes="muted"/>
+                <TextBlock Text="{Binding FrameCount}" Classes="muted"/>
+            </StackPanel>
+            <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
+                <TextBlock Text="FPS: " Classes="muted"/>
+                <TextBlock Text="{Binding FrameFrequency}" Classes="muted"/>
+            </StackPanel>
+            <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                <materialIcons:MaterialIcon Kind="ClockOutline" Width="12" Height="12"
+                                            Classes="muted" VerticalAlignment="Center" Margin="0,0,2,0"/>
+                <TextBlock Text="{Binding AnimationLength}" Classes="muted"/>
+            </StackPanel>
+        </Grid>
+    </StackPanel>
+</UserControl>

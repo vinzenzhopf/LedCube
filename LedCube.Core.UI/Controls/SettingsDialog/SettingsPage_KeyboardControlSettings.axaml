@@ -1,0 +1,65 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="LedCube.Core.UI.Controls.SettingsDialog.SettingsPage_KeyboardControlSettings">
+    <UserControl.Resources>
+        <DataTemplate x:Key="KeyChipTemplate">
+            <Border CornerRadius="6" BorderThickness="1" BorderBrush="Gray"
+                    Background="#FAFAFA" Padding="8,4" Margin="0,0,6,0">
+                <TextBlock FontWeight="SemiBold" VerticalAlignment="Center" Text="{Binding}"/>
+            </Border>
+        </DataTemplate>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" FontSize="16" FontWeight="SemiBold"
+                   Text="Keyboard Controls" Margin="0,0,0,8"/>
+
+        <DataGrid Grid.Row="1"
+                  ItemsSource="{Binding Entries}"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="False"
+                  HeadersVisibility="Column"
+                  SelectionMode="Single"
+                  GridLinesVisibility="Horizontal"
+                  RowHeaderWidth="0">
+
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Icon"
+                                    Width="50"
+                                    Binding="{Binding Icon}"/>
+                <DataGridTextColumn Header="Function"
+                                    Width="160"
+                                    Binding="{Binding FunctionId}"/>
+                <DataGridTextColumn Header="Description"
+                                    Width="*"
+                                    Binding="{Binding Description}"/>
+                <DataGridTemplateColumn Header="Hotkey" Width="200">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Command="{Binding InputHotkeyClickedCommand}"
+                                    Background="Transparent"
+                                    BorderThickness="0"
+                                    HorizontalContentAlignment="Left"
+                                    Padding="2"
+                                    Cursor="Hand"
+                                    ToolTip.Tip="Click to change binding">
+                                <ItemsControl ItemsSource="{Binding HotkeyTokens}"
+                                              ItemTemplate="{StaticResource KeyChipTemplate}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                </ItemsControl>
+                            </Button>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>

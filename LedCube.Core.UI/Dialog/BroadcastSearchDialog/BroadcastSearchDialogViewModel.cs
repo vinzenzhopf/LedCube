@@ -4,8 +4,8 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Threading;
+using Avalonia.Controls;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using LedCube.Core.UI.Util;
@@ -83,7 +83,7 @@ public partial class BroadcastSearchDialogViewModel : ObservableObject
                     await Task.Run(() => NetworkAdapterUtil.GetAdapters().Select(x => new NetworkAdapterViewModel(x)).ToList(), token)
                         .ConfigureAwait(true);
                 Log.Verbose("Found {count} NetworkAdapters.", adapterViewModels.Count);
-                await Application.Current.Dispatcher.InvokeAsync(() =>
+                await Dispatcher.UIThread.InvokeAsync(() =>
                 {
                     Log.Verbose("Start updating AdapterList in UI");
                     var selectedIp = SelectedAdapter?.Address;
@@ -92,9 +92,8 @@ public partial class BroadcastSearchDialogViewModel : ObservableObject
                     foreach (var a in adapterViewModels)
                     {
                         NetworkAdapters.Add(a);
-                        Dispatcher.Yield(DispatcherPriority.Background);
                     }
-                    // if (selectedIp == null && _settings.LastSelectedIp != null) 
+                    // if (selectedIp == null && _settings.LastSelectedIp != null)
                     //     selectedIp = _settings.LastSelectedIp;
                     if (selectedIp != null)
                         SelectedAdapter = NetworkAdapters?.FirstOrDefault(a => Equals(a.Address, selectedIp));
@@ -102,7 +101,7 @@ public partial class BroadcastSearchDialogViewModel : ObservableObject
                         // SelectedAdapterIndex = 0
                         SelectedAdapter = NetworkAdapters.First();
                     Log.Verbose("Updated AdapterList in UI");
-                }, DispatcherPriority.Background, token);
+                }, DispatcherPriority.Background);
             }), token);
             Log.Verbose("UpdateAdaptersCommand finished");
         }
@@ -135,14 +134,14 @@ public partial class BroadcastSearchDialogViewModel : ObservableObject
                 using var cubeCommunication = _cubeCommunicationFactory.Invoke();
                 _logger.LogInformation("BroadcastSearchCommand start searching...");
                 await cubeCommunication.ReStartListeningAsync(4243, SelectedAdapter.Address, token);
-                await Application.Current.Dispatcher.InvokeAsync(() => Destinations.Clear());
+                await Dispatcher.UIThread.InvokeAsync(() => Destinations.Clear());
                 var results = cubeCommunication
                     .SendBroadcastSearch("Tbd", RemotePort!.Value, TimeSpan.FromSeconds(15), token)
                     .ConfigureAwait(false);
                 await foreach (var result in results)
                 {
                     _logger.LogInformation("BroadcastSearchCommand destination found");
-                    await Application.Current.Dispatcher.BeginInvoke(() => Destinations.Add(result));
+                    await Dispatcher.UIThread.InvokeAsync(() => Destinations.Add(result));
                 }
 
                 _logger.LogInformation("BroadcastSearchCommand finished");
@@ -179,19 +178,17 @@ public partial class BroadcastSearchDialogViewModel : ObservableObject
     {
         if (window is not Window w) return;
         DialogResult = new BroadcastSearchDialogResult(SelectedDestination, true);
-        w.DialogResult = true;
-        w.Close();
-    } 
-    
+        w.Close(true);
+    }
+
     [RelayCommand]
     private void OnCancelClicked(object window)
     {
         if (window is not Window w) return;
         DialogResult = new BroadcastSearchDialogResult(null, false);
-        w.DialogResult = false;
-        w.Close();
+        w.Close(false);
     }
-    
+
     [RelayCommand]
     private void OnClosed(object window)
     {
@@ -202,6 +199,5 @@ public partial class BroadcastSearchDialogViewModel : ObservableObject
         if (window is not Window w) return;
         if (DialogResult is not null) return;
         DialogResult = new BroadcastSearchDialogResult(null, null);
-        w.DialogResult = null;
     }
 }

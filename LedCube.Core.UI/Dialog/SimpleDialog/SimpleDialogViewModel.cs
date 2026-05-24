@@ -1,4 +1,4 @@
-﻿using System.Windows;
+﻿using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
@@ -45,44 +45,28 @@ public partial class SimpleDialogViewModel : ObservableObject
     private void OnOkClicked(object window)
     {
         Result = DialogResult.Ok;
-        if (window is Window w)
-        {
-            w.DialogResult = true;
-            w.Close();
-        }
-    } 
-    
+        if (window is Window w) w.Close();
+    }
+
     [RelayCommand]
     private void OnCancelClicked(object window)
     {
         Result = DialogResult.Cancel;
-        if (window is Window w)
-        {
-            w.DialogResult = null;
-            w.Close();
-        }
+        if (window is Window w) w.Close();
     }
-    
+
     [RelayCommand]
     private void OnYesClicked(object window)
     {
         Result = DialogResult.Yes;
-        if (window is Window w)
-        {
-            w.DialogResult = true;
-            w.Close();
-        }
+        if (window is Window w) w.Close();
     }
-    
+
     [RelayCommand]
     private void OnNoClicked(object window)
     {
         Result = DialogResult.No;
-        if (window is Window w)
-        {
-            w.DialogResult = false;
-            w.Close();
-        }
+        if (window is Window w) w.Close();
     }
 
     [RelayCommand]

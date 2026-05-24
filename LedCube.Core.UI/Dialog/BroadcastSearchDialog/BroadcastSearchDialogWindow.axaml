@@ -1,0 +1,86 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:LedCube.Core.UI.Dialog.BroadcastSearchDialog"
+        xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+        x:Class="LedCube.Core.UI.Dialog.BroadcastSearchDialog.BroadcastSearchDialogWindow"
+        x:Name="DialogWindow"
+        Height="400" Width="400"
+        Title="Broadcast search..."
+        CanResize="False">
+    <DockPanel Margin="10">
+        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Margin="5,0,0,0" Padding="8" MinWidth="50"
+                    Content="Cancel"
+                    Command="{Binding CancelClickedCommand}"
+                    CommandParameter="{Binding #DialogWindow}"/>
+            <Button Margin="5,0,0,0" Padding="8" MinWidth="50"
+                    Content="Ok"
+                    Command="{Binding OkClickedCommand}"
+                    CommandParameter="{Binding #DialogWindow}"
+                    IsDefault="True"/>
+        </StackPanel>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="4*"/>
+                <ColumnDefinition Width="6*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Column="0" Grid.Row="0" Text="Network Adapter" Margin="0,2" VerticalAlignment="Center"/>
+            <ComboBox Grid.Column="1" Grid.Row="0"
+                      ItemsSource="{Binding NetworkAdapters}"
+                      SelectedItem="{Binding SelectedAdapter}"
+                      Margin="0,2,2,2">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding TextExtended}"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            <Button Grid.Column="2" Grid.Row="0"
+                    Command="{Binding UpdateAdaptersCommand}"
+                    Margin="0,2">
+                <materialIcons:MaterialIcon Kind="Refresh" Width="15" Height="15"/>
+            </Button>
+
+            <TextBlock Grid.Column="0" Grid.Row="1" Text="Remote Port" Margin="0,2" VerticalAlignment="Center"/>
+            <TextBox Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2"
+                     Text="{Binding RemotePort}" Margin="0,2"/>
+
+            <!-- Stop search button (visible when searching) -->
+            <Button Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="3"
+                    Command="{Binding BroadcastSearchCancelCommand}"
+                    Margin="0,2"
+                    IsVisible="{Binding BroadcastSearchRunning}">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Stop searching..." VerticalAlignment="Center" Margin="10,0"/>
+                    <materialIcons:MaterialIcon Kind="StopCircle" Width="20" Height="20" Margin="2"/>
+                </StackPanel>
+            </Button>
+            <!-- Start search button (visible when not searching) -->
+            <Button Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="3"
+                    Command="{Binding BroadcastSearchCommand}"
+                    Margin="0,2"
+                    IsVisible="{Binding BroadcastSearchRunning, Converter={x:Static BoolConverters.Not}}">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Broadcast search" VerticalAlignment="Center" Margin="10,0"/>
+                    <materialIcons:MaterialIcon Kind="CloudSearch" Width="20" Height="20" Margin="2"/>
+                </StackPanel>
+            </Button>
+
+            <ProgressBar Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="3" Value="0"/>
+            <ListBox Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="4"
+                     ItemsSource="{Binding Destinations}"
+                     SelectedItem="{Binding SelectedDestination}"
+                     Margin="2"/>
+        </Grid>
+    </DockPanel>
+</Window>

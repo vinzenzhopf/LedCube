@@ -1,0 +1,66 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:LedCube.Streamer.DebugUI"
+        x:Class="LedCube.Streamer.DebugUI.MainWindow"
+        x:DataType="local:MainWindow"
+        Title="LedCube Streamer Debug"
+        Height="450" Width="900"
+        TransparencyLevelHint="None"
+        Background="{DynamicResource SolidBackgroundFillColorBaseBrush}">
+    <DockPanel>
+        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+            <Button Content="Send Discovery" Click="ButtonSendDiscovery_OnClick" Padding="10,5" Margin="2"/>
+            <Button Content="Send Info" Click="ButtonSendInfo_OnClick" Padding="10,5" Margin="2"/>
+            <Button Content="Send AnimStart" Click="ButtonSendAnimationStart_OnClick" Padding="10,5" Margin="2"/>
+            <Button Content="Send AnimEnd" Click="ButtonSendAnimationEnd_OnClick" Padding="10,5" Margin="2"/>
+            <StackPanel Margin="2">
+                <TextBlock Text="Remote Host:" Margin="0,2"/>
+                <TextBox Name="RemoteHost" MinWidth="140"/>
+            </StackPanel>
+            <StackPanel Margin="2">
+                <TextBlock Text="Port:" Margin="0,2"/>
+                <TextBox Name="Port" MinWidth="60"/>
+            </StackPanel>
+            <StackPanel Margin="2">
+                <TextBlock Text="Counter:" Margin="0,2"/>
+                <TextBox Name="Counter" MinWidth="60"/>
+            </StackPanel>
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+            <Button Content="Send Frame 1" Click="ButtonSendFrame1_OnClick" Padding="10,5" Margin="2"/>
+            <Button Content="Send Frame 2" Click="ButtonSendFrame2_OnClick" Padding="10,5" Margin="2"/>
+            <Button Content="Send Frame 3" Click="ButtonSendFrame3_OnClick" Padding="10,5" Margin="2"/>
+            <Button Content="Send Frame 4" Click="ButtonSendFrame4_OnClick" Padding="10,5" Margin="2"/>
+            <Button Content="Send Frame 5" Click="ButtonSendFrame5_OnClick" Padding="10,5" Margin="2"/>
+            <Button Content="Send Frame 6" Click="ButtonSendFrame6_OnClick" Padding="10,5" Margin="2"/>
+        </StackPanel>
+
+        <Border DockPanel.Dock="Top" BorderBrush="{DynamicResource DividerStrokeColorDefaultBrush}"
+                BorderThickness="1" Margin="2" Padding="4">
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Top" Text="Cyclic send" FontWeight="SemiBold" Margin="2,0,0,4"/>
+                <StackPanel Orientation="Horizontal">
+                    <Button Content="StartSending" Click="StartTimer_OnClick" Padding="10,5" Margin="2"/>
+                    <Button Content="StopSending" Click="StopTimer_OnClick" Padding="10,5" Margin="2"/>
+                    <StackPanel Margin="2">
+                        <TextBlock Text="Running:" Margin="0,2"/>
+                        <CheckBox Name="TimerIsRunning" IsEnabled="False" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                    <StackPanel Margin="2">
+                        <TextBlock Text="CycleTime (us):" Margin="0,2"/>
+                        <TextBox Name="TimerCycleTime" MinWidth="110"/>
+                    </StackPanel>
+                    <Button Content="TickManually" Click="TimerTickManually_OnClick" Padding="10,5" Margin="2"/>
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <StackPanel Margin="2" DockPanel.Dock="Top">
+            <TextBlock Text="FrameBuffer:" Margin="0,2"/>
+            <TextBox Name="FrameBuffer"/>
+        </StackPanel>
+
+        <ListBox Name="MessagesList" ItemsSource="{Binding Messages}"/>
+    </DockPanel>
+</Window>

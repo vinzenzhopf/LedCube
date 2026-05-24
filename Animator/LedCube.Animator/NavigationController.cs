@@ -1,6 +1,6 @@
-﻿using System;
-using System.Windows;
-using System.Windows.Threading;
+using System;
+using Avalonia;
+using Avalonia.Controls.ApplicationLifetimes;
 using CommunityToolkit.Mvvm.Messaging;
 using LedCube.Animator.Controls.SettingsWindow;
 using LedCube.Animator.Messages;
@@ -9,8 +9,8 @@ using Serilog;
 
 namespace LedCube.Animator;
 
-public class NavigationController : 
-    IRecipient<ExitApplicationNavigationMessage>, 
+public class NavigationController :
+    IRecipient<ExitApplicationNavigationMessage>,
     IRecipient<OpenSettingsNavigationMessage>
 {
     private readonly IServiceProvider _serviceProvider;
@@ -24,17 +24,14 @@ public class NavigationController :
     public void Receive(ExitApplicationNavigationMessage message)
     {
         Log.Debug("Received ExitApplicationNavigationMessage {0}, Sender: {1}", message.Target, message.Sender);
-        Application.Current.Shutdown();
+        if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime lifetime)
+            lifetime.Shutdown();
     }
 
     public void Receive(OpenSettingsNavigationMessage message)
     {
         Log.Debug("Received OpenSettingsNavigationMessage {0}, Sender: {1}", message.Target, message.Sender);
         var settingsWindow = _serviceProvider.GetService<SettingsWindow>();
-
-        Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
-        {
-            settingsWindow!.ShowDialog();
-        });
+        settingsWindow?.Show();
     }
 }

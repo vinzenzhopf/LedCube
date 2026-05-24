@@ -1,6 +1,6 @@
-﻿using System;
-using System.Windows.Media;
+using System;
+using Avalonia.Media;
 
 namespace LedCube.Animator.Controls.LogAppender;
 
-public record LogEntry(Brush Color, string Level, DateTimeOffset Time, string Logger, string Message);
+public record LogEntry(IBrush Color, string Level, DateTimeOffset Time, string Logger, string Message);

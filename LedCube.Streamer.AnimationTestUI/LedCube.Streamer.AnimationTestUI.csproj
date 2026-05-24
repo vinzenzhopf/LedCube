@@ -1,17 +1,20 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <TargetFramework>net10.0-windows</TargetFramework>
-        <UseWPF>true</UseWPF>
+        <TargetFramework>net10.0</TargetFramework>
         <LangVersion>preview</LangVersion>
+        <Nullable>enable</Nullable>
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Avalonia" />
+        <PackageReference Include="Avalonia.Desktop" />
+        <PackageReference Include="Avalonia.Themes.Fluent" />
+        <PackageReference Include="Avalonia.Fonts.Inter" />
+        <PackageReference Include="FluentAvaloniaUI" />
+        <PackageReference Include="Material.Icons.Avalonia" />
         <PackageReference Include="CommunityToolkit.Mvvm" />
-        <PackageReference Include="MahApps.Metro" />
-        <PackageReference Include="MahApps.Metro.IconPacks" />
-        <PackageReference Include="MahApps.Metro.IconPacks.FontAwesome" />
         <PackageReference Include="Microsoft.Extensions.Configuration" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Binder" />
         <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" />
@@ -25,7 +28,6 @@
         <PackageReference Include="Serilog.Extensions.Logging" />
         <PackageReference Include="Serilog.Sinks.Debug" />
         <PackageReference Include="Serilog.Sinks.File" />
-        <PackageReference Include="Serilog.Sinks.RichTextBox.Wpf" />
     </ItemGroup>
 
     <ItemGroup>
@@ -38,24 +40,6 @@
         <ProjectReference Include="..\Plugin\LedCube.Plugins.Animation.SdfTest\LedCube.Plugins.Animation.SdfTest.csproj" />
         <ProjectReference Include="..\Plugin\LedCube.Plugins.Animation.Snake3D\LedCube.Plugins.Animation.Snake3D.csproj" />
         <ProjectReference Include="..\Plugin\LedCube.Plugins.Animation.TextWriter\LedCube.Plugins.Animation.TextWriter.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Page Update="Controls\MainWindow\MainWindow.xaml">
-        <Generator>MSBuild:Compile</Generator>
-        <XamlRuntime>Wpf</XamlRuntime>
-        <SubType>Designer</SubType>
-      </Page>
-      <Page Update="Controls\MenuBar\MenuBar.xaml">
-        <Generator>MSBuild:Compile</Generator>
-        <XamlRuntime>Wpf</XamlRuntime>
-        <SubType>Designer</SubType>
-      </Page>
-      <Page Update="Dialogs\BroadcastSearchDialog\BroadcastSearchDialogWindow.xaml">
-        <Generator>MSBuild:Compile</Generator>
-        <XamlRuntime>Wpf</XamlRuntime>
-        <SubType>Designer</SubType>
-      </Page>
     </ItemGroup>
 
 </Project>
