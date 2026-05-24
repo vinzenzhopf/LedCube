@@ -1,29 +1,20 @@
 using System;
-using System.Windows;
-using CommunityToolkit.Mvvm.ComponentModel;
+using Avalonia.Controls;
+using Avalonia.Interactivity;
 using SkiaSharp;
 
 namespace LedCube.Core.UI.TimelineControl.Demo;
 
-[ObservableObject]
 public partial class MainWindow : Window
 {
-    [ObservableProperty] private TimelineMode _mode = TimelineMode.Edit;
-    [ObservableProperty] private int _totalFrames = 200;
-    [ObservableProperty] private int _currentFrame = 0;
-    [ObservableProperty] private bool _loopEnabled = false;
-    [ObservableProperty] private int _loopStart = 20;
-    [ObservableProperty] private int _loopEnd = 80;
-    [ObservableProperty] private bool _showFrameTime = false;
-    [ObservableProperty] private int _modeIndex = 0;
-
-    public TimeSpan? FrameTime => ShowFrameTime ? TimeSpan.FromMilliseconds(33.3) : null;
+    private readonly MainViewModel _vm = new();
 
     public MainWindow()
     {
         InitializeComponent();
+        DataContext = _vm;
 
-        // Add some example markers
+        // Add some example markers.
         Timeline.Markers.Add(new PointMarker
         {
             Frame = 10,
@@ -51,17 +42,11 @@ public partial class MainWindow : Window
         });
     }
 
-    partial void OnModeIndexChanged(int value) =>
-        Mode = value == 0 ? TimelineMode.Edit : TimelineMode.Live;
-
-    partial void OnShowFrameTimeChanged(bool value) =>
-        OnPropertyChanged(nameof(FrameTime));
-
-    private void AddPointMarker_Click(object sender, RoutedEventArgs e)
+    private void AddPointMarker_Click(object? sender, RoutedEventArgs e)
     {
         Timeline.Markers.Add(new PointMarker
         {
-            Frame = CurrentFrame,
+            Frame = _vm.CurrentFrame,
             Label = $"M{Timeline.Markers.Count + 1}",
             Color = SKColors.DeepSkyBlue,
             IsDraggable = true,
@@ -69,10 +54,10 @@ public partial class MainWindow : Window
         });
     }
 
-    private void AddRangeMarker_Click(object sender, RoutedEventArgs e)
+    private void AddRangeMarker_Click(object? sender, RoutedEventArgs e)
     {
-        var start = Timeline.SelectionStart ?? CurrentFrame;
-        var end = Timeline.SelectionEnd ?? Math.Min(CurrentFrame + 20, TotalFrames - 1);
+        var start = Timeline.SelectionStart ?? _vm.CurrentFrame;
+        var end = Timeline.SelectionEnd ?? Math.Min(_vm.CurrentFrame + 20, _vm.TotalFrames - 1);
         if (start > end) (start, end) = (end, start);
         Timeline.Markers.Add(new RangeMarker
         {
@@ -85,17 +70,17 @@ public partial class MainWindow : Window
         });
     }
 
-    private void ClearMarkers_Click(object sender, RoutedEventArgs e) =>
+    private void ClearMarkers_Click(object? sender, RoutedEventArgs e) =>
         Timeline.Markers.Clear();
 
-    private void Timeline_PlayheadChanged(object sender, PlayheadChangedEventArgs e) =>
+    private void Timeline_PlayheadChanged(object? sender, PlayheadChangedEventArgs e) =>
         StatusText.Text = $"Playhead: frame {e.NewFrame} (was {e.OldFrame})";
 
-    private void Timeline_SelectionChanged(object sender, SelectionChangedEventArgs e) =>
+    private void Timeline_SelectionChanged(object? sender, SelectionChangedEventArgs e) =>
         StatusText.Text = e.NewStart.HasValue
             ? $"Selection: {e.NewStart} – {e.NewEnd}"
             : "Selection cleared";
 
-    private void Timeline_MarkerDragCompleted(object sender, MarkerDragCompletedEventArgs e) =>
+    private void Timeline_MarkerDragCompleted(object? sender, MarkerDragCompletedEventArgs e) =>
         StatusText.Text = $"Marker moved: {e.OldFrame} → {e.NewFrame}  ({e.Marker.Label})";
 }

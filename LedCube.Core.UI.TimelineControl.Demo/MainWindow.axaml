@@ -1,9 +1,15 @@
-<Window x:Class="LedCube.Core.UI.TimelineControl.Demo.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+<Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:tc="clr-namespace:LedCube.Core.UI.TimelineControl;assembly=LedCube.Core.UI.TimelineControl"
-        Title="TimelineControl Demo" Height="550" Width="900"
-        DataContext="{Binding RelativeSource={RelativeSource Self}}">
+        x:Class="LedCube.Core.UI.TimelineControl.Demo.MainWindow"
+        Title="TimelineControl Demo" Height="600" Width="900"
+        TransparencyLevelHint="None"
+        Background="#202020"
+        Foreground="#F0F0F0">
+    <!-- Wrap content in an explicit Border so the upper region has a known
+         opaque backing surface — bypasses any Window-Background-not-applied
+         compositor issue. -->
+    <Border Background="#202020">
     <Grid Margin="8">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -20,65 +26,68 @@
             </Grid.ColumnDefinitions>
 
             <!-- Column 1: Playback -->
-            <GroupBox Grid.Column="0" Header="Playback" Margin="2">
-                <StackPanel Margin="4">
-                    <DockPanel LastChildFill="True" Margin="0,2">
-                        <Label DockPanel.Dock="Left" Content="Mode:" Width="90"/>
-                        <ComboBox SelectedIndex="{Binding ModeIndex, Mode=TwoWay}">
+            <HeaderedContentControl Grid.Column="0" Header="Playback">
+                <StackPanel Spacing="4">
+                    <DockPanel LastChildFill="True">
+                        <TextBlock DockPanel.Dock="Left" Text="Mode:" Width="90" VerticalAlignment="Center"/>
+                        <ComboBox SelectedIndex="{Binding ModeIndex, Mode=TwoWay}" HorizontalAlignment="Stretch">
                             <ComboBoxItem Content="Edit"/>
                             <ComboBoxItem Content="Live"/>
                         </ComboBox>
                     </DockPanel>
-                    <DockPanel LastChildFill="True" Margin="0,2">
-                        <Label DockPanel.Dock="Left" Content="TotalFrames:" Width="90"/>
+                    <DockPanel LastChildFill="True">
+                        <TextBlock DockPanel.Dock="Left" Text="TotalFrames:" Width="90" VerticalAlignment="Center"/>
                         <Slider Value="{Binding TotalFrames, Mode=TwoWay}" Minimum="10" Maximum="1000" TickFrequency="10"/>
                     </DockPanel>
-                    <DockPanel LastChildFill="True" Margin="0,2">
-                        <Label DockPanel.Dock="Left" Content="CurrentFrame:" Width="90"/>
+                    <DockPanel LastChildFill="True">
+                        <TextBlock DockPanel.Dock="Left" Text="CurrentFrame:" Width="90" VerticalAlignment="Center"/>
                         <Slider Value="{Binding CurrentFrame, Mode=TwoWay}" Minimum="0" Maximum="{Binding TotalFrames}"/>
                     </DockPanel>
-                    <DockPanel LastChildFill="True" Margin="0,2">
-                        <Label DockPanel.Dock="Left" Content="FrameTime(ms):" Width="90"/>
+                    <DockPanel LastChildFill="True">
+                        <TextBlock DockPanel.Dock="Left" Text="FrameTime(ms):" Width="90" VerticalAlignment="Center"/>
                         <CheckBox IsChecked="{Binding ShowFrameTime, Mode=TwoWay}" Content="33ms (30fps)" VerticalAlignment="Center"/>
                     </DockPanel>
                 </StackPanel>
-            </GroupBox>
+            </HeaderedContentControl>
 
             <!-- Column 2: Loop Region -->
-            <GroupBox Grid.Column="1" Header="Loop Region" Margin="2">
-                <StackPanel Margin="4">
-                    <DockPanel LastChildFill="True" Margin="0,2">
-                        <Label DockPanel.Dock="Left" Content="Enabled:" Width="90"/>
+            <HeaderedContentControl Grid.Column="1" Header="Loop Region">
+                <StackPanel Spacing="4">
+                    <DockPanel LastChildFill="True">
+                        <TextBlock DockPanel.Dock="Left" Text="Enabled:" Width="90" VerticalAlignment="Center"/>
                         <CheckBox IsChecked="{Binding LoopEnabled, Mode=TwoWay}" VerticalAlignment="Center"/>
                     </DockPanel>
-                    <DockPanel LastChildFill="True" Margin="0,2">
-                        <Label DockPanel.Dock="Left" Content="LoopStart:" Width="90"/>
+                    <DockPanel LastChildFill="True">
+                        <TextBlock DockPanel.Dock="Left" Text="LoopStart:" Width="90" VerticalAlignment="Center"/>
                         <Slider Value="{Binding LoopStart, Mode=TwoWay}" Minimum="0" Maximum="{Binding TotalFrames}"/>
                     </DockPanel>
-                    <DockPanel LastChildFill="True" Margin="0,2">
-                        <Label DockPanel.Dock="Left" Content="LoopEnd:" Width="90"/>
+                    <DockPanel LastChildFill="True">
+                        <TextBlock DockPanel.Dock="Left" Text="LoopEnd:" Width="90" VerticalAlignment="Center"/>
                         <Slider Value="{Binding LoopEnd, Mode=TwoWay}" Minimum="0" Maximum="{Binding TotalFrames}"/>
                     </DockPanel>
                 </StackPanel>
-            </GroupBox>
+            </HeaderedContentControl>
 
             <!-- Column 3: Markers -->
-            <GroupBox Grid.Column="2" Header="Markers" Margin="2">
-                <StackPanel Margin="4">
-                    <Button Content="Add PointMarker at CurrentFrame" Margin="0,2" Click="AddPointMarker_Click"/>
-                    <Button Content="Add RangeMarker (selection)" Margin="0,2" Click="AddRangeMarker_Click"/>
-                    <Button Content="Clear All Markers" Margin="0,2" Click="ClearMarkers_Click"/>
+            <HeaderedContentControl Grid.Column="2" Header="Markers">
+                <StackPanel Spacing="4">
+                    <Button Content="Add PointMarker at CurrentFrame" Click="AddPointMarker_Click" HorizontalAlignment="Stretch"/>
+                    <Button Content="Add RangeMarker (selection)" Click="AddRangeMarker_Click" HorizontalAlignment="Stretch"/>
+                    <Button Content="Clear All Markers" Click="ClearMarkers_Click" HorizontalAlignment="Stretch"/>
                 </StackPanel>
-            </GroupBox>
+            </HeaderedContentControl>
         </Grid>
 
         <!-- Status bar -->
-        <TextBlock Grid.Row="1" x:Name="StatusText" Margin="4,4,4,2" FontSize="11" Foreground="Gray"
+        <TextBlock Grid.Row="1" Name="StatusText" Margin="4,4,4,2" FontSize="11" Classes="muted"
                    Text="Click the timeline to move the playhead. Shift+Scroll to zoom. Drag markers to reposition."/>
 
         <!-- Timeline control -->
-        <Border Grid.Row="2" Margin="0,4,0,0" BorderBrush="#444" BorderThickness="1">
-            <tc:TimelineControl x:Name="Timeline"
+        <Border Grid.Row="2" Margin="0,4,0,0"
+                BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                BorderThickness="1"
+                CornerRadius="4">
+            <tc:TimelineControl Name="Timeline"
                                 Mode="{Binding Mode}"
                                 TotalFrames="{Binding TotalFrames, Mode=TwoWay}"
                                 CurrentFrame="{Binding CurrentFrame, Mode=TwoWay}"
@@ -91,4 +100,5 @@
                                 MarkerDragCompleted="Timeline_MarkerDragCompleted"/>
         </Border>
     </Grid>
+    </Border>
 </Window>
