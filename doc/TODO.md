@@ -6,9 +6,18 @@
 
 ## UI (LedCube.Streamer.UI)
 
-- [ ] Re-evaluate MahApps.Metro — still viable? Consider alternatives (e.g. ModernWpf, HandyControl, Fluent UI)
-- [ ] General UI cleanup and polish
-- [ ] Improve animation list/selection UX
+- [x] Port to Avalonia 11.2 + FluentAvaloniaUI (replaces MahApps.Metro)
+- [x] Establish style system (`General.axaml` tokens, `Components.axaml`
+  icon-button/toolbar/muted classes, `Controls.axaml` with group-box
+  HeaderedContentControl template and DataGrid theming)
+- [x] LogAppender: DataGrid with resizable columns, level filter via
+  flyout, debounced flush (`ConcurrentQueue` → 100 ms `DispatcherTimer`),
+  `MaxEntries = 10 000`
+- [ ] Move log severity brushes (`Brushes.Red`, `Brushes.DarkRed`, …
+  in `LogAppenderControlSink`) into theme-aware resources
+- [ ] Improve/Fix animation list/selection UX
+- [ ] Extract stat label/value pairs in `StreamingControl` into a
+  reusable component style (~18 inline duplicates today)
 
 ## Animator (LedCube.Animator)
 
@@ -22,17 +31,23 @@
 
 ## Plugin System
 
-- [ ] True dynamic plugin loading — replace explicit project references with an MSBuild target that builds and copies plugin DLLs automatically, so any plugin dropped into the output folder is discovered without modifying the host app's `.csproj`
+- [ ] True dynamic plugin loading — replace explicit project references
+  with an MSBuild target that builds and copies plugin DLLs automatically,
+  so any plugin dropped into the output folder is discovered without
+  modifying the host app's `.csproj`
 
 ## Infrastructure / Misc
 
 - [x] Review and tighten nullable usage across Solution
 - [x] Fix/Improve App Configuration Handling
 - [x] Remove/Combine Streamer.UI and Streamer.SmallUI
+- [x] Port from WPF to Avalonia (all apps + TimelineControl.Demo;
+  zero `<UseWPF>` projects remain)
+- [ ] Delete orphaned `LedCube.Streamer.SmallUI/` directory (no csproj,
+  not in solution, but source files linger)
 - [ ] Resolve Changes from AnimationTestUI
   - AnimationList vs AnimationTest control, PreviewKeyDown/Up event handlers? This was probably used for the Snake Animation?)
 - [ ] Add/Improve documentation
-- [ ] Port to Avalonia
 
 ## Testing
 
