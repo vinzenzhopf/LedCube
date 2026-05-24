@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Avalonia.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -67,10 +68,11 @@ public partial class KeyboardControlEntryViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void InputHotkeyClicked()
+    private async Task InputHotkeyClicked()
     {
         var msg = new OpenSettingsHotkeyInputDialogMessage(FunctionId, Description);
         WeakReferenceMessenger.Default.Send(msg);
+        await msg.Completion.Task;
         if (!msg.DialogResult.HasValue || !msg.DialogResult.Value) return;
         Binding = msg.ResultBinding;
         _hotkeyService?.SetCustomBinding(_function, msg.ResultBinding);

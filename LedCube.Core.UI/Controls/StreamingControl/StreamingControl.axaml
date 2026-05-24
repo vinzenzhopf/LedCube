@@ -4,9 +4,12 @@
              xmlns:cubeView2D="clr-namespace:LedCube.Core.UI.Controls.CubeView2D"
              xmlns:converters="clr-namespace:LedCube.Core.UI.Converters"
              xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:vm="clr-namespace:LedCube.Core.UI.Controls.StreamingControl"
+             x:DataType="vm:StreamingControlViewModel"
              x:Class="LedCube.Core.UI.Controls.StreamingControl.StreamingControl">
     <UserControl.Resources>
         <converters:EnumToStringConverter x:Key="EnumToString"/>
+        <converters:ConnectionStateToColorConverter x:Key="ConnectionStateToColor"/>
         <converters:TimeSpanToTotalTimeConverter x:Key="TimeSpanToMs"/>
         <converters:VisibleWhenIntConverter x:Key="VisWhenConnected"/>
         <converters:VisibleWhenIntConverter x:Key="VisWhenDisconnected" TrueValue="False" FalseValue="True"/>
@@ -21,9 +24,9 @@
                         <ColumnDefinition Width="1*"/>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
@@ -36,36 +39,39 @@
                     <TextBox Grid.Row="1" Grid.Column="1" Margin="2,0,2,5"
                              IsEnabled="{Binding HostEditingEnabled}"
                              Text="{Binding Port}"/>
-
+                    
                     <!-- Broadcast search button -->
-                    <Button Grid.Column="3" Grid.Row="0" Grid.RowSpan="2"
+                    <Button Grid.Row="0" Grid.Column="2" Grid.RowSpan="2"
+                            VerticalAlignment="Center"
                             Classes="icon"
                             IsEnabled="{Binding HostEditingEnabled}"
                             Command="{Binding OpenBroadcastSearchCommand}"
                             ToolTip.Tip="Broadcast search...">
                         <materialIcons:MaterialIcon Kind="HomeSearchOutline"/>
                     </Button>
-
-                    <!-- Connect / Disconnect buttons -->
-                    <Panel Grid.Column="4" Grid.RowSpan="2" Grid.Row="0" HorizontalAlignment="Center">
+                    
+                    
+                    <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4"
+                                Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Bottom"
+                                Margin="0,0,0,3">
+                        <!-- Connect / Disconnect buttons -->
                         <Button Classes="icon"
                                 Command="{Binding ConnectCommand}"
-                                IsVisible="{Binding IsConnected, Converter={StaticResource VisWhenDisconnected}}">
+                                IsVisible="{Binding !IsConnectingOrConnected}">
                             <materialIcons:MaterialIcon Kind="LanConnect"/>
                         </Button>
                         <Button Classes="icon"
                                 Command="{Binding DisconnectCommand}"
-                                IsVisible="{Binding IsConnected}">
+                                IsVisible="{Binding IsConnectingOrConnected}">
                             <materialIcons:MaterialIcon Kind="LanDisconnect"/>
                         </Button>
-                    </Panel>
-
-                    <!-- Connection state indicator -->
-                    <StackPanel Grid.Column="2" Grid.RowSpan="2" Grid.Row="0"
-                                Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom"
-                                Margin="0,0,0,3">
-                        <cubeView2D:Led IsChecked="{Binding IsConnected, Mode=OneWay}" Size="25"/>
-                        <TextBlock VerticalAlignment="Center"
+                        <!-- Connection state indicator -->
+                        <cubeView2D:Led Size="24"
+                                        IsChecked="{Binding IsConnected, Mode=OneWay}"
+                                        Foreground="{Binding ConnectionState, Converter={StaticResource ConnectionStateToColor}}"/>
+                        <TextBlock VerticalAlignment="Center" 
+                                   HorizontalAlignment="Left"
+                                   Foreground="{Binding ConnectionState, Converter={StaticResource ConnectionStateToColor}}"
                                    Text="{Binding ConnectionState, Converter={StaticResource EnumToString}}"
                                    Classes="muted"/>
                     </StackPanel>
@@ -104,108 +110,7 @@
         </HeaderedContentControl>
 
         <HeaderedContentControl Header="Connection Stats">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <StackPanel Grid.Column="0" Margin="5,0">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock FontSize="11" Text="Cube Version: "/>
-                        <TextBlock FontSize="11" Text="{Binding StreamingStatusViewModel.CubeVersion}"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock FontSize="11" Text="Streamer Version: "/>
-                        <TextBlock FontSize="11" Text="{Binding StreamingStatusViewModel.StreamerVersion}"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock FontSize="11" Text="ErrorCode: "/>
-                        <TextBlock FontSize="11" Text="{Binding StreamingStatusViewModel.CubeErrorCode}"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock FontSize="11" Text="Ping: "/>
-                        <TextBlock FontSize="11" Text="{Binding StreamingStatusViewModel.Ping,
-                                       StringFormat='{}{0:F2}',
-                                       Converter={StaticResource TimeSpanToMs},
-                                       ConverterParameter='ms'}"/>
-                        <TextBlock FontSize="11" Text=" ms"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock FontSize="11" Text="Ping Mean: "/>
-                        <TextBlock FontSize="11" Text="{Binding StreamingStatusViewModel.PingMean,
-                                       StringFormat='{}{0:F2}',
-                                       Converter={StaticResource TimeSpanToMs},
-                                       ConverterParameter='ms'}"/>
-                        <TextBlock FontSize="11" Text=" ms"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock FontSize="11" Text="CurrentTicks: "/>
-                        <TextBlock FontSize="11" Text="{Binding StreamingStatusViewModel.CurrentTicks}"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock FontSize="11" Text="ConnectionStable: "/>
-                        <TextBlock FontSize="11" Text="{Binding StreamingStatusViewModel.ConnectionStable}"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock FontSize="11" Text="StreamingState: "/>
-                        <TextBlock FontSize="11" Text="{Binding CubeStreamer.StreamingState}"/>
-                    </StackPanel>
-                </StackPanel>
-                <StackPanel Grid.Column="1" Margin="5,0">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock FontSize="11" Text="AnimationStatus: "/>
-                        <TextBlock FontSize="11" Text="{Binding StreamingStatusViewModel.AnimationStatus}"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock FontSize="11" Text="CurrentAnimation: "/>
-                        <TextBlock FontSize="11" Text="{Binding StreamingStatusViewModel.CurrentAnimation}"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock FontSize="11" Text="FrameCount: "/>
-                        <TextBlock FontSize="11" Text="{Binding StreamingStatusViewModel.FrameNumber}"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock FontSize="11" Text="FPS Mean: "/>
-                        <TextBlock FontSize="11" Text="{Binding StreamingStatusViewModel.FpsMean, StringFormat='{}{0:F2}', Mode=OneWay}"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock FontSize="11" Text="FPS Current: "/>
-                        <TextBlock FontSize="11" Text="{Binding StreamingStatusViewModel.FpsCurrent, Mode=OneWay}"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock FontSize="11" Text="FrameTime Mean: "/>
-                        <TextBlock FontSize="11" Text="{Binding StreamingStatusViewModel.FrameTimeMean,
-                                       StringFormat='{}{0:F2}',
-                                       Converter={StaticResource TimeSpanToMs},
-                                       ConverterParameter='ms'}"/>
-                        <TextBlock FontSize="11" Text=" ms"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock FontSize="11" Text="FrameTime Current: "/>
-                        <TextBlock FontSize="11" Text="{Binding StreamingStatusViewModel.FrameTimeCurrent,
-                                       StringFormat='{}{0:F2}',
-                                       Converter={StaticResource TimeSpanToMs},
-                                       ConverterParameter='ms'}"/>
-                        <TextBlock FontSize="11" Text=" ms"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock FontSize="11" Text="FrameTime 95%: "/>
-                        <TextBlock FontSize="11" Text="{Binding StreamingStatusViewModel.FrameTime95Pct,
-                                       StringFormat='{}{0:F2}',
-                                       Converter={StaticResource TimeSpanToMs},
-                                       ConverterParameter='ms'}"/>
-                        <TextBlock FontSize="11" Text=" ms"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock FontSize="11" Text="FrameTime 5%: "/>
-                        <TextBlock FontSize="11" Text="{Binding StreamingStatusViewModel.FrameTime05Pct,
-                                       StringFormat='{}{0:F2}',
-                                       Converter={StaticResource TimeSpanToMs},
-                                       ConverterParameter='ms'}"/>
-                        <TextBlock FontSize="11" Text=" ms"/>
-                    </StackPanel>
-                </StackPanel>
-            </Grid>
+            <vm:CubeStreamingStatusView DataContext="{Binding StreamingStatusViewModel}"/>
         </HeaderedContentControl>
     </StackPanel>
 </UserControl>

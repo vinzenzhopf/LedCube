@@ -9,45 +9,19 @@ using Microsoft.Extensions.Logging;
 
 namespace LedCube.Core.UI.Controls.StreamingControl;
 
-public partial class CubeStreamingStatusViewModel : ObservableObject, ICubeStreamingStatus, IDisposable
+public partial class CubeStreamingStatusViewModel : ObservableObject, IDisposable
 {
     private readonly ILogger _logger;
     private readonly ICubeStreamingStatus _cubeStreamingStatus;
-
-    [ObservableProperty]
-    private string _cubeVersion = string.Empty;
-    [ObservableProperty]
-    private string _streamerVersion = string.Empty;
-    [ObservableProperty]
-    private TimeSpan _ping;
-    [ObservableProperty]
-    private TimeSpan _pingMean;
+    
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(FpsCurrent))]
-    private TimeSpan _frameTimeCurrent;
-    [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(FpsMean))]
-    private TimeSpan _frameTimeMean;
-    [ObservableProperty]
-    private TimeSpan _frameTime95Pct;
-    [ObservableProperty]
-    private TimeSpan _frameTime05Pct;
-    [ObservableProperty]
-    private long _frameNumber;
-    [ObservableProperty]
-    private AnimationStatus _animationStatus;
-    [ObservableProperty]
-    private string _currentAnimation = string.Empty;
-    [ObservableProperty]
-    private uint _currentTicks;
-    [ObservableProperty]
-    private CubeErrorCode _cubeErrorCode;
-    [ObservableProperty]
-    private bool _connectionStable;
-
-    public double FpsCurrent => 1 / FrameTimeCurrent.TotalSeconds;
+    private CubeStreamingStatusSnapshot _streamingStatus = new CubeStreamingStatusSnapshot();
     
-    public double FpsMean => 1 / FrameTimeMean.TotalSeconds;
+    public double FpsCurrent => 1 / StreamingStatus.FrameTimeCurrent.TotalSeconds;
+    
+    public double FpsMean => 1 / StreamingStatus.FrameTimeMean.TotalSeconds;
     
     private PeriodicTimer _timer;
     private CancellationTokenSource _cancellationTokenSource;
@@ -83,20 +57,24 @@ public partial class CubeStreamingStatusViewModel : ObservableObject, ICubeStrea
 
     public void Update(ICubeStreamingStatus status)
     {
-        CubeVersion = status.CubeVersion;
-        StreamerVersion = status.StreamerVersion;
-        Ping = status.Ping;
-        PingMean = status.PingMean;
-        FrameTimeCurrent = status.FrameTimeCurrent;
-        FrameTimeMean = status.FrameTimeMean;
-        FrameTime95Pct = status.FrameTime95Pct;
-        FrameTime05Pct = status.FrameTime05Pct;
-        FrameNumber = status.FrameNumber;
-        AnimationStatus = status.AnimationStatus;
-        CurrentAnimation = status.CurrentAnimation;
-        CurrentTicks = status.CurrentTicks;
-        CubeErrorCode = status.CubeErrorCode;
-        ConnectionStable = status.ConnectionStable;
+        StreamingStatus = new CubeStreamingStatusSnapshot(
+            CubeVersion: status.CubeVersion,
+            StreamerVersion: status.StreamerVersion,
+            Ping: status.Ping,
+            PingMean: status.PingMean,
+            FrameTimeCurrent: status.FrameTimeCurrent,
+            FrameTimeMean: status.FrameTimeMean,
+            FrameTime95Pct: status.FrameTime95Pct,
+            FrameTime05Pct: status.FrameTime05Pct,
+            FpsMean: 1 / StreamingStatus.FrameTimeCurrent.TotalSeconds,
+            FpsCurrent: 1 / StreamingStatus.FrameTimeMean.TotalSeconds,
+            FrameNumber: status.FrameNumber,
+            AnimationStatus: status.AnimationStatus,
+            CurrentAnimation: status.CurrentAnimation,
+            CurrentTicks: status.CurrentTicks,
+            CubeErrorCode: status.CubeErrorCode,
+            ConnectionStable: status.ConnectionStable
+        );
     }
 
     public void Dispose()

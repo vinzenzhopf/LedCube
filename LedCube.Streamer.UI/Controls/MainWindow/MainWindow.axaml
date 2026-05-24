@@ -10,7 +10,7 @@
         xmlns:playlistControl="clr-namespace:LedCube.Core.UI.Controls.PlaylistControl;assembly=LedCube.Core.UI"
         x:Class="LedCube.Streamer.UI.Controls.MainWindow.MainWindow"
         Title="{Binding TitleText}"
-        Height="800" Width="1200"
+        Height="900" Width="1400"
         TransparencyLevelHint="None"
         Background="{DynamicResource SolidBackgroundFillColorBaseBrush}">
     <DockPanel>
@@ -39,24 +39,24 @@
             <Grid Grid.Row="0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="4"/>
+                    <ColumnDefinition Width="2"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
                 <!-- Left: Streaming -->
                 <DockPanel Grid.Column="0">
                     <streamingControl:StreamingControl DockPanel.Dock="Top" DataContext="{Binding StreamingControlViewModel}"/>
+                    <HeaderedContentControl DockPanel.Dock="Bottom" Header="Active Animation">
+                        <playbackControl:PlaybackControl DataContext="{Binding PlaybackControlViewModel}"/>
+                    </HeaderedContentControl>
                 </DockPanel>
 
                 <GridSplitter Grid.Column="1" VerticalAlignment="Stretch" ResizeBehavior="BasedOnAlignment"/>
 
                 <!-- Right: Playback + Playlist -->
                 <DockPanel Grid.Column="2">
-                    <HeaderedContentControl DockPanel.Dock="Bottom" Header="Active Animation">
-                        <StackPanel>
-                            <pluginConfigControl:PluginConfigControl DataContext="{Binding PluginConfigViewModel}"/>
-                            <playbackControl:PlaybackControl DataContext="{Binding PlaybackControlViewModel}"/>
-                        </StackPanel>
+                    <HeaderedContentControl DockPanel.Dock="Bottom" Header="Plugin Config">
+                        <pluginConfigControl:PluginConfigControl DataContext="{Binding PluginConfigViewModel}"/>
                     </HeaderedContentControl>
                     <HeaderedContentControl Header="Playlist">
                         <playlistControl:PlaylistControl DataContext="{Binding PlaylistControlViewModel}"/>
@@ -66,7 +66,7 @@
 
             <!-- Log splitter (hidden when ShowLog=false) -->
             <GridSplitter Grid.Row="1"
-                          HorizontalAlignment="Stretch" Height="4"
+                          HorizontalAlignment="Stretch" Height="2"
                           IsVisible="{Binding LogAppenderViewModel.ShowLog}"/>
 
             <!-- Log panel (hidden when ShowLog=false) -->

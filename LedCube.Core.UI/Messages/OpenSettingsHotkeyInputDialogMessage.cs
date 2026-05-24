@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using LedCube.Core.UI.Services.Hotkey;
 
 namespace LedCube.Core.UI.Messages;
@@ -6,4 +7,5 @@ public record OpenSettingsHotkeyInputDialogMessage(string Function, string Descr
 {
     public bool? DialogResult { get; set; }
     public InputBinding ResultBinding { get; set; }
+    public TaskCompletionSource Completion { get; } = new();
 }

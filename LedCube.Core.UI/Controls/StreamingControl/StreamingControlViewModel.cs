@@ -41,6 +41,7 @@ public partial class StreamingControlViewModel : ObservableObject
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsConnectionValid))]
     [NotifyPropertyChangedFor(nameof(IsConnected))]
+    [NotifyPropertyChangedFor(nameof(IsConnectingOrConnected))]
     [NotifyPropertyChangedFor(nameof(HostEditingEnabled))]
     [NotifyCanExecuteChangedFor(nameof(ConnectCommand))]
     private ConnectionState _connectionState;
@@ -53,6 +54,7 @@ public partial class StreamingControlViewModel : ObservableObject
     
     public bool IsConnectionValid => !string.IsNullOrWhiteSpace(Host) && Port is > ushort.MinValue and < ushort.MaxValue;
     public bool IsConnected => ConnectionState is ConnectionState.Connected or ConnectionState.NotResponding;
+    public bool IsConnectingOrConnected => ConnectionState is not ConnectionState.Disconnected;
     public bool HostEditingEnabled => ConnectionState is ConnectionState.Disconnected;
 
     public StreamingControlViewModel(
@@ -68,10 +70,11 @@ public partial class StreamingControlViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void OpenBroadcastSearch()
+    private async Task OpenBroadcastSearch()
     {
         var message = new OpenBroadcastSearchDialogMessage();
-        WeakReferenceMessenger.Default.Send(message);   
+        WeakReferenceMessenger.Default.Send(message);
+        await message.Completion.Task;
         _logger.LogInformation("Dialog Result {DialogResult}: Destination: {destination}", message.DialogResult?.DialogResult, message.DialogResult?.HostAndPort);
         if (message.DialogResult is {DialogResult: true, HostAndPort: not null})
         {
@@ -101,15 +104,33 @@ public partial class StreamingControlViewModel : ObservableObject
                 () => { ConnectionState = connected ? ConnectionState.Connected : ConnectionState.Disconnected; },
                 DispatcherPriority.Normal);
         }
+        catch (OperationCanceledException)
+        {
+            _logger.LogInformation("Connect cancelled");
+        }
         catch (Exception e)
         {
             _logger.LogError(e, "Error while connect");
+        }
+        finally
+        {
+            if (ConnectionState == ConnectionState.Connecting)
+            {
+                await Dispatcher.UIThread.InvokeAsync(
+                    () => { ConnectionState = ConnectionState.Disconnected; },
+                    DispatcherPriority.Normal);
+            }
         }
     }
 
     [RelayCommand(AllowConcurrentExecutions = false)]
     private async Task DisconnectAsync(CancellationToken token)
     {
+        if (ConnectionState == ConnectionState.Connecting)
+        {
+            ConnectCommand.Cancel();
+            return;
+        }
         try{
             await CubeStreamer.DisconnectAsync(token);
             await Dispatcher.UIThread.InvokeAsync(() =>

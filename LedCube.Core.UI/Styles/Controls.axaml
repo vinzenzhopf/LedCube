@@ -65,17 +65,16 @@
             <ControlTemplate TargetType="controls:Led">
                 <Border Padding="{TemplateBinding Padding}">
                     <DockPanel>
-                        <Ellipse
-                            Width="{TemplateBinding Size}"
-                            Height="{TemplateBinding Size}"
-                            Margin="1"
-                            DockPanel.Dock="Left"
-                            Fill="{TemplateBinding Background}"
-                            Stroke="{Binding Foreground,
-                                     RelativeSource={RelativeSource TemplatedParent},
-                                     Converter={converters:BrushBrightnessConverter},
-                                     ConverterParameter=-0.2}"
-                            StrokeThickness="1" />
+                        <Ellipse Width="{TemplateBinding Size}"
+                                 Height="{TemplateBinding Size}"
+                                 Margin="1"
+                                 DockPanel.Dock="Left"
+                                 StrokeThickness="1"
+                                 Fill="{TemplateBinding FillBrush}"
+                                 Stroke="{Binding Foreground,
+                                          RelativeSource={RelativeSource TemplatedParent},
+                                          Converter={converters:BrushBrightnessConverter},
+                                          ConverterParameter=-0.2}"/>
                         <TextBlock
                             Margin="4,0,0,0"
                             VerticalAlignment="Center"
@@ -85,21 +84,7 @@
             </ControlTemplate>
         </Setter>
     </Style>
-    <Style Selector="controls|Led">
-        <Setter Property="Background">
-            <Setter.Value>
-                <Binding Path="Foreground" RelativeSource="{RelativeSource Self}"
-                         Converter="{converters:BrushBrightnessConverter}"
-                         ConverterParameter="0.9" />
-            </Setter.Value>
-        </Setter>
-    </Style>
     <Style Selector="controls|Led:checked">
-        <Setter Property="Background">
-            <Setter.Value>
-                <Binding Path="Foreground" RelativeSource="{RelativeSource Self}" />
-            </Setter.Value>
-        </Setter>
         <Setter Property="FontWeight" Value="Bold" />
     </Style>
 </Styles>

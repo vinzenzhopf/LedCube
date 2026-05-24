@@ -1,4 +1,6 @@
-﻿namespace LedCube.Core.UI.Dialog.SimpleDialog;
+﻿using System.Threading.Tasks;
+
+namespace LedCube.Core.UI.Dialog.SimpleDialog;
 
 public record OpenSimpleDialogMessage(
     SimpleDialogButtons Buttons,
@@ -7,6 +9,7 @@ public record OpenSimpleDialogMessage(
     bool CancelIsPrimary = false)
 {
     public DialogResult Result { get; set; } = default;
+    public TaskCompletionSource Completion { get; } = new();
 }
 
 public enum SimpleDialogButtons

@@ -202,43 +202,71 @@ public partial class App : Application,
 
     public async void Receive(OpenSimpleDialogMessage message)
     {
-        Log.Information("Showing SimpleDialog");
-        var viewModel = new SimpleDialogViewModel()
+        try
         {
-            Buttons = message.Buttons,
-            Text = message.Text,
-            Title = message.Title
-        };
-        var dialog = new SimpleDialogWindow() { DataContext = viewModel };
-        await dialog.ShowDialog(_mainWindow!);
-        message.Result = viewModel.Result;
+            Log.Information("Showing SimpleDialog");
+            var viewModel = new SimpleDialogViewModel()
+            {
+                Buttons = message.Buttons,
+                Text = message.Text,
+                Title = message.Title
+            };
+            var dialog = new SimpleDialogWindow() { DataContext = viewModel };
+            await dialog.ShowDialog(_mainWindow!);
+            message.Result = viewModel.Result;
+        }
+        finally
+        {
+            message.Completion.TrySetResult();
+        }
     }
 
     public async void Receive(OpenBroadcastSearchDialogMessage message)
     {
-        Log.Information("Showing BroadcastSearchDialog");
-        var viewModel = _host!.Services.GetRequiredService<BroadcastSearchDialogViewModel>();
-        var window = new BroadcastSearchDialogWindow() { DataContext = viewModel };
-        await window.ShowDialog(_mainWindow!);
-        message.DialogResult = viewModel.DialogResult;
+        try
+        {
+            Log.Information("Showing BroadcastSearchDialog");
+            var viewModel = _host!.Services.GetRequiredService<BroadcastSearchDialogViewModel>();
+            var window = new BroadcastSearchDialogWindow() { DataContext = viewModel };
+            await window.ShowDialog(_mainWindow!);
+            message.DialogResult = viewModel.DialogResult;
+        }
+        finally
+        {
+            message.Completion.TrySetResult();
+        }
     }
 
     public async void Receive(OpenSelectAnimationDialogMessage message)
     {
-        Log.Information("Showing SelectAnimationDialog");
-        var viewModel = _host!.Services.GetRequiredService<SelectAnimationDialogViewModel>();
-        var window = new SelectAnimationDialog() { DataContext = viewModel };
-        await window.ShowDialog(_mainWindow!);
-        message.Result = viewModel.DialogResult;
+        try
+        {
+            Log.Information("Showing SelectAnimationDialog");
+            var viewModel = _host!.Services.GetRequiredService<SelectAnimationDialogViewModel>();
+            var window = new SelectAnimationDialog() { DataContext = viewModel };
+            await window.ShowDialog(_mainWindow!);
+            message.Result = viewModel.DialogResult;
+        }
+        finally
+        {
+            message.Completion.TrySetResult();
+        }
     }
 
     public async void Receive(EditAnimationInstanceDialogMessage message)
     {
-        Log.Information("Showing EditAnimationInstanceDialog");
-        var viewModel = _host!.Services.GetRequiredService<EditAnimationInstanceDialogViewModel>();
-        viewModel.Message = message;
-        var window = new EditAnimationInstanceDialog() { DataContext = viewModel };
-        await window.ShowDialog(_mainWindow!);
-        message.Result = viewModel.DialogResult;
+        try
+        {
+            Log.Information("Showing EditAnimationInstanceDialog");
+            var viewModel = _host!.Services.GetRequiredService<EditAnimationInstanceDialogViewModel>();
+            viewModel.Message = message;
+            var window = new EditAnimationInstanceDialog() { DataContext = viewModel };
+            await window.ShowDialog(_mainWindow!);
+            message.Result = viewModel.DialogResult;
+        }
+        finally
+        {
+            message.Completion.TrySetResult();
+        }
     }
 }

@@ -105,32 +105,33 @@ public partial class PlaylistControlViewModel : ObservableObject, IRecipient<Pla
     }
 
     [RelayCommand(AllowConcurrentExecutions = false)]
-    private Task AddAnimation()
+    private async Task AddAnimation()
     {
-        var result = WeakReferenceMessenger.Default.Send(new OpenSelectAnimationDialogMessage());
-        if (result.Result is { Result: true, Animation.GeneratorInfo: not null, Animation.TypeInfo: not null })
+        var msg = WeakReferenceMessenger.Default.Send(new OpenSelectAnimationDialogMessage());
+        await msg.Completion.Task;
+        if (msg.Result is { Result: true, Animation.GeneratorInfo: not null, Animation.TypeInfo: not null })
         {
-            var anim = result.Result.Animation;
+            var anim = msg.Result.Animation;
             var entry = new PlaylistEntry(anim.GeneratorInfo, anim.TypeInfo)
             {
-                InstanceName = result.Result.InstanceName ?? string.Empty
+                InstanceName = msg.Result.InstanceName ?? string.Empty
             };
             _playlistService.Add(entry);
         }
-        return Task.CompletedTask;
     }
 
     [RelayCommand(AllowConcurrentExecutions = false)]
-    private Task EditAnimation()
+    private async Task EditAnimation()
     {
-        if (SelectedInstance is null) return Task.CompletedTask;
+        if (SelectedInstance is null) return;
 
         var copy = new PlaylistEntryControlViewModel(SelectedInstance);
-        var result = WeakReferenceMessenger.Default.Send(new EditAnimationInstanceDialogMessage(copy));
-        if (result.Result?.Result is not true) return Task.CompletedTask;
+        var msg = WeakReferenceMessenger.Default.Send(new EditAnimationInstanceDialogMessage(copy));
+        await msg.Completion.Task;
+        if (msg.Result?.Result is not true) return;
 
         var originalEntry = SelectedInstance.Entry;
-        if (originalEntry is null) return Task.CompletedTask;
+        if (originalEntry is null) return;
 
         if (copy.Animation.TypeInfo == originalEntry.TypeInfo)
         {
@@ -149,7 +150,7 @@ public partial class PlaylistControlViewModel : ObservableObject, IRecipient<Pla
         {
             // Different animation — replace entry
             if (copy.Animation.GeneratorInfo is null || copy.Animation.TypeInfo is null)
-                return Task.CompletedTask;
+                return;
             var idx = _playlistService.Entries.IndexOf(originalEntry);
             var newEntry = new PlaylistEntry(copy.Animation.GeneratorInfo, copy.Animation.TypeInfo)
             {
@@ -161,7 +162,6 @@ public partial class PlaylistControlViewModel : ObservableObject, IRecipient<Pla
             _playlistService.Insert(idx, newEntry);
             _playlistService.Select(newEntry);
         }
-        return Task.CompletedTask;
     }
 
     [RelayCommand(AllowConcurrentExecutions = false)]

@@ -14,7 +14,8 @@ public class BrushBrightnessConverter : ConverterExtensionBase, IValueConverter
 {
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        if (value is not SolidColorBrush brush)
+        // Handles both SolidColorBrush (mutable) and ImmutableSolidColorBrush (Brushes.Gray etc).
+        if (value is not ISolidColorBrush brush)
             return new SolidColorBrush();
 
         var correctionFactor = System.Convert.ToSingle(parameter, CultureInfo.InvariantCulture);

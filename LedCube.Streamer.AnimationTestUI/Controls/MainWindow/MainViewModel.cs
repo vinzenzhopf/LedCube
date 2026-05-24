@@ -67,10 +67,11 @@ public partial class MainViewModel : ObservableObject
     }
     
     [RelayCommand]
-    private void BroadcastSearch()
+    private async Task BroadcastSearch()
     {
         var message = new OpenBroadcastSearchDialogMessage();
-        WeakReferenceMessenger.Default.Send(message);   
+        WeakReferenceMessenger.Default.Send(message);
+        await message.Completion.Task;
         _logger.LogInformation("Dialog Result {DialogResult}: Destination: {destination}", message.DialogResult?.DialogResult, message.DialogResult?.HostAndPort);
     }
 }
