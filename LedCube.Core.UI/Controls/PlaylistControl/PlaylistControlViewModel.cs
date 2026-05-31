@@ -13,7 +13,9 @@ using LedCube.Core.UI.Services.Playlist;
 
 namespace LedCube.Core.UI.Controls.PlaylistControl;
 
-public partial class PlaylistControlViewModel : ObservableObject, IRecipient<PlaylistSelectionChangedMessage>
+public partial class PlaylistControlViewModel : ObservableObject,
+    IRecipient<PlaylistSelectionChangedMessage>,
+    IRecipient<PlaylistEntryEditedMessage>
 {
     private readonly IPlaylistService _playlistService;
     private readonly IPlaybackService _playbackService;
@@ -30,7 +32,8 @@ public partial class PlaylistControlViewModel : ObservableObject, IRecipient<Pla
         _playbackService = playbackService;
         ((INotifyCollectionChanged)playlistService.Entries).CollectionChanged += OnEntriesChanged;
         ((INotifyPropertyChanged)playbackService).PropertyChanged += OnPlaybackPropertyChanged;
-        WeakReferenceMessenger.Default.Register(this);
+        WeakReferenceMessenger.Default.Register<PlaylistSelectionChangedMessage>(this);
+        WeakReferenceMessenger.Default.Register<PlaylistEntryEditedMessage>(this);
     }
 
     private void OnPlaybackPropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -66,6 +69,14 @@ public partial class PlaylistControlViewModel : ObservableObject, IRecipient<Pla
         var vm = message.Entry is null ? null : _entryMap.GetValueOrDefault(message.Entry);
         if (SelectedInstance != vm)
             SelectedInstance = vm;
+    }
+
+    public void Receive(PlaylistEntryEditedMessage message)
+    {
+        if (!_entryMap.TryGetValue(message.Entry, out var vm)) return;
+        vm.InstanceName = message.Entry.InstanceName;
+        vm.RepeatCount = message.Entry.RepeatCount;
+        vm.FrameTimeOverride = message.Entry.FrameTimeOverride;
     }
 
     private void OnEntriesChanged(object? sender, NotifyCollectionChangedEventArgs e)

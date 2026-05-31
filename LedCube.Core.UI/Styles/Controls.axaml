@@ -1,7 +1,8 @@
 <Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:converters="clr-namespace:LedCube.Core.UI.Converters"
-        xmlns:controls="clr-namespace:LedCube.Core.UI.Controls.CubeView2D">
+        xmlns:controls="clr-namespace:LedCube.Core.UI.Controls.CubeView2D"
+        xmlns:c="clr-namespace:LedCube.Core.UI.Controls">
     <Styles.Resources>
         <ResourceDictionary>
             <!-- Collapse the sort-icon reservation inside DataGridColumnHeader so HeaderTemplates can use full width. -->
@@ -86,5 +87,20 @@
     </Style>
     <Style Selector="controls|Led:checked">
         <Setter Property="FontWeight" Value="Bold" />
+    </Style>
+
+    <!-- ===== StatRow: "label: value [unit]" stat line ===== -->
+    <Style Selector="c|StatRow">
+        <Setter Property="Template">
+            <ControlTemplate TargetType="c:StatRow">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="{TemplateBinding Label}"/>
+                    <TextBlock Text="{TemplateBinding Value}"/>
+                    <TextBlock Margin="3,0,0,0"
+                               Text="{TemplateBinding Unit}"
+                               IsVisible="{TemplateBinding Unit, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+                </StackPanel>
+            </ControlTemplate>
+        </Setter>
     </Style>
 </Styles>

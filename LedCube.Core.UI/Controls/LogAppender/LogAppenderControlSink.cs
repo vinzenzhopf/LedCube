@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Concurrent;
-using Avalonia.Media;
 using Serilog.Core;
 using Serilog.Events;
 
@@ -12,23 +11,11 @@ public sealed class LogAppenderControlSink : ILogEventSink
 
     public IFormatProvider? FormatProvider { get; set; }
 
-    private static IBrush BrushFromLevel(LogEventLevel level) => level switch
-    {
-        LogEventLevel.Fatal => Brushes.DarkRed,
-        LogEventLevel.Error => Brushes.Red,
-        LogEventLevel.Warning => Brushes.Orange,
-        LogEventLevel.Information => Brushes.RoyalBlue,
-        LogEventLevel.Debug => Brushes.ForestGreen,
-        LogEventLevel.Verbose => Brushes.DimGray,
-        _ => Brushes.Black
-    };
-
     public void Emit(LogEvent logEvent)
     {
         var message = logEvent.RenderMessage(FormatProvider);
         logEvent.Properties.TryGetValue("SourceContext", out var context);
         var entry = new LogEntry(
-            BrushFromLevel(logEvent.Level),
             logEvent.Level,
             logEvent.Level.ToString(),
             DateTimeOffset.Now,

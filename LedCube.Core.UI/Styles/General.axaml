@@ -30,4 +30,27 @@
     <system:Double x:Key="PadL">12</system:Double>
 
     <Thickness x:Key="IconBtnMargin">2</Thickness>
+    <Thickness x:Key="IconBtnInlineMargin">2,2,2,5</Thickness>
+
+    <!-- ===== Log severity brushes (theme-aware) ===== -->
+    <ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Key="Light">
+            <SolidColorBrush x:Key="LogFatalBrush"       Color="#B91C1C"/>
+            <SolidColorBrush x:Key="LogErrorBrush"       Color="#DC2626"/>
+            <SolidColorBrush x:Key="LogWarningBrush"     Color="#D97706"/>
+            <SolidColorBrush x:Key="LogInformationBrush" Color="#2563EB"/>
+            <SolidColorBrush x:Key="LogDebugBrush"       Color="#16A34A"/>
+            <SolidColorBrush x:Key="LogVerboseBrush"     Color="#6B7280"/>
+            <SolidColorBrush x:Key="LogDefaultBrush"     Color="#1F2937"/>
+        </ResourceDictionary>
+        <ResourceDictionary x:Key="Dark">
+            <SolidColorBrush x:Key="LogFatalBrush"       Color="#F87171"/>
+            <SolidColorBrush x:Key="LogErrorBrush"       Color="#EF4444"/>
+            <SolidColorBrush x:Key="LogWarningBrush"     Color="#FBBF24"/>
+            <SolidColorBrush x:Key="LogInformationBrush" Color="#60A5FA"/>
+            <SolidColorBrush x:Key="LogDebugBrush"       Color="#4ADE80"/>
+            <SolidColorBrush x:Key="LogVerboseBrush"     Color="#9CA3AF"/>
+            <SolidColorBrush x:Key="LogDefaultBrush"     Color="#E5E7EB"/>
+        </ResourceDictionary>
+    </ResourceDictionary.ThemeDictionaries>
 </ResourceDictionary>

@@ -11,8 +11,6 @@
         <converters:EnumToStringConverter x:Key="EnumToString"/>
         <converters:ConnectionStateToColorConverter x:Key="ConnectionStateToColor"/>
         <converters:TimeSpanToTotalTimeConverter x:Key="TimeSpanToMs"/>
-        <converters:VisibleWhenIntConverter x:Key="VisWhenConnected"/>
-        <converters:VisibleWhenIntConverter x:Key="VisWhenDisconnected" TrueValue="False" FalseValue="True"/>
     </UserControl.Resources>
 
     <StackPanel>
@@ -42,14 +40,12 @@
                     
                     <!-- Broadcast search button -->
                     <Button Grid.Row="0" Grid.Column="2" Grid.RowSpan="2"
-                            VerticalAlignment="Center"
-                            Classes="icon"
+                            Classes="icon inline"
                             IsEnabled="{Binding HostEditingEnabled}"
                             Command="{Binding OpenBroadcastSearchCommand}"
                             ToolTip.Tip="Broadcast search...">
                         <materialIcons:MaterialIcon Kind="HomeSearchOutline"/>
                     </Button>
-                    
                     
                     <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4"
                                 Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Bottom"
@@ -80,6 +76,7 @@
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="1*"/>
                         <ColumnDefinition Width="1*"/>
                     </Grid.ColumnDefinitions>
@@ -88,23 +85,22 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
-                    <StackPanel Grid.Column="0" Grid.Row="0" Grid.RowSpan="2"
-                                Classes="toolbar vertical"
-                                VerticalAlignment="Center">
-                        <Button Classes="icon" Command="{Binding StartStreamingCommand}">
-                            <materialIcons:MaterialIcon Kind="Play"/>
-                        </Button>
-                        <Button Classes="icon"
-                                Command="{Binding StopStreamingCommand}"
-                                IsEnabled="{Binding IsStreamActive}">
-                            <materialIcons:MaterialIcon Kind="Stop"/>
-                        </Button>
-                    </StackPanel>
-
-                    <TextBlock Grid.Row="0" Grid.Column="1" Text="AnimationName:" VerticalAlignment="Bottom" Margin="2,0"/>
-                    <TextBox Grid.Row="1" Grid.Column="1" Margin="2,0,2,5" Text="{Binding AnimationName}"/>
-                    <TextBlock Grid.Row="0" Grid.Column="2" Text="FrameTime Ms:" VerticalAlignment="Bottom" Margin="2,0"/>
-                    <TextBox Grid.Row="1" Grid.Column="2" Margin="2,0,2,5" Text="{Binding FrameTimeMs}"/>
+                    
+                    <Button Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Classes="icon inline" 
+                            Command="{Binding StartStreamingCommand}"
+                            Margin="0,0,0,5">
+                        <materialIcons:MaterialIcon Kind="Play"/>
+                    </Button>
+                    <Button Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" Classes="icon inline"
+                            Command="{Binding StopStreamingCommand}"
+                            IsEnabled="{Binding IsStreamActive}">
+                        <materialIcons:MaterialIcon Kind="Stop"/>
+                    </Button>
+                    
+                    <TextBlock Grid.Row="0" Grid.Column="2" Text="AnimationName:" VerticalAlignment="Bottom" Margin="2,0"/>
+                    <TextBox Grid.Row="1" Grid.Column="2" Margin="2,0,2,5" Text="{Binding AnimationName}"/>
+                    <TextBlock Grid.Row="0" Grid.Column="3" Text="FrameTime Ms:" VerticalAlignment="Bottom" Margin="2,0"/>
+                    <TextBox Grid.Row="1" Grid.Column="3" Margin="2,0,2,5" Text="{Binding FrameTimeMs}"/>
                 </Grid>
             </StackPanel>
         </HeaderedContentControl>

@@ -13,11 +13,12 @@
 - [x] LogAppender: DataGrid with resizable columns, level filter via
   flyout, debounced flush (`ConcurrentQueue` → 100 ms `DispatcherTimer`),
   `MaxEntries = 10 000`
-- [ ] Move log severity brushes (`Brushes.Red`, `Brushes.DarkRed`, …
-  in `LogAppenderControlSink`) into theme-aware resources
+- [x] Move log severity brushes into theme-aware resources
+  (`General.axaml` ThemeDictionaries + `LogLevelToBrushConverter`;
+  `LogEntry` no longer carries an `IBrush`)
 - [ ] Improve/Fix animation list/selection UX
-- [ ] Extract stat label/value pairs in `StreamingControl` into a
-  reusable component style (~18 inline duplicates today)
+- [x] Extract stat label/value pairs in `StreamingControl` into a
+  reusable `StatRow` `TemplatedControl`
 
 ## Animator (LedCube.Animator)
 

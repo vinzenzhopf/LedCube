@@ -19,13 +19,26 @@ public partial class PluginConfigControlViewModel : ObservableObject, IRecipient
     [ObservableProperty]
     private bool _hasSelection;
 
+    public string InstanceName
+    {
+        get => _selectedEntry?.InstanceName ?? string.Empty;
+        set
+        {
+            if (_selectedEntry is null) return;
+            _selectedEntry.InstanceName = value ?? string.Empty;
+            NotifyEntryEdited();
+            OnPropertyChanged();
+        }
+    }
+
     public int RepeatCount
     {
         get => _selectedEntry?.RepeatCount ?? 1;
         set
         {
-            if (_selectedEntry is not null)
-                _selectedEntry.RepeatCount = value;
+            if (_selectedEntry is null) return;
+            _selectedEntry.RepeatCount = value;
+            NotifyEntryEdited();
             OnPropertyChanged();
         }
     }
@@ -40,8 +53,15 @@ public partial class PluginConfigControlViewModel : ObservableObject, IRecipient
                 _selectedEntry.FrameTimeOverride = null;
             else if (double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out var ms))
                 _selectedEntry.FrameTimeOverride = TimeSpan.FromMilliseconds(ms);
+            NotifyEntryEdited();
             OnPropertyChanged();
         }
+    }
+
+    private void NotifyEntryEdited()
+    {
+        if (_selectedEntry is not null)
+            WeakReferenceMessenger.Default.Send(new PlaylistEntryEditedMessage(_selectedEntry));
     }
 
     public PluginConfigControlViewModel()
@@ -60,6 +80,7 @@ public partial class PluginConfigControlViewModel : ObservableObject, IRecipient
         ConfigEntries.Clear();
 
         HasSelection = entry is not null;
+        OnPropertyChanged(nameof(InstanceName));
         OnPropertyChanged(nameof(RepeatCount));
         OnPropertyChanged(nameof(FrameTimeOverrideMs));
 

@@ -8,6 +8,7 @@
             <Button Classes="icon">         (medium / default)
             <Button Classes="icon sm">      (compact)
             <Button Classes="icon lg">      (primary / play button)
+            <Button Classes="icon inline">  (inline with an text box)
     -->
     <Style Selector="Button.icon">
         <Setter Property="Width" Value="{StaticResource IconBtnSizeM}"/>
@@ -25,6 +26,11 @@
         <Setter Property="Width" Value="{StaticResource IconBtnSizeL}"/>
         <Setter Property="Height" Value="{StaticResource IconBtnSizeL}"/>
     </Style>
+    <Style Selector="Button.icon.inline">
+        <Setter Property="Margin" Value="{StaticResource IconBtnInlineMargin}"/>
+        <Setter Property="VerticalAlignment" Value="Bottom"/>
+    </Style>
+
 
     <!-- Default icon size inside icon buttons (the MaterialIcon child). -->
     <Style Selector="Button.icon > materialIcons|MaterialIcon">

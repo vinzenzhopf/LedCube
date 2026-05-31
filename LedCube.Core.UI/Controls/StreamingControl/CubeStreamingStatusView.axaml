@@ -1,9 +1,7 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
+<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:LedCube.Core.UI.Controls.CubeView2D;assembly=LedCube.Core.UI"
-             xmlns:cubeView2D="clr-namespace:LedCube.Core.UI.Controls.CubeView2D"
              xmlns:converters="clr-namespace:LedCube.Core.UI.Converters"
-             xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:c="clr-namespace:LedCube.Core.UI.Controls"
              xmlns:vm="clr-namespace:LedCube.Core.UI.Controls.StreamingControl"
              x:DataType="vm:CubeStreamingStatusViewModel"
              x:Class="LedCube.Core.UI.Controls.StreamingControl.CubeStreamingStatusView">
@@ -12,7 +10,7 @@
     </UserControl.Resources>
     <Grid>
         <Grid.Styles>
-            <Style Selector="TextBlock">
+            <Style Selector="c|StatRow">
                 <Setter Property="FontSize" Value="11"/>
             </Style>
         </Grid.Styles>
@@ -21,96 +19,30 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <StackPanel Grid.Column="0" Margin="5,0">
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Cube Version: "/>
-                <TextBlock Text="{Binding StreamingStatus.CubeVersion}"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Streamer Version: "/>
-                <TextBlock Text="{Binding StreamingStatus.StreamerVersion}"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="ErrorCode: "/>
-                <TextBlock Text="{Binding StreamingStatus.CubeErrorCode}"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Ping: "/>
-                <TextBlock Text="{Binding StreamingStatus.Ping,
-                               StringFormat='{}{0:F2}',
-                               Converter={StaticResource TimeSpanToMs},
-                               ConverterParameter='ms'}"/>
-                <TextBlock Text=" ms"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Ping Mean: "/>
-                <TextBlock Text="{Binding StreamingStatus.PingMean,
-                               StringFormat='{}{0:F2}',
-                               Converter={StaticResource TimeSpanToMs},
-                               ConverterParameter='ms'}"/>
-                <TextBlock Text=" ms"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="CurrentTicks: "/>
-                <TextBlock Text="{Binding StreamingStatus.CurrentTicks}"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="ConnectionStable: "/>
-                <TextBlock Text="{Binding StreamingStatus.ConnectionStable}"/>
-            </StackPanel>
+            <c:StatRow Label="Cube Version: "     Value="{Binding StreamingStatus.CubeVersion}"/>
+            <c:StatRow Label="Streamer Version: " Value="{Binding StreamingStatus.StreamerVersion}"/>
+            <c:StatRow Label="ErrorCode: "        Value="{Binding StreamingStatus.CubeErrorCode}"/>
+            <c:StatRow Label="Ping: "             Unit="ms"
+                       Value="{Binding StreamingStatus.Ping, StringFormat='{}{0:F2}', Converter={StaticResource TimeSpanToMs}}"/>
+            <c:StatRow Label="Ping Mean: "        Unit="ms"
+                       Value="{Binding StreamingStatus.PingMean, StringFormat='{}{0:F2}', Converter={StaticResource TimeSpanToMs}}"/>
+            <c:StatRow Label="CurrentTicks: "     Value="{Binding StreamingStatus.CurrentTicks}"/>
+            <c:StatRow Label="ConnectionStable: " Value="{Binding StreamingStatus.ConnectionStable}"/>
         </StackPanel>
         <StackPanel Grid.Column="1" Margin="5,0">
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="AnimationStatus: "/>
-                <TextBlock Text="{Binding StreamingStatus.AnimationStatus}"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="CurrentAnimation: "/>
-                <TextBlock Text="{Binding StreamingStatus.CurrentAnimation}"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="FrameCount: "/>
-                <TextBlock Text="{Binding StreamingStatus.FrameNumber}"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="FPS Mean: "/>
-                <TextBlock Text="{Binding StreamingStatus.FpsMean, StringFormat='{}{0:F2}'}"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="FPS Current: "/>
-                <TextBlock Text="{Binding StreamingStatus.FpsCurrent, StringFormat='{}{0:F2}'}"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="FrameTime Mean: "/>
-                <TextBlock Text="{Binding StreamingStatus.FrameTimeMean,
-                               StringFormat='{}{0:F2}',
-                               Converter={StaticResource TimeSpanToMs},
-                               ConverterParameter='ms'}"/>
-                <TextBlock Text=" ms"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="FrameTime Current: "/>
-                <TextBlock Text="{Binding StreamingStatus.FrameTimeCurrent,
-                               StringFormat='{}{0:F2}',
-                               Converter={StaticResource TimeSpanToMs},
-                               ConverterParameter='ms'}"/>
-                <TextBlock Text=" ms"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="FrameTime 95%: "/>
-                <TextBlock Text="{Binding StreamingStatus.FrameTime95Pct,
-                               StringFormat='{}{0:F2}',
-                               Converter={StaticResource TimeSpanToMs},
-                               ConverterParameter='ms'}"/>
-                <TextBlock Text=" ms"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="FrameTime 5%: "/>
-                <TextBlock Text="{Binding StreamingStatus.FrameTime05Pct,
-                               StringFormat='{}{0:F2}',
-                               Converter={StaticResource TimeSpanToMs},
-                               ConverterParameter='ms'}"/>
-                <TextBlock Text=" ms"/>
-            </StackPanel>
+            <c:StatRow Label="AnimationStatus: "  Value="{Binding StreamingStatus.AnimationStatus}"/>
+            <c:StatRow Label="CurrentAnimation: " Value="{Binding StreamingStatus.CurrentAnimation}"/>
+            <c:StatRow Label="FrameCount: "       Value="{Binding StreamingStatus.FrameNumber}"/>
+            <c:StatRow Label="FPS Mean: "         Value="{Binding FpsMean, StringFormat='{}{0:F2}', Mode=OneWay}"/>
+            <c:StatRow Label="FPS Current: "      Value="{Binding FpsCurrent, Mode=OneWay}"/>
+            <c:StatRow Label="FrameTime Mean: "   Unit="ms"
+                       Value="{Binding StreamingStatus.FrameTimeMean, StringFormat='{}{0:F2}', Converter={StaticResource TimeSpanToMs}}"/>
+            <c:StatRow Label="FrameTime Current: " Unit="ms"
+                       Value="{Binding StreamingStatus.FrameTimeCurrent, StringFormat='{}{0:F2}', Converter={StaticResource TimeSpanToMs}}"/>
+            <c:StatRow Label="FrameTime 95%: "    Unit="ms"
+                       Value="{Binding StreamingStatus.FrameTime95Pct, StringFormat='{}{0:F2}', Converter={StaticResource TimeSpanToMs}}"/>
+            <c:StatRow Label="FrameTime 5%: "     Unit="ms"
+                       Value="{Binding StreamingStatus.FrameTime05Pct, StringFormat='{}{0:F2}', Converter={StaticResource TimeSpanToMs}}"/>
         </StackPanel>
     </Grid>
 </UserControl>

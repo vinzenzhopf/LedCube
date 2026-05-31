@@ -72,7 +72,7 @@
                 <!-- Placeholder when no animation -->
                 <TextBlock Classes="muted"
                            Text="No Animation selected."
-                           IsVisible="{Binding IsAnimationSelected, Converter={StaticResource VisWhenNotPlaying}}"/>
+                           IsVisible="{Binding !IsAnimationSelected}"/>
             </Grid>
 
             <!-- Playback buttons -->

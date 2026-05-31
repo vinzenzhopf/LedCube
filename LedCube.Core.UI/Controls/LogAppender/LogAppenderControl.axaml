@@ -2,10 +2,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:LedCube.Core.UI.Controls.LogAppender"
              xmlns:helpers="clr-namespace:LedCube.Core.UI.Helpers"
+             xmlns:converters="clr-namespace:LedCube.Core.UI.Converters"
              xmlns:serilog="clr-namespace:Serilog.Events;assembly=Serilog"
              xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              x:Class="LedCube.Core.UI.Controls.LogAppender.LogAppenderControl">
     <UserControl.Resources>
+        <converters:LogLevelToBrushConverter x:Key="LogLevelToBrush"/>
         <!-- Per-column header template — full control over padding/font/color. -->
         <DataTemplate x:Key="LogHeader" x:DataType="x:String">
             <TextBlock Text="{Binding}"
@@ -28,7 +30,7 @@
             <Setter Property="Padding" Value="0"/>
             <Setter Property="Margin" Value="0"/>
             <Setter Property="MinHeight" Value="0"/>
-            <Setter Property="Foreground" Value="{Binding Color}"/>
+            <Setter Property="Foreground" Value="{Binding Severity, Converter={StaticResource LogLevelToBrush}}"/>
         </Style>
     </UserControl.Styles>
     <Grid>
