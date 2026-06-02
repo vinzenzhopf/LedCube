@@ -5,8 +5,9 @@
              xmlns:converters="clr-namespace:LedCube.Core.UI.Converters"
              xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:vm="clr-namespace:LedCube.Core.UI.Controls.StreamingControl"
+             xmlns:cubeStreamer="clr-namespace:LedCube.Streamer.CubeStreamer;assembly=LedCube.Streamer"
              x:DataType="vm:StreamingControlViewModel"
-             x:Class="LedCube.Core.UI.Controls.StreamingControl.StreamingControl">
+             x:Class="LedCube.Core.UI.Controls.StreamingControl.StreamingControlView">
     <UserControl.Resources>
         <converters:EnumToStringConverter x:Key="EnumToString"/>
         <converters:ConnectionStateToColorConverter x:Key="ConnectionStateToColor"/>

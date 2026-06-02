@@ -2,8 +2,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:sty="using:FluentAvalonia.Styling"
              xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:core="clr-namespace:LedCube.Core.UI;assembly=LedCube.Core.UI"
              x:Class="LedCube.Streamer.AnimationTestUI.App"
              RequestedThemeVariant="Default">
+    <Application.DataTemplates>
+        <core:ViewLocator/>
+    </Application.DataTemplates>
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

@@ -1,6 +1,8 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="LedCube.Animator.Controls.LogAppender.LogAppenderControl">
+             xmlns:vm="clr-namespace:LedCube.Animator.Controls.LogAppender"
+             x:Class="LedCube.Animator.Controls.LogAppender.LogAppenderControl"
+             x:DataType="vm:LogAppenderViewModel">
 
     <Grid RowDefinitions="Auto,*">
 
@@ -16,7 +18,7 @@
                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                  FontFamily="Consolas,Menlo,monospace" FontSize="11">
             <ListBox.ItemTemplate>
-                <DataTemplate>
+                <DataTemplate x:DataType="vm:LogEntry">
                     <Grid ColumnDefinitions="70,60,*,3*">
                         <TextBlock Grid.Column="0" Text="{Binding Time, StringFormat=HH:mm:ss.fff}"
                                    Foreground="{Binding Color}" />

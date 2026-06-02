@@ -2,7 +2,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:LedCube.Streamer.UI.Controls.MenuBar"
              xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-             x:Class="LedCube.Streamer.UI.Controls.MenuBar.MenuBar">
+             x:Class="LedCube.Streamer.UI.Controls.MenuBar.MenuBar"
+             x:DataType="local:MenuBarViewModel">
     <Menu>
         <MenuItem Header="_File">
             <MenuItem Header="_Settings" Command="{Binding OpenSettingsCommand}">

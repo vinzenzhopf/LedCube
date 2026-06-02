@@ -1,6 +1,8 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="LedCube.Core.UI.Controls.SettingsDialog.SettingsPage_GeneralConfig">
+             xmlns:vm="clr-namespace:LedCube.Core.UI.Controls.SettingsDialog"
+             x:Class="LedCube.Core.UI.Controls.SettingsDialog.SettingsPage_GeneralConfig"
+             x:DataType="vm:GeneralCubeSettingsViewModel">
     <StackPanel>
         <TextBlock FontSize="16" FontWeight="SemiBold" Text="Cube Dimensions" Margin="0,0,0,12"/>
         <Grid>

@@ -1,7 +1,8 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:LedCube.Core.UI.Controls.CubeView2D"
-             x:Class="LedCube.Core.UI.Controls.CubeView2D.CubeView2D">
+             x:Class="LedCube.Core.UI.Controls.CubeView2D.CubeView2D"
+             x:DataType="local:CubeView2DViewModel">
     <DockPanel>
         <Grid DockPanel.Dock="Top">
             <Grid.ColumnDefinitions>

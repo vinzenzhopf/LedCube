@@ -1,7 +1,9 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:material="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-             x:Class="LedCube.Animator.Controls.MenuBar.MenuBar">
+             xmlns:vm="clr-namespace:LedCube.Animator.Controls.MenuBar"
+             x:Class="LedCube.Animator.Controls.MenuBar.MenuBar"
+             x:DataType="vm:MenuBarViewModel">
 
     <Menu>
         <MenuItem Header="_File">

@@ -3,6 +3,7 @@
         xmlns:local="clr-namespace:LedCube.Core.UI.Dialog.EditAnimationInstanceDialog"
         xmlns:playlistControl="clr-namespace:LedCube.Core.UI.Controls.PlaylistControl;assembly=LedCube.Core.UI"
         x:Class="LedCube.Core.UI.Dialog.EditAnimationInstanceDialog.EditAnimationInstanceDialog"
+        x:DataType="local:EditAnimationInstanceDialogViewModel"
         x:Name="DialogWindow"
         Height="400" Width="350"
         Title="Edit Animation"

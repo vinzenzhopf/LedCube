@@ -1,8 +1,10 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="LedCube.Core.UI.Controls.SettingsDialog.SettingsPage_KeyboardControlSettings">
+             xmlns:vm="clr-namespace:LedCube.Core.UI.Controls.SettingsDialog"
+             x:Class="LedCube.Core.UI.Controls.SettingsDialog.SettingsPage_KeyboardControlSettings"
+             x:DataType="vm:KeyboardControlSettingViewModel">
     <UserControl.Resources>
-        <DataTemplate x:Key="KeyChipTemplate">
+        <DataTemplate x:Key="KeyChipTemplate" x:DataType="x:String">
             <Border CornerRadius="6" BorderThickness="1" BorderBrush="Gray"
                     Background="#FAFAFA" Padding="8,4" Margin="0,0,6,0">
                 <TextBlock FontWeight="SemiBold" VerticalAlignment="Center" Text="{Binding}"/>
@@ -39,7 +41,7 @@
                                     Binding="{Binding Description}"/>
                 <DataGridTemplateColumn Header="Hotkey" Width="200">
                     <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
+                        <DataTemplate x:DataType="vm:KeyboardControlEntryViewModel">
                             <Button Command="{Binding InputHotkeyClickedCommand}"
                                     Background="Transparent"
                                     BorderThickness="0"

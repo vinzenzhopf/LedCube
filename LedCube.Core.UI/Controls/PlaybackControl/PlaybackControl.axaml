@@ -5,7 +5,8 @@
              xmlns:playback="clr-namespace:LedCube.Core.UI.Services.Playback"
              xmlns:timeline="clr-namespace:LedCube.Core.UI.TimelineControl;assembly=LedCube.Core.UI.TimelineControl"
              xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-             x:Class="LedCube.Core.UI.Controls.PlaybackControl.PlaybackControl">
+             x:Class="LedCube.Core.UI.Controls.PlaybackControl.PlaybackControl"
+             x:DataType="local:PlaybackControlViewModel">
     <UserControl.Resources>
         <converters:VisibleWhenIntConverter x:Key="VisWhenPlaying"/>
         <converters:VisibleWhenIntConverter x:Key="VisWhenNotPlaying" TrueValue="False" FalseValue="True"/>

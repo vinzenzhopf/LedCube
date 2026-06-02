@@ -3,6 +3,7 @@
         xmlns:local="clr-namespace:LedCube.Core.UI.Dialog.SelectAnimationDialog"
         xmlns:playlistControl="clr-namespace:LedCube.Core.UI.Controls.PlaylistControl;assembly=LedCube.Core.UI"
         x:Class="LedCube.Core.UI.Dialog.SelectAnimationDialog.SelectAnimationDialog"
+        x:DataType="local:SelectAnimationDialogViewModel"
         x:Name="DialogWindow"
         Height="400" Width="350"
         Title="Select Animation"

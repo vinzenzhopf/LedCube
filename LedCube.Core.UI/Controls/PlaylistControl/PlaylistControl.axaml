@@ -2,7 +2,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:LedCube.Core.UI.Controls.PlaylistControl"
              xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-             x:Class="LedCube.Core.UI.Controls.PlaylistControl.PlaylistControl">
+             x:Class="LedCube.Core.UI.Controls.PlaylistControl.PlaylistControl"
+             x:DataType="local:PlaylistControlViewModel">
     <DockPanel>
         <StackPanel DockPanel.Dock="Top" Classes="toolbar">
             <Button Classes="icon" Command="{Binding AddAnimationCommand}">

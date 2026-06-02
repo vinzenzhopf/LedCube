@@ -1,7 +1,9 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:helpers="clr-namespace:LedCube.Core.UI.Helpers"
-             x:Class="LedCube.Core.UI.Controls.SettingsDialog.SettingsPage_StreamerSettings">
+             xmlns:vm="clr-namespace:LedCube.Core.UI.Controls.SettingsDialog"
+             x:Class="LedCube.Core.UI.Controls.SettingsDialog.SettingsPage_StreamerSettings"
+             x:DataType="vm:CubeStreamerSettingsViewModel">
     <StackPanel>
         <TextBlock FontSize="16" FontWeight="SemiBold" Text="Streaming" Margin="0,0,0,8"/>
         <HeaderedContentControl Header="Connection" Margin="0,0,0,8">

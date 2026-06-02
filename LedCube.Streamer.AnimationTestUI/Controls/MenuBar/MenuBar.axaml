@@ -1,7 +1,9 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-             x:Class="LedCube.Streamer.AnimationTestUI.Controls.MenuBar.MenuBar">
+             xmlns:local="clr-namespace:LedCube.Streamer.AnimationTestUI.Controls.MenuBar"
+             x:Class="LedCube.Streamer.AnimationTestUI.Controls.MenuBar.MenuBar"
+             x:DataType="local:MenuBarViewModel">
     <Menu>
         <MenuItem Header="_File">
             <MenuItem Header="_Settings" Command="{Binding OpenSettingsCommand}">
@@ -13,7 +15,7 @@
             <MenuItem Header="E_xit" Command="{Binding ExitApplicationCommand}"/>
         </MenuItem>
         <MenuItem Header="_Tools">
-            <MenuItem Header="Show Debug _Log" IsChecked="{Binding AppenderViewModel.ShowLog, Mode=TwoWay}" ToggleType="CheckBox"/>
+            <MenuItem Header="Show Debug _Log" ToggleType="CheckBox"/>
         </MenuItem>
     </Menu>
 </UserControl>

@@ -5,7 +5,8 @@
              xmlns:converters="clr-namespace:LedCube.Core.UI.Converters"
              xmlns:serilog="clr-namespace:Serilog.Events;assembly=Serilog"
              xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-             x:Class="LedCube.Core.UI.Controls.LogAppender.LogAppenderControl">
+             x:Class="LedCube.Core.UI.Controls.LogAppender.LogAppenderControl"
+             x:DataType="local:LogAppenderViewModel">
     <UserControl.Resources>
         <converters:LogLevelToBrushConverter x:Key="LogLevelToBrush"/>
         <!-- Per-column header template — full control over padding/font/color. -->
@@ -30,7 +31,7 @@
             <Setter Property="Padding" Value="0"/>
             <Setter Property="Margin" Value="0"/>
             <Setter Property="MinHeight" Value="0"/>
-            <Setter Property="Foreground" Value="{Binding Severity, Converter={StaticResource LogLevelToBrush}}"/>
+            <Setter Property="Foreground" Value="{Binding Severity, Converter={StaticResource LogLevelToBrush}, x:DataType=local:LogEntry}"/>
         </Style>
     </UserControl.Styles>
     <Grid>

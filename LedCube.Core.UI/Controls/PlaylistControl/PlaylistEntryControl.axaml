@@ -3,7 +3,8 @@
              xmlns:local="clr-namespace:LedCube.Core.UI.Controls.PlaylistControl"
              xmlns:converters="clr-namespace:LedCube.Core.UI.Converters"
              xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-             x:Class="LedCube.Core.UI.Controls.PlaylistControl.PlaylistEntryControl">
+             x:Class="LedCube.Core.UI.Controls.PlaylistControl.PlaylistEntryControl"
+             x:DataType="local:PlaylistEntryControlViewModel">
     <UserControl.Resources>
         <converters:VisibleWhenIntConverter x:Key="VisWhenInt"/>
     </UserControl.Resources>

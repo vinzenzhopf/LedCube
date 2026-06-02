@@ -2,12 +2,13 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:LedCube.Core.UI.Controls.SettingsDialog"
         x:Class="LedCube.Core.UI.Controls.SettingsDialog.SettingsHotkeyInputDialog"
+        x:DataType="local:SettingsHotkeyInputDialogViewModel"
         Title="{Binding Description}"
         Height="160" Width="400"
         CanResize="False"
         WindowStartupLocation="CenterOwner">
     <Window.Resources>
-        <DataTemplate x:Key="KeyChipTemplate">
+        <DataTemplate x:Key="KeyChipTemplate" x:DataType="x:String">
             <Border CornerRadius="6" BorderThickness="1" BorderBrush="Gray"
                     Background="#FAFAFA" Padding="8,4" Margin="0,0,6,0">
                 <TextBlock FontWeight="SemiBold" VerticalAlignment="Center" Text="{Binding}"/>

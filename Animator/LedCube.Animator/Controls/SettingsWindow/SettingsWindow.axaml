@@ -1,6 +1,8 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:LedCube.Animator.Controls.SettingsWindow"
         x:Class="LedCube.Animator.Controls.SettingsWindow.SettingsWindow"
+        x:DataType="vm:SettingsViewModel"
         Title="Settings"
         Width="500" Height="400"
         CanResize="False"

@@ -2,9 +2,9 @@ using Avalonia.Controls;
 
 namespace LedCube.Core.UI.Controls.StreamingControl;
 
-public partial class StreamingControl : UserControl
+public partial class StreamingControlView : UserControl
 {
-    public StreamingControl()
+    public StreamingControlView()
     {
         InitializeComponent();
     }

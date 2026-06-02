@@ -1,9 +1,8 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="clr-namespace:LedCube.Animator.Controls.MainWindow"
-        xmlns:menuBar="clr-namespace:LedCube.Animator.Controls.MenuBar"
-        xmlns:logAppender="clr-namespace:LedCube.Animator.Controls.LogAppender"
         x:Class="LedCube.Animator.Controls.MainWindow.MainWindow"
+        x:DataType="vm:MainViewModel"
         Title="{Binding TitleText}"
         Width="1200" Height="800"
         MinWidth="800" MinHeight="600"
@@ -13,7 +12,7 @@
     <Grid RowDefinitions="Auto,*,Auto">
 
         <!-- Menu Bar -->
-        <menuBar:MenuBar Grid.Row="0" DataContext="{Binding MenuBarViewModel}" />
+        <ContentControl Grid.Row="0" Content="{Binding MenuBarViewModel}" />
 
         <!-- Main Content -->
         <Grid Grid.Row="1" ColumnDefinitions="200,4,*,4,200">
@@ -35,12 +34,14 @@
                                Foreground="White" FontStyle="Italic" />
                 </Border>
 
-                <!-- Log splitter and panel -->
+                <!-- Log splitter -->
                 <GridSplitter Grid.Row="1" ResizeDirection="Rows"
                               IsVisible="{Binding LogAppenderViewModel.ShowLog}" />
-                <logAppender:LogAppenderControl Grid.Row="2" Height="180"
-                    DataContext="{Binding LogAppenderViewModel}"
-                    IsVisible="{Binding LogAppenderViewModel.ShowLog}" />
+
+                <!-- Log panel (hidden when ShowLog=false) -->
+                <Panel Grid.Row="2" Height="180" IsVisible="{Binding LogAppenderViewModel.ShowLog}">
+                    <ContentControl Content="{Binding LogAppenderViewModel}"/>
+                </Panel>
             </Grid>
 
             <GridSplitter Grid.Column="3" ResizeDirection="Columns" />

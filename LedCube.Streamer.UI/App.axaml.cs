@@ -33,6 +33,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
+using CubeStreamingStatus = LedCube.Streamer.CubeStreamer.CubeStreamingStatus;
 
 namespace LedCube.Streamer.UI;
 
@@ -156,7 +157,7 @@ public partial class App : Application,
         services.AddSingleton<Controls.MenuBar.MenuBarViewModel>();
         services.AddSingleton<Controls.MenuBar.MenuBar>();
         services.AddSingleton<StreamingControlViewModel>();
-        services.AddSingleton<StreamingControl>();
+        services.AddSingleton<StreamingControlView>();
         services.AddSingleton<BroadcastSearchDialogViewModel>();
         services.AddSingleton<SelectAnimationDialogViewModel>();
         services.AddSingleton<EditAnimationInstanceDialogViewModel>();

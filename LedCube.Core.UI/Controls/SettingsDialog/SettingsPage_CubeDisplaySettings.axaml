@@ -1,7 +1,9 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:helpers="clr-namespace:LedCube.Core.UI.Helpers"
-             x:Class="LedCube.Core.UI.Controls.SettingsDialog.SettingsPage_CubeDisplaySettings">
+             xmlns:vm="clr-namespace:LedCube.Core.UI.Controls.SettingsDialog"
+             x:Class="LedCube.Core.UI.Controls.SettingsDialog.SettingsPage_CubeDisplaySettings"
+             x:DataType="vm:CubeDisplaySettingsViewModel">
     <StackPanel>
         <TextBlock FontSize="16" FontWeight="SemiBold" Text="3D Drawing" Margin="0,0,0,12"/>
 
@@ -18,22 +20,22 @@
                 </Grid.RowDefinitions>
 
                 <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="LED Dimensions"/>
-                <TextBox   Grid.Row="0" Grid.Column="1" Text="{Binding LedType.LedDimensions}"/>
+                <TextBox   Grid.Row="0" Grid.Column="1" Text="{Binding Cube3DDrawingConfig.LedType.LedDimensions}"/>
 
                 <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Text="Shape" Margin="0,8,0,0"/>
                 <ComboBox  Grid.Row="1" Grid.Column="1" Margin="0,8,0,0"
                            ItemsSource="{x:Static helpers:EnumValues.LedShapes}"
-                           SelectedItem="{Binding LedType.Shape}"/>
+                           SelectedItem="{Binding Cube3DDrawingConfig.LedType.Shape}"/>
 
                 <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="Tint" Margin="0,8,0,0"/>
                 <TextBox   Grid.Row="2" Grid.Column="1" Margin="0,8,0,0"
-                           Text="{Binding LedType.Tint}"/>
+                           Text="{Binding Cube3DDrawingConfig.LedType.Tint}"/>
             </Grid>
         </HeaderedContentControl>
 
         <HeaderedContentControl Header="Rendering" Margin="0,0,0,12">
             <StackPanel Margin="12">
-                <CheckBox Content="Draw wireframe" IsChecked="{Binding DrawWireframe}"/>
+                <CheckBox Content="Draw wireframe" IsChecked="{Binding Cube3DDrawingConfig.DrawWireframe}"/>
             </StackPanel>
         </HeaderedContentControl>
 
@@ -51,15 +53,15 @@
                 </Grid.RowDefinitions>
 
                 <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="LED Dimensions"/>
-                <TextBox   Grid.Row="0" Grid.Column="1" Text="{Binding LedDimensions}"/>
+                <TextBox   Grid.Row="0" Grid.Column="1" Text="{Binding Cube3DDrawingConfig.LedType.LedDimensions}"/>
 
                 <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Text="Shape" Margin="0,8,0,0"/>
                 <ComboBox  Grid.Row="1" Grid.Column="1" Margin="0,8,0,0"
                            ItemsSource="{x:Static helpers:EnumValues.LedShapes}"
-                           SelectedItem="{Binding Shape}"/>
+                           SelectedItem="{Binding Cube3DDrawingConfig.LedType.Shape}"/>
 
                 <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="Tint" Margin="0,8,0,0"/>
-                <TextBox   Grid.Row="2" Grid.Column="1" Margin="0,8,0,0" Text="{Binding Tint}"/>
+                <TextBox   Grid.Row="2" Grid.Column="1" Margin="0,8,0,0" Text="{Binding Cube3DDrawingConfig.LedType.Tint}"/>
             </Grid>
         </StackPanel>
     </StackPanel>

@@ -2,7 +2,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:LedCube.Core.UI.Controls.PluginConfigControl"
              xmlns:converters="clr-namespace:LedCube.Core.UI.Converters"
-             x:Class="LedCube.Core.UI.Controls.PluginConfigControl.PluginConfigControl">
+             x:Class="LedCube.Core.UI.Controls.PluginConfigControl.PluginConfigControl"
+             x:DataType="local:PluginConfigControlViewModel">
     <UserControl.Resources>
         <converters:BooleanToVisibilityConverterEx x:Key="InvertBool" TrueValue="False" FalseValue="True"/>
     </UserControl.Resources>

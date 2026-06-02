@@ -34,6 +34,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Extensions.Logging;
+using CubeStreamingStatus = LedCube.Streamer.CubeStreamer.CubeStreamingStatus;
 
 namespace LedCube.Streamer.AnimationTestUI;
 
@@ -155,7 +156,7 @@ public partial class App : Application,
         services.AddSingleton<CubeView2DViewModel>();
         services.AddSingleton<CubeView2D>();
         services.AddSingleton<StreamingControlViewModel>();
-        services.AddSingleton<StreamingControl>();
+        services.AddSingleton<StreamingControlView>();
         services.AddSingleton<AnimationTestViewModel>();
         services.AddSingleton<AnimationTest>();
 

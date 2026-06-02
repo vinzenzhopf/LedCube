@@ -30,11 +30,4 @@
         <ProjectReference Include="..\Plugin\LedCube.PluginHost\LedCube.PluginHost.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <AvaloniaXaml Include="Controls\StreamingControl\CubeStreamingStatusView.axaml.cs">
-        <SubType>Designer</SubType>
-        <DependentUpon>CubeStreamingStatusView.axaml</DependentUpon>
-      </AvaloniaXaml>
-    </ItemGroup>
-
 </Project>

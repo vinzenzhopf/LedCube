@@ -3,6 +3,7 @@
         xmlns:local="clr-namespace:LedCube.Core.UI.Dialog.BroadcastSearchDialog"
         xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
         x:Class="LedCube.Core.UI.Dialog.BroadcastSearchDialog.BroadcastSearchDialogWindow"
+        x:DataType="local:BroadcastSearchDialogViewModel"
         x:Name="DialogWindow"
         Height="400" Width="400"
         Title="Broadcast search..."
@@ -40,7 +41,7 @@
                       SelectedItem="{Binding SelectedAdapter}"
                       Margin="0,2,2,2">
                 <ComboBox.ItemTemplate>
-                    <DataTemplate>
+                    <DataTemplate x:DataType="local:NetworkAdapterViewModel">
                         <TextBlock Text="{Binding TextExtended}"/>
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
