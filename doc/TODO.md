@@ -76,10 +76,14 @@
 
 ## Testing
 
+- [x] Headless UI test harness (`LedCube.Core.UI.Test`, Avalonia.Headless.XUnit) —
+  covers `PlaybackControl` bindings/commands and `PlaylistService` repeat-mode
+  auto-advance / navigation (with in-memory playback/playlist/plugin fakes).
 - [ ] Add unit tests for core domain logic (`LedCube.Core.Common`)
 - [ ] Add tests for plugin lifecycle (`FrameGeneratorBase`, `PluginManager`)
 - [ ] Add tests for UDP communication / frame serialization
 - [ ] Integration tests for playback loop
+  - The `PlaybackService` frame loop itself (timer-driven draw / repeat / finish) is still uncovered.
 
 ## Animations
 
