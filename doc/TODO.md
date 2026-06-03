@@ -7,18 +7,30 @@
 ## UI (LedCube.Streamer.UI)
 
 - [x] Port to Avalonia 11.2 + FluentAvaloniaUI (replaces MahApps.Metro)
-- [x] Establish style system (`General.axaml` tokens, `Components.axaml`
-  icon-button/toolbar/muted classes, `Controls.axaml` with group-box
-  HeaderedContentControl template and DataGrid theming)
-- [x] LogAppender: DataGrid with resizable columns, level filter via
-  flyout, debounced flush (`ConcurrentQueue` → 100 ms `DispatcherTimer`),
-  `MaxEntries = 10 000`
-- [x] Move log severity brushes into theme-aware resources
-  (`General.axaml` ThemeDictionaries + `LogLevelToBrushConverter`;
-  `LogEntry` no longer carries an `IBrush`)
-- [ ] Improve/Fix animation list/selection UX
-- [x] Extract stat label/value pairs in `StreamingControl` into a
-  reusable `StatRow` `TemplatedControl`
+- [x] Establish style system (`General.axaml` tokens, `Components.axaml` icon-button/toolbar/muted classes, 
+  `Controls.axaml` with group-box HeaderedContentControl template and DataGrid theming)
+- [x] LogAppender: DataGrid with resizable columns, level filter via flyout, debounced flush 
+  (`ConcurrentQueue` → 100 ms `DispatcherTimer`), `MaxEntries = 10 000`
+- [x] Move log severity brushes into theme-aware resources (`General.axaml` 
+  ThemeDictionaries + `LogLevelToBrushConverter`; `LogEntry` no longer carries an `IBrush`)
+- [x] Extract stat label/value pairs in `StreamingControl` into a reusable `StatRow` `TemplatedControl`
+- [ ] Show AnimationFile Infos in the Playlist View of selected Animation, including name, description, author, optionally image and so on.
+- [ ] Move forward through the playlist when the end of an animation is reached
+- [ ] When manually Reving through the Playlist with the Rewind or FastForward Buttons in 
+  the PlaybackControl, the selected index in the Playlist is changed, but not the active playing entry. 
+  The Selection in the Playlist should not be updated that way.
+- [ ] Respect the Repeat setting in the General Settings, when playing a playlist
+  - When Repeat is set to 0, the same animation repeats itself indefinitely, until manually stopped or advanced.
+- [ ] Stop the Playing if the end of an Playlist is reached
+- [ ] The FPS counter in the PlaybackControl needs to be formatted to 2 decimal places
+
+### Animation List
+- Instead of referencing AnimationsFiles directy with Path, i would like to have a List of available AnimationFiles, like in an Music Player.
+- [ ] Define Paths in the Settings, where AnimationFiles can be found and discoverd.
+- [ ] Discover these Paths, maybe on startup, can be triggered by an tool bar entry. Build an Index of all AnimationFiles found.
+- [ ] Show the AnimationFiles in a List, with all their infos, like in an music player. (Maybe adda third Column in the MainView for that)
+- [ ] Allow the adding of those animation files to the Playlist.
+- [ ] Make the Animation List search-/filterable
 
 ## Animator (LedCube.Animator)
 
