@@ -468,3 +468,6 @@ fabric.properties
 
 CLAUDE.md
 .claude
+
+# DemoGen output
+demos-out/
