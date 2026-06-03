@@ -56,11 +56,15 @@ public static class TimelineRenderer
 
     private static void DrawLoopRegion(SKCanvas canvas, TimelineLayout layout, TimelineState state, float trackHeight, RenderResources res)
     {
-        if (!state.LoopEnabled || state.LoopStart is null || state.LoopEnd is null)
+        // Snapshot once: these are mutated on the UI thread while this runs on the render thread,
+        // so re-reading after the null check could see them flip to null in between.
+        int? loopStart = state.LoopStart;
+        int? loopEnd = state.LoopEnd;
+        if (!state.LoopEnabled || loopStart is null || loopEnd is null)
             return;
 
-        float x1 = (float)layout.FrameToPixel(state.LoopStart.Value);
-        float x2 = (float)layout.FrameToPixel(state.LoopEnd.Value);
+        float x1 = (float)layout.FrameToPixel(loopStart.Value);
+        float x2 = (float)layout.FrameToPixel(loopEnd.Value);
 
         if (x2 < 0f || x1 > (float)layout.ViewportWidth)
             return;
@@ -148,7 +152,10 @@ public static class TimelineRenderer
         // Time label baseline: below frame number (only when FrameTime is set)
         const float timeLabelY = RulerHeight - 2f;
 
-        bool hasFrameTime = state.FrameTime.HasValue;
+        // Snapshot once: TimelineState is mutated on the UI thread while this runs on the render
+        // thread, so re-reading state.FrameTime below could see it flip to null between the
+        // HasValue check and the .Value access (e.g. when an animation unloads during auto-advance).
+        TimeSpan? frameTime = state.FrameTime;
 
         // Align first major tick at or after first visible
         int startFrame = (first / majorInterval) * majorInterval;
@@ -163,9 +170,9 @@ public static class TimelineRenderer
             string frameLabel = frame.ToString();
             canvas.DrawText(frameLabel, x, frameNumberY, SKTextAlign.Center, res.RulerLabelFont, res.RulerLabelPaint);
 
-            if (hasFrameTime)
+            if (frameTime.HasValue)
             {
-                TimeSpan t = state.FrameTime!.Value * frame;
+                TimeSpan t = frameTime.Value * frame;
                 string timeLabel = $"{(int)t.TotalMinutes}:{t.Seconds:D2}.{t.Milliseconds:D3}";
                 canvas.DrawText(timeLabel, x, timeLabelY, SKTextAlign.Center, res.TimeLabelFont, res.TimeLabelPaint);
             }

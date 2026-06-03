@@ -40,6 +40,13 @@
 ## Animator (LedCube.Animator)
 
 - [ ] **TimelineControl** — scrubbing, multi-frame selection, comfortable frame editing
+- [ ] **TimelineControl render thread-safety** — `TimelineRenderer` reads the live `TimelineState`
+  on the Skia render thread while it is mutated on the UI thread (bindings like `FrameTime`,
+  `LoopStart/End` flipping to null during playlist auto-advance). This caused render-loop
+  `NullReference`/`Nullable must have a value` exceptions (swallowed by Avalonia's compositor, only
+  visible in the debugger). Worked around with per-field snapshots in `DrawRulerLabels`/`DrawLoopRegion`;
+  the proper fix is to pass an immutable render snapshot of `TimelineState` into `Draw` so the render
+  thread never reads the live mutable object.
 - [ ] **3D View** — fix and update; render cube properly, fix camera controls
 - [ ] **Selection modes** — multiple selection modes for picking/editing LEDs in 3D view
 - [ ] **2D plane selection** — finish plane-wise selection component
