@@ -15,14 +15,19 @@
   ThemeDictionaries + `LogLevelToBrushConverter`; `LogEntry` no longer carries an `IBrush`)
 - [x] Extract stat label/value pairs in `StreamingControl` into a reusable `StatRow` `TemplatedControl`
 - [ ] Show AnimationFile Infos in the Playlist View of selected Animation, including name, description, author, optionally image and so on.
-- [ ] Move forward through the playlist when the end of an animation is reached
-- [ ] When manually Reving through the Playlist with the Rewind or FastForward Buttons in 
+- [x] Move forward through the playlist when the end of an animation is reached
+- [x] When manually Reving through the Playlist with the Rewind or FastForward Buttons in 
   the PlaybackControl, the selected index in the Playlist is changed, but not the active playing entry. 
   The Selection in the Playlist should not be updated that way.
-- [ ] Respect the Repeat setting in the General Settings, when playing a playlist
-  - When Repeat is set to 0, the same animation repeats itself indefinitely, until manually stopped or advanced.
-- [ ] Stop the Playing if the end of an Playlist is reached
-- [ ] The FPS counter in the PlaybackControl needs to be formatted to 2 decimal places
+  (Rewind/FastForward now load+play the prev/next entry relative to the *playing* entry, leaving selection untouched.)
+- [x] Respect the per-entry Repeat setting when playing a playlist
+  - The per-entry `RepeatCount` is honoured by `PlaybackService` (0 = repeat that entry indefinitely; N = play N times before advancing).
+- [x] Stop the Playing if the end of an Playlist is reached
+  - Covered by the `StopAtEnd` playlist repeat mode (default).
+- [x] Playlist repeat mode — cycle button in PlaybackControl: StopAtEnd, LoopWholePlaylist (default),
+  RepeatCurrentEntry, FairRandomPlay (fair shuffle — all entries play before repeating), TrueRandomPlay.
+  - [ ] Persist the selected playlist repeat mode across sessions (currently in-memory only).
+- [x] The FPS counter in the PlaybackControl needs to be formatted to 2 decimal places
 
 ### Animation List
 - Instead of referencing AnimationsFiles directy with Path, i would like to have a List of available AnimationFiles, like in an Music Player.

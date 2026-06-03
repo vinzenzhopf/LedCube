@@ -8,6 +8,7 @@ using CommunityToolkit.Mvvm.Input;
 using LedCube.Core.UI.Controls.PlaylistControl;
 using LedCube.Core.UI.Services.Playback;
 using LedCube.Core.UI.Services.Playlist;
+using Material.Icons;
 
 namespace LedCube.Core.UI.Controls.PlaybackControl;
 
@@ -45,6 +46,37 @@ public partial class PlaybackControlViewModel : ObservableObject
         _currentTime = playbackService.CurrentTime;
         ((INotifyPropertyChanged)playbackService).PropertyChanged += OnServicePropertyChanged;
         ((INotifyCollectionChanged)playlistService.Entries).CollectionChanged += OnEntriesChanged;
+        playlistService.PropertyChanged += OnPlaylistServicePropertyChanged;
+    }
+
+    public PlaylistRepeatMode RepeatMode => _playlistService.RepeatMode;
+
+    public MaterialIconKind RepeatModeIcon => _playlistService.RepeatMode switch
+    {
+        PlaylistRepeatMode.StopAtEnd           => MaterialIconKind.RepeatOff,
+        PlaylistRepeatMode.LoopWholePlaylist   => MaterialIconKind.Repeat,
+        PlaylistRepeatMode.RepeatCurrentEntry  => MaterialIconKind.RepeatOnce,
+        PlaylistRepeatMode.FairRandomPlay => MaterialIconKind.ShuffleVariant,
+        PlaylistRepeatMode.TrueRandomPlay      => MaterialIconKind.Shuffle,
+        _                                      => MaterialIconKind.RepeatOff,
+    };
+
+    public string RepeatModeTooltip => _playlistService.RepeatMode switch
+    {
+        PlaylistRepeatMode.StopAtEnd           => "Stop at end of playlist",
+        PlaylistRepeatMode.LoopWholePlaylist   => "Loop whole playlist",
+        PlaylistRepeatMode.RepeatCurrentEntry  => "Repeat current entry",
+        PlaylistRepeatMode.FairRandomPlay => "Shuffle (play all before repeating)",
+        PlaylistRepeatMode.TrueRandomPlay      => "Random",
+        _                                      => string.Empty,
+    };
+
+    private void OnPlaylistServicePropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName != nameof(IPlaylistService.RepeatMode)) return;
+        OnPropertyChanged(nameof(RepeatMode));
+        OnPropertyChanged(nameof(RepeatModeIcon));
+        OnPropertyChanged(nameof(RepeatModeTooltip));
     }
 
     private static AnimationViewModel? BuildAnimationViewModel(PlaylistEntry? entry)
@@ -138,14 +170,17 @@ public partial class PlaybackControlViewModel : ObservableObject
     [RelayCommand(CanExecute = nameof(CanNavigatePlaylist))]
     private Task Forward(CancellationToken token)
     {
-        _playlistService.SelectNext();
+        _playlistService.PlayNext();
         return Task.CompletedTask;
     }
 
     [RelayCommand(CanExecute = nameof(CanNavigatePlaylist))]
     private Task Backward(CancellationToken token)
     {
-        _playlistService.SelectPrevious();
+        _playlistService.PlayPrevious();
         return Task.CompletedTask;
     }
+
+    [RelayCommand]
+    private void CycleRepeatMode() => _playlistService.CycleRepeatMode();
 }

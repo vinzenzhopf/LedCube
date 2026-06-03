@@ -16,9 +16,19 @@ Pure data record holding everything needed to load and configure one animation i
 Source of truth for the playlist. Holds `IPlaybackService` directly.
 - `Entries` — `ReadOnlyObservableCollection<PlaylistEntry>`; all mutations go through service methods (`Add`, `Insert`, `Remove`, `Move`)
 - `SelectedEntry` — the entry currently selected for config editing (read-only externally, set via `Select`)
-- `Select`, `SelectNext`, `SelectPrevious` — change selection only; do not affect playback
+- `Select` — changes selection only; does not affect playback
+- `PlayNext`, `PlayPrevious` — load and play the entry after/before the currently *playing* one (wraps around); anchored to `IPlaybackService.CurrentEntry` and never touch the selection. Manual skipping is always sequential regardless of `RepeatMode`.
+- `RepeatMode` / `CycleRepeatMode` — playlist auto-advance policy (`PlaylistRepeatMode`), cycled by the PlaybackControl repeat button. In-memory only (not yet persisted).
 - When `SelectedEntry` changes: sends `PlaylistSelectionChangedMessage` so config UI updates
-- On `PlaybackFinishedMessage`: advances to the next entry after the currently loaded one, loads it, and starts playback (auto-advance)
+- On `PlaybackFinishedMessage`: auto-advances per `RepeatMode` (see below); auto-advance never changes the selection
+
+### PlaylistRepeatMode
+Governs what happens when an entry finishes (after its own per-entry `RepeatCount` is exhausted):
+- `StopAtEnd` — play through once, stop at the last entry
+- `LoopWholePlaylist` (default) — advance sequentially, wrap last → first
+- `RepeatCurrentEntry` — keep replaying the current entry
+- `FairRandomPlay` — fair shuffle: every entry plays once before any repeats
+- `TrueRandomPlay` — pick a fully random entry each time
 
 ### PlaybackService
 Drives the animation frame loop as a `BackgroundService`. Holds no reference to `PlaylistService`.
@@ -26,7 +36,9 @@ Drives the animation frame loop as a `BackgroundService`. Holds no reference to 
 - `StartPlayback`, `StopPlayback`, `PausePlayback`, `ContinuePlayback`, `SeekToFrame` — control playback state
 - `CurrentEntry` — the entry currently loaded (independent of which entry is selected)
 - `FrameTime` — effective frame time after loading (override or generator default)
-- Fires `PlaybackFinishedMessage` when an animation signals `DrawingResult.Finished` and all repeats are exhausted
+- Honours the entry's per-entry `RepeatCount` (read live on each finish: 0 = repeat forever, N = play N times) before advancing
+- `FileAnimationGenerator` plays its file with `loopOverride: false`, so a baked `loop: true` flag does not loop internally forever — the animation reports finished after one pass and repetition is governed by `RepeatCount` / `RepeatMode`
+- Fires `PlaybackFinishedMessage` when an animation signals `DrawingResult.Finished` and its repeats are exhausted
 
 ### PlaylistControlViewModel
 Thin UI adapter over `PlaylistService` and `IPlaybackService`.
@@ -49,7 +61,8 @@ Receives `PlaylistSelectionChangedMessage` and rebuilds the config UI for the se
 Exposes playback commands and current state to the UI. Holds `IPlaybackService` and `IPlaylistService`.
 - Mirrors `PlaybackState`, `CurrentFrame`, `CurrentTime`, `FrameTime`, and `CurrentEntry` from `IPlaybackService` via `PropertyChanged` subscription
 - All playback commands (Play/Continue, Pause, Stop, Restart) are disabled when no entry is loaded
-- Forward/Backward navigate the playlist (selection only); disabled when fewer than 2 entries
+- Forward/Backward skip the active playback to the next/previous playlist entry (via `PlayNext`/`PlayPrevious`); they do not change the selection; disabled when fewer than 2 entries
+- A repeat button cycles `PlaylistService.RepeatMode` (`CycleRepeatModeCommand`); its icon/tooltip mirror the current mode
 - Constructs a local `AnimationViewModel` from the loaded `PlaylistEntry` for display; updates `FrameTime` once the generator has initialised
 
 ## Selection vs Playback

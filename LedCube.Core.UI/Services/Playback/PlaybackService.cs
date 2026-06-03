@@ -48,7 +48,9 @@ public partial class PlaybackService : BackgroundService, IPlaybackService
     private long _elapsedTicks = 0;
     private long _lastFrameTicks = 0;
     private long _frameTicks = 0;
-    private int _remainingRepeats = 1;
+    // Times the current entry has finished playing since playback (re)started. Compared against the
+    // entry's live RepeatCount on each finish, so editing Repeat mid-playback takes effect immediately.
+    private int _playCount = 0;
 
     [ObservableProperty]
     private PlaylistEntry? _currentEntry;
@@ -127,7 +129,7 @@ public partial class PlaybackService : BackgroundService, IPlaybackService
         CurrentFrame = 0;
         CurrentTime = TimeSpan.Zero;
         _elapsedTicksUntilPause = 0;
-        _remainingRepeats = CurrentEntry?.RepeatCount ?? 1;
+        _playCount = 0;
         _updateTimer = new PeriodicTimer(_frameTime);
         _stopwatch.Restart();
 
@@ -185,7 +187,6 @@ public partial class PlaybackService : BackgroundService, IPlaybackService
 
     private void HandleRepeat()
     {
-        if (_remainingRepeats > 0) _remainingRepeats--;
         CurrentFrame = 0;
         CurrentTime = TimeSpan.Zero;
         _elapsedTicksUntilPause = 0;
@@ -230,14 +231,18 @@ public partial class PlaybackService : BackgroundService, IPlaybackService
 
                     if (result == DrawingResult.Finished)
                     {
-                        _logger.LogInformation("Animation signalled finished.");
+                        _playCount++;
+                        // RepeatCount is read live every finish: 0 = repeat forever, N = play N times.
                         var count = CurrentEntry?.RepeatCount ?? 1;
-                        if (count == 0 || _remainingRepeats > 1)
+                        if (count == 0 || _playCount < count)
                         {
+                            _logger.LogInformation("Animation finished, repeating (play {Play} of {Count}).",
+                                _playCount + 1, count == 0 ? "∞" : count.ToString());
                             HandleRepeat();
                         }
                         else
                         {
+                            _logger.LogInformation("Animation finished after {Count} play(s).", count);
                             StopPlayback();
                             WeakReferenceMessenger.Default.Send(new PlaybackFinishedMessage());
                         }
