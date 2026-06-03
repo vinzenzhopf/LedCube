@@ -110,7 +110,7 @@ public class RoundtripTests
     {
         var animation = WithLoop(AnimationBuilder.Static(LedFormat.Binary, new Point3D(4, 4, 4)), true);
         var read = AnimationBuilder.RoundTrip(animation);
-        Assert.True(read.Manifest.Loop);
+        Assert.True(read.Manifest.SeamlessLoop);
         Assert.Equal(animation, read);
     }
 
@@ -119,7 +119,7 @@ public class RoundtripTests
     {
         var animation = WithLoop(AnimationBuilder.Static(LedFormat.Binary, new Point3D(4, 4, 4)), false);
         var read = AnimationBuilder.RoundTrip(animation);
-        Assert.False(read.Manifest.Loop);
+        Assert.False(read.Manifest.SeamlessLoop);
         Assert.Equal(animation, read);
     }
 
@@ -188,7 +188,7 @@ public class RoundtripTests
     }
 
     private static RawAnimation WithLoop(RawAnimation source, bool loop) => new(
-        source.Manifest with { Loop = loop },
+        source.Manifest with { SeamlessLoop = loop },
         source.Frames,
         source.Keyframes,
         source.Thumbnail);

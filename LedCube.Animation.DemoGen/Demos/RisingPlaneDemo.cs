@@ -18,7 +18,7 @@ public sealed class RisingPlaneDemo : IDemo
         var author = new AnimationAuthor(
             size,
             frameTimeUs: 50_000, // 20 fps
-            loop: true,
+            seamlessLoop: true,
             name: "Rising Plane",
             description: "A horizontal plane sweeping up the cube.");
 

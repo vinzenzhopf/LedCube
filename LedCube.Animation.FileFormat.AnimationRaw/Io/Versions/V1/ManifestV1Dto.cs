@@ -21,7 +21,7 @@ internal sealed record ManifestV1Dto
     public string? LedFormat { get; init; }
     public int FrameCount { get; init; }
     public uint FrameTimeUs { get; init; }
-    public bool Loop { get; init; }
+    public bool SeamlessLoop { get; init; }
     public List<KeyframeDto>? Keyframes { get; init; }
 
     /// <summary>Unknown/forward-compatible manifest fields, preserved for round-tripping.</summary>

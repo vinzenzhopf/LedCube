@@ -20,7 +20,7 @@ public sealed class AnimationAuthor
     private readonly Point3D _size;
     private readonly LedFormat _format;
     private readonly uint _frameTimeUs;
-    private readonly bool _loop;
+    private readonly bool _seamlessLoop;
     private readonly string _name;
     private readonly string? _author;
     private readonly string? _description;
@@ -31,7 +31,7 @@ public sealed class AnimationAuthor
     public AnimationAuthor(
         Point3D size,
         uint frameTimeUs,
-        bool loop = false,
+        bool seamlessLoop = false,
         LedFormat format = LedFormat.Binary,
         string name = "Demo Animation",
         string? author = null,
@@ -40,7 +40,7 @@ public sealed class AnimationAuthor
         _size = size;
         _format = format;
         _frameTimeUs = frameTimeUs;
-        _loop = loop;
+        _seamlessLoop = seamlessLoop;
         _name = name;
         _author = author;
         _description = description;
@@ -97,7 +97,7 @@ public sealed class AnimationAuthor
             LedFormat = _format,
             FrameCount = _frames.Count,
             FrameTimeUs = _frameTimeUs,
-            Loop = _loop,
+            SeamlessLoop = _seamlessLoop,
         };
 
         return new RawAnimation(manifest, _frames, keyframes);

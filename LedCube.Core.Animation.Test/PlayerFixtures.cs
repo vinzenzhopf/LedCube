@@ -18,7 +18,7 @@ internal static class PlayerFixtures
         LedFormat = format,
         FrameCount = frameCount,
         FrameTimeUs = frameTimeUs,
-        Loop = loop,
+        SeamlessLoop = loop,
     };
 
     /// <summary>A bit-packed binary frame of the right stride with the given LED indices turned on.</summary>

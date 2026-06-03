@@ -50,7 +50,7 @@ internal static class ReadV1
             LedFormat = ledFormat,
             FrameCount = dto.FrameCount,
             FrameTimeUs = dto.FrameTimeUs,
-            Loop = dto.Loop,
+            SeamlessLoop = dto.SeamlessLoop,
             ExtraFields = dto.Extra is { Count: > 0 } ? dto.Extra : null,
         };
 

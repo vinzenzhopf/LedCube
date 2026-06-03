@@ -105,8 +105,11 @@ public sealed class FileAnimationGenerator(
 
         try
         {
+            // loopOverride: false — ignore the file's authored loop flag during playlist playback so
+            // the animation reports finished after one pass. Repetition is then governed by the
+            // playlist's per-entry RepeatCount and RepeatMode instead of looping internally forever.
             _player = new RawAnimationPlayer(
-                _animation, new CubeRenderOptions(animationContext.CubeData.Size));
+                _animation, new CubeRenderOptions(animationContext.CubeData.Size), loopOverride: false);
             _player.Reset();
         }
         catch (Exception e)

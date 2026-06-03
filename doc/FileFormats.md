@@ -105,7 +105,7 @@ Unknown entries must be preserved by readers that re-save the file. Unknown mani
   "ledFormat": "Rgb",
   "frameCount": 1500,
   "frameTimeUs": 20000,
-  "loop": true,
+  "seamlessLoop": true,
   "keyframes": [
     { "at": 0,    "id": 0 },
     { "at": 100,  "id": 1 },
@@ -126,7 +126,7 @@ Unknown entries must be preserved by readers that re-save the file. Unknown mani
 | `ledFormat`      | enum str  | yes      | `Binary` (1 bit), `Grayscale` (8 bit), `Rgb` (24 bit).             |
 | `frameCount`     | int       | yes      | **Timeline length in frames** (not the number of unique frames).   |
 | `frameTimeUs`    | uint      | yes      | Authoring frame period in microseconds. Player may override.       |
-| `loop`           | bool      | no       | Player hint. Default `false`.                                      |
+| `seamlessLoop`   | bool      | no       | Authoring hint: animation is a seamless loop. Informational only — playback repetition is controlled by the player/playlist. Default `false`. |
 | `keyframes`      | array     | yes      | Schedule. See [Keyframes and the frame pool](#keyframes-and-the-frame-pool). |
 
 ### LED encoding (`ledFormat`)
@@ -189,7 +189,7 @@ If the authoring project used transitions (fades, blends), the baker is responsi
 
 A static animation is exactly one keyframe: `[{ at: 0, id: 0 }]` with `frames.bin` holding a single frame and `frameCount` controlling the hold duration.
 
-After the last keyframe ends, content **holds** until `frameCount`, then either stops (if `loop=false`) or snaps to `keyframes[0]` (if `loop=true`).
+After the last keyframe ends, content **holds** until `frameCount`. Whether the timeline then stops or wraps to `keyframes[0]` is decided by the player (a host playing a playlist controls repetition via its own repeat settings); `seamlessLoop` is only an authoring hint that wrapping is visually seamless.
 
 #### Color space
 

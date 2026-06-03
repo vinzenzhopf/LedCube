@@ -36,8 +36,12 @@ public sealed record AnimationManifest
     /// <summary>Authoring frame period in microseconds. A player may override it.</summary>
     public required uint FrameTimeUs { get; init; }
 
-    /// <summary>Player hint: loop the timeline after the last frame. Defaults to false.</summary>
-    public bool Loop { get; init; }
+    /// <summary>
+    /// Authoring hint: the animation is a seamless loop (its last frame flows back into the first).
+    /// Informational only — playback repetition is controlled by the player/playlist, not this flag.
+    /// Defaults to false.
+    /// </summary>
+    public bool SeamlessLoop { get; init; }
 
     /// <summary>
     /// Unknown manifest fields preserved verbatim for round-tripping newer files through

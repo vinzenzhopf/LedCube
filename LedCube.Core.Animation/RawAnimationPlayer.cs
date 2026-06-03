@@ -15,13 +15,19 @@ public sealed class RawAnimationPlayer
 {
     private readonly RawAnimation _animation;
     private readonly IFrameRenderer _renderer;
+    private readonly bool _loop;
     private int _lastRenderedPoolId = -1;
 
     /// <summary>Authored frame period.</summary>
     public TimeSpan FrameTime { get; }
 
     public int FrameCount => _animation.Manifest.FrameCount;
-    public bool Loop => _animation.Manifest.Loop;
+
+    /// <summary>
+    /// Whether the timeline loops. Defaults to the animation's authored <c>loop</c> flag, but a host
+    /// (e.g. a playlist player that controls repetition via its own repeat count) can override it.
+    /// </summary>
+    public bool Loop => _loop;
     public Point3D Size => _animation.Manifest.Size;
     public LedFormat Format => _animation.Manifest.LedFormat;
 
@@ -29,7 +35,11 @@ public sealed class RawAnimationPlayer
     /// The animation's LED format is unsupported (v1: anything but Binary), or its size does not
     /// satisfy <see cref="CubeRenderOptions.SizeMismatch"/>.
     /// </exception>
-    public RawAnimationPlayer(RawAnimation animation, CubeRenderOptions options)
+    /// <param name="loopOverride">
+    /// When non-null, overrides the animation's authored <c>loop</c> flag. Pass <c>false</c> so the
+    /// player reports finished after one pass and lets the host control repetition.
+    /// </param>
+    public RawAnimationPlayer(RawAnimation animation, CubeRenderOptions options, bool? loopOverride = null)
     {
         _animation = animation ?? throw new ArgumentNullException(nameof(animation));
         ArgumentNullException.ThrowIfNull(options);
@@ -37,6 +47,7 @@ public sealed class RawAnimationPlayer
         _renderer = SelectRenderer(animation.Manifest.LedFormat);
         ValidateSize(animation.Manifest.Size, options);
 
+        _loop = loopOverride ?? animation.Manifest.SeamlessLoop;
         FrameTime = TimeSpan.FromMicroseconds(animation.Manifest.FrameTimeUs);
     }
 

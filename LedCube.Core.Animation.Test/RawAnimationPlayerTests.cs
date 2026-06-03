@@ -11,7 +11,7 @@ public class RawAnimationPlayerTests
 {
     private static readonly Point3D Cube16 = new(16, 16, 16);
 
-    private static RawAnimationPlayer TwoKeyframePlayer(bool loop = false, int frameCount = 10)
+    private static RawAnimationPlayer TwoKeyframePlayer(bool loop = false, int frameCount = 10, bool? loopOverride = null)
     {
         var manifest = PlayerFixtures.Manifest(Cube16, frameCount: frameCount, frameTimeUs: 1000, loop: loop);
         var frames = new List<Frame>
@@ -20,7 +20,25 @@ public class RawAnimationPlayerTests
             new(PlayerFixtures.BinaryFrame(Cube16, 1)),
         };
         var keyframes = new List<Keyframe> { new(0, 0), new(5, 1) };
-        return new RawAnimationPlayer(PlayerFixtures.Build(manifest, frames, keyframes), new CubeRenderOptions(Cube16));
+        return new RawAnimationPlayer(PlayerFixtures.Build(manifest, frames, keyframes), new CubeRenderOptions(Cube16), loopOverride);
+    }
+
+    [Fact]
+    public void LoopOverride_False_ForcesFinish_EvenWhenManifestLoops()
+    {
+        // A file authored with loop=true must still report finished after one pass when the host
+        // overrides loop to false (the playlist player controls repetition itself).
+        var player = TwoKeyframePlayer(loop: true, frameCount: 10, loopOverride: false);
+        Assert.False(player.Loop);
+        Assert.True(player.IsFinishedAt(10_000));
+        Assert.Equal(9, player.TimelinePositionAt(50_000)); // holds last frame, no wrap
+    }
+
+    [Fact]
+    public void LoopOverride_Null_UsesManifestLoopFlag()
+    {
+        Assert.True(TwoKeyframePlayer(loop: true).Loop);
+        Assert.False(TwoKeyframePlayer(loop: false).Loop);
     }
 
     [Theory]

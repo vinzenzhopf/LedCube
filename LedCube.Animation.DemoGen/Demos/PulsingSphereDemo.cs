@@ -22,7 +22,7 @@ public sealed class PulsingSphereDemo : IDemo
         var author = new AnimationAuthor(
             cube.Size,
             frameTimeUs: 33_000, // ~30 fps
-            loop: true,
+            seamlessLoop: true,
             name: "Pulsing Sphere",
             description: "A sphere breathing in and out, rendered from a signed distance field.");
 

@@ -52,7 +52,7 @@ internal static class AnimationBuilder
         LedFormat = ledFormat,
         FrameCount = frameCount,
         FrameTimeUs = frameTimeUs,
-        Loop = loop,
+        SeamlessLoop = loop,
         ExtraFields = extraFields,
     };
 

@@ -110,7 +110,7 @@ public static class LcAnimRawWriter
         LedFormat = manifest.LedFormat.ToString(),
         FrameCount = manifest.FrameCount,
         FrameTimeUs = manifest.FrameTimeUs,
-        Loop = manifest.Loop,
+        SeamlessLoop = manifest.SeamlessLoop,
         Keyframes = keyframes.Select(k => new KeyframeDto { At = k.At, Id = k.Id }).ToList(),
         Extra = manifest.ExtraFields is { Count: > 0 }
             ? new Dictionary<string, System.Text.Json.JsonElement>(manifest.ExtraFields)
