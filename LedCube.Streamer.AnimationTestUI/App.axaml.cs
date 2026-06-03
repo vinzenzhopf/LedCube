@@ -117,6 +117,9 @@ public partial class App : Application,
                 services.AddSingleton(appInfo);
                 services.AddSingleton<ISettingsProvider<LedCubeStreamerSettings>>(settingsProvider);
                 services.AddSingleton<ISettings<LedCubeStreamerSettings>>(settingsProvider);
+                services.AddSingleton<ISettingsProvider<LastConnectionSettings>>(
+                    new SectionSettingsProvider<LedCubeStreamerSettings, LastConnectionSettings>(
+                        settingsProvider, s => s.LastConnection, (s, v) => s with { LastConnection = v }));
                 services.AddLogAppenderControlViewModel(logAppenderControlSink);
                 services.SetupPluginHost(_pluginHostContext);
                 ConfigureServices(services);

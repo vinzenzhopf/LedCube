@@ -8,6 +8,8 @@ using Avalonia.Controls;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using LedCube.Core.Common.Config;
+using LedCube.Core.Common.Settings;
 using LedCube.Core.UI.Util;
 using LedCube.Streamer.UdpCom;
 using Microsoft.Extensions.Logging;
@@ -20,6 +22,7 @@ public partial class BroadcastSearchDialogViewModel : ObservableObject
 {
     private readonly Func<IUdpCubeCommunication> _cubeCommunicationFactory;
     private readonly ILogger _logger;
+    private readonly ISettingsProvider<LastConnectionSettings>? _lastConnection;
     
     [ObservableProperty]
     private string _title = string.Empty;
@@ -63,12 +66,13 @@ public partial class BroadcastSearchDialogViewModel : ObservableObject
 
     public BroadcastSearchDialogViewModel(
         ILoggerFactory loggerFactory,
-        Func<IUdpCubeCommunication> cubeCommunicationFactory)
+        Func<IUdpCubeCommunication> cubeCommunicationFactory,
+        ISettingsProvider<LastConnectionSettings>? lastConnection = null)
     {
         _logger = loggerFactory.CreateLogger(GetType());
         _cubeCommunicationFactory = cubeCommunicationFactory;
-        // _settings = settings;
-        RemotePort = 4242; //settings.LastBroadcastPort;
+        _lastConnection = lastConnection;
+        RemotePort = lastConnection?.Settings.Port ?? 4242;
     }
     
     private async Task UpdateAdaptersInternal(CancellationToken token)
@@ -93,12 +97,13 @@ public partial class BroadcastSearchDialogViewModel : ObservableObject
                     {
                         NetworkAdapters.Add(a);
                     }
-                    // if (selectedIp == null && _settings.LastSelectedIp != null)
-                    //     selectedIp = _settings.LastSelectedIp;
+                    if (selectedIp == null &&
+                        IPAddress.TryParse(_lastConnection?.Settings.AdapterAddress, out var lastIp))
+                        selectedIp = lastIp;
                     if (selectedIp != null)
-                        SelectedAdapter = NetworkAdapters?.FirstOrDefault(a => Equals(a.Address, selectedIp));
+                        SelectedAdapter = NetworkAdapters?.FirstOrDefault(a => Equals(a.Address, selectedIp))
+                                          ?? NetworkAdapters?.First();
                     else
-                        // SelectedAdapterIndex = 0
                         SelectedAdapter = NetworkAdapters.First();
                     Log.Verbose("Updated AdapterList in UI");
                 }, DispatcherPriority.Background);
@@ -177,8 +182,22 @@ public partial class BroadcastSearchDialogViewModel : ObservableObject
     private void OnOkClicked(object window)
     {
         if (window is not Window w) return;
+        SaveLastConnection();
         DialogResult = new BroadcastSearchDialogResult(SelectedDestination, true);
         w.Close(true);
+    }
+
+    private void SaveLastConnection()
+    {
+        if (_lastConnection is null)
+            return;
+        _lastConnection.SaveAndUpdate(_lastConnection.Settings with
+        {
+            AdapterAddress = SelectedAdapter?.Address.ToString(),
+            Port = RemotePort is > ushort.MinValue and < ushort.MaxValue
+                ? RemotePort.Value
+                : _lastConnection.Settings.Port
+        });
     }
 
     [RelayCommand]

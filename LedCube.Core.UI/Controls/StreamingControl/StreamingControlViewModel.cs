@@ -7,6 +7,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using LedCube.Core.Common;
+using LedCube.Core.Common.Config;
+using LedCube.Core.Common.Settings;
 using LedCube.Core.UI.Dialog.BroadcastSearchDialog;
 using LedCube.Streamer.CubeStreamer;
 using LedCube.Streamer.UdpCom;
@@ -17,6 +19,8 @@ namespace LedCube.Core.UI.Controls.StreamingControl;
 public partial class StreamingControlViewModel : ObservableObject
 {
     private readonly ILogger _logger;
+    private readonly ISettingsProvider<LastConnectionSettings>? _lastConnection;
+    private readonly ISettingsProvider<CubeStreamerSettings>? _connectionDefaults;
     public ICubeStreamer CubeStreamer { get; }
     public CubeStreamingStatusViewModel StreamingStatusViewModel { get; }
 
@@ -24,7 +28,7 @@ public partial class StreamingControlViewModel : ObservableObject
     [NotifyPropertyChangedFor(nameof(IsConnectionValid))]
     [NotifyPropertyChangedFor(nameof(HostAndPort))]
     [NotifyCanExecuteChangedFor(nameof(ConnectCommand))]
-    private string _host = "192.168.178.41";//string.Empty;
+    private string _host = string.Empty;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsConnectionValid))]
@@ -61,12 +65,30 @@ public partial class StreamingControlViewModel : ObservableObject
         ILoggerFactory loggerFactory,
         AppInfo appInfo,
         ICubeStreamer cubeStreamer,
-        CubeStreamingStatusViewModel streamingStatusViewModel
+        CubeStreamingStatusViewModel streamingStatusViewModel,
+        ISettingsProvider<LastConnectionSettings>? lastConnection = null,
+        ISettingsProvider<CubeStreamerSettings>? connectionDefaults = null
     )
     {
         _logger = loggerFactory.CreateLogger(GetType());
         CubeStreamer = cubeStreamer;
         StreamingStatusViewModel = streamingStatusViewModel;
+        _lastConnection = lastConnection;
+        _connectionDefaults = connectionDefaults;
+
+        // Seed from last-used connection, falling back to the configured default.
+        var last = lastConnection?.Settings;
+        var defaults = connectionDefaults?.Settings;
+        if (last is not null && !string.IsNullOrWhiteSpace(last.Hostname))
+        {
+            _host = last.Hostname;
+            _port = last.Port;
+        }
+        else if (defaults is not null && !string.IsNullOrWhiteSpace(defaults.Hostname))
+        {
+            _host = defaults.Hostname;
+            _port = defaults.Port;
+        }
     }
 
     [RelayCommand]
@@ -103,6 +125,8 @@ public partial class StreamingControlViewModel : ObservableObject
             await Dispatcher.UIThread.InvokeAsync(
                 () => { ConnectionState = connected ? ConnectionState.Connected : ConnectionState.Disconnected; },
                 DispatcherPriority.Normal);
+            if (connected)
+                SaveLastConnection();
         }
         catch (OperationCanceledException)
         {
@@ -179,5 +203,16 @@ public partial class StreamingControlViewModel : ObservableObject
         {
             _logger.LogError(e, "Error while stop streaming");
         }
+    }
+
+    private void SaveLastConnection()
+    {
+        if (_lastConnection is null || Port is null)
+            return;
+        _lastConnection.SaveAndUpdate(_lastConnection.Settings with
+        {
+            Hostname = Host,
+            Port = Port.Value
+        });
     }
 }

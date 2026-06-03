@@ -114,6 +114,7 @@ public partial class App : Application,
                 services.AddSettingsProvider<LedCubeStreamerSettings>("LedCube", settingsFile, LedCubeStreamerSettings.Default)
                     .AddSection(s => s.Cube, (s, v) => s with { Cube = v })
                     .AddSection(s => s.Connection, (s, v) => s with { Connection = v })
+                    .AddSection(s => s.LastConnection, (s, v) => s with { LastConnection = v })
                     .AddSection(s => s.KeyboardControl, (s, v) => s with { KeyboardControl = v });
                 services.AddLogAppenderControlViewModel(logAppenderControlSink);
 
