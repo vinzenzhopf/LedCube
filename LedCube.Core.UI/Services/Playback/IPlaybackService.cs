@@ -10,6 +10,7 @@ public interface IPlaybackService
     public PlaybackState PlaybackState { get; }
     public PlaylistEntry? CurrentEntry { get; }
     public TimeSpan FrameTime { get; }
+    public int? FrameCount { get; }
     public int CurrentFrame { get; }
     public TimeSpan CurrentTime { get; }
     public Task UpdateFrameGeneratorAsync(PlaylistEntry entry, CancellationToken token);

@@ -65,10 +65,19 @@ public partial class PlaybackControlViewModel : ObservableObject
         {
             case nameof(IPlaybackService.CurrentEntry):
                 Animation = BuildAnimationViewModel(_playbackService.CurrentEntry);
+                if (Animation is not null)
+                {
+                    Animation.FrameTime = _playbackService.FrameTime;
+                    Animation.FrameCount = _playbackService.FrameCount ?? 0;
+                }
                 break;
             case nameof(IPlaybackService.FrameTime):
                 if (Animation is not null)
                     Animation.FrameTime = _playbackService.FrameTime;
+                break;
+            case nameof(IPlaybackService.FrameCount):
+                if (Animation is not null)
+                    Animation.FrameCount = _playbackService.FrameCount ?? 0;
                 break;
             case nameof(IPlaybackService.PlaybackState):
                 PlaybackState = _playbackService.PlaybackState;

@@ -33,7 +33,7 @@ public partial class AnimationViewModel : ObservableObject
     [ObservableProperty]
     private FrameGeneratorInfo? _generatorInfo;
 
-    public double FrameFrequency => FrameTime.TotalSeconds;
+    public double FrameFrequency => FrameTime.TotalSeconds > 0 ? 1.0 / FrameTime.TotalSeconds : 0;
     public TimeSpan TotalTime => TimeSpan.FromTicks((long)(FrameCount * FrameTime.Ticks));
 
     public AnimationViewModel()

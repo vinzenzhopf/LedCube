@@ -9,7 +9,13 @@ public interface IFrameGenerator
     static abstract FrameGeneratorInfo Info { get; }
 
     TimeSpan? FrameTime { get; }
-    
+
+    /// <summary>
+    /// Total number of frames on the animation's timeline, or null when the animation is
+    /// open-ended / dynamic (e.g. interactive or procedural generators).
+    /// </summary>
+    int? FrameCount => null;
+
     /// <summary>
     /// Initializes the Animation. Allows the Animation to do some preparation/initialization work to be done in advance and asynchronously.
     /// </summary>

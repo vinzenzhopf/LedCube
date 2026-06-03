@@ -91,6 +91,12 @@ public partial class PluginConfigControlViewModel : ObservableObject, IRecipient
             return;
 
         foreach (var descriptor in descriptors)
-            ConfigEntries.Add(new ConfigEntryViewModel(descriptor, entry.Config));
+            ConfigEntries.Add(new ConfigEntryViewModel(descriptor, entry.Config, OnConfigEntryChanged));
+    }
+
+    private void OnConfigEntryChanged()
+    {
+        if (_selectedEntry is not null)
+            WeakReferenceMessenger.Default.Send(new PlaylistEntryConfigChangedMessage(_selectedEntry));
     }
 }

@@ -41,6 +41,8 @@ public partial class PlaybackService : BackgroundService, IPlaybackService
 
     public TimeSpan FrameTime => _frameTime;
     private TimeSpan _frameTime = TimeSpan.Zero;
+    public int? FrameCount => _frameCount;
+    private int? _frameCount;
     private TimeSpan _lastFrameTime = TimeSpan.Zero;
     private long _elapsedTicksUntilPause = 0;
     private long _elapsedTicks = 0;
@@ -85,6 +87,8 @@ public partial class PlaybackService : BackgroundService, IPlaybackService
             ?? _frameGenerator.FrameTime
             ?? TimeSpan.FromMilliseconds(1);
         OnPropertyChanged(nameof(FrameTime));
+        _frameCount = _frameGenerator.FrameCount;
+        OnPropertyChanged(nameof(FrameCount));
         _updateTimer = null;
 
         await _frameGenerator.InitializeAsync(token).ConfigureAwait(false);
@@ -98,6 +102,8 @@ public partial class PlaybackService : BackgroundService, IPlaybackService
 
         CurrentEntry = null;
         PlaybackState = PlaybackState.Stopped;
+        _frameCount = null;
+        OnPropertyChanged(nameof(FrameCount));
 
         (_frameGenerator as IDisposable)?.Dispose();
         _frameGenerator = null;

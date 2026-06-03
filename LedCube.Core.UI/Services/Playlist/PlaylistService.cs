@@ -10,7 +10,9 @@ using Microsoft.Extensions.Logging;
 
 namespace LedCube.Core.UI.Services.Playlist;
 
-public partial class PlaylistService : ObservableObject, IPlaylistService, IRecipient<PlaybackFinishedMessage>
+public partial class PlaylistService : ObservableObject, IPlaylistService,
+    IRecipient<PlaybackFinishedMessage>,
+    IRecipient<PlaylistEntryConfigChangedMessage>
 {
     private readonly ILogger<PlaylistService> _logger;
     private readonly IPluginManager _pluginManager;
@@ -29,7 +31,7 @@ public partial class PlaylistService : ObservableObject, IPlaylistService, IReci
         _playbackService = playbackService;
         Entries = new ReadOnlyObservableCollection<PlaylistEntry>(_entries);
         _entries.CollectionChanged += OnEntriesChanged;
-        WeakReferenceMessenger.Default.Register(this);
+        WeakReferenceMessenger.Default.RegisterAll(this);
     }
 
     partial void OnSelectedEntryChanged(PlaylistEntry? value)
@@ -87,6 +89,17 @@ public partial class PlaylistService : ObservableObject, IPlaylistService, IReci
         SelectedEntry = next;
 
         _ = LoadAndPlayAsync(next);
+    }
+
+    public void Receive(PlaylistEntryConfigChangedMessage message)
+    {
+        // Reconfigure the loaded generator so config edits (e.g. a new file path) take effect.
+        // Only when this entry is the loaded one and playback is stopped, so a running
+        // animation is never interrupted out from under the user.
+        if (!ReferenceEquals(message.Entry, _playbackService.CurrentEntry)) return;
+        if (_playbackService.PlaybackState != PlaybackState.Stopped) return;
+
+        _ = _playbackService.UpdateFrameGeneratorAsync(message.Entry, CancellationToken.None);
     }
 
     private async Task LoadAndPlayAsync(PlaylistEntry entry)

@@ -1,3 +1,4 @@
+using System;
 using CommunityToolkit.Mvvm.ComponentModel;
 using LedCube.PluginBase;
 
@@ -6,6 +7,7 @@ namespace LedCube.Core.UI.Controls.PluginConfigControl;
 public partial class ConfigEntryViewModel : ObservableObject
 {
     private readonly AnimationConfig _config;
+    private readonly Action? _onChanged;
 
     public AnimationConfigDescriptor Descriptor { get; }
 
@@ -18,6 +20,7 @@ public partial class ConfigEntryViewModel : ObservableObject
         OnPropertyChanged(nameof(StringValue));
         OnPropertyChanged(nameof(BoolValue));
         OnPropertyChanged(nameof(EnumValue));
+        _onChanged?.Invoke();
     }
 
     public string StringValue
@@ -47,10 +50,11 @@ public partial class ConfigEntryViewModel : ObservableObject
         set => Value = value;
     }
 
-    public ConfigEntryViewModel(AnimationConfigDescriptor descriptor, AnimationConfig config)
+    public ConfigEntryViewModel(AnimationConfigDescriptor descriptor, AnimationConfig config, Action? onChanged = null)
     {
         Descriptor = descriptor;
         _config = config;
+        _onChanged = onChanged;
         _value = config.TryGetValue(descriptor.Key, out var v) ? v : descriptor.DefaultValue;
     }
 }
