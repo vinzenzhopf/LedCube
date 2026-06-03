@@ -6,5 +6,8 @@ public enum AnimationConfigType
     Int,
     Float,
     Bool,
-    Enum
+    Enum,
+
+    /// <summary>A file-system path. The UI renders a text box plus a "browse" file picker.</summary>
+    FilePath
 }

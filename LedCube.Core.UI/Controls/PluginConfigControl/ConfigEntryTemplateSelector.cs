@@ -1,7 +1,12 @@
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using Avalonia.Data;
 using Avalonia.Layout;
+using Avalonia.Platform.Storage;
 using LedCube.PluginBase;
 
 namespace LedCube.Core.UI.Controls.PluginConfigControl;
@@ -24,6 +29,7 @@ public class ConfigEntryDataTemplate : IDataTemplate
             AnimationConfigType.Float => BuildText(80),
             AnimationConfigType.String => BuildText(120),
             AnimationConfigType.Enum => BuildEnum(),
+            AnimationConfigType.FilePath => BuildFilePath(vm),
             _ => new TextBlock { Text = $"[{vm.Descriptor.Type}]" }
         };
     }
@@ -76,5 +82,100 @@ public class ConfigEntryDataTemplate : IDataTemplate
         Grid.SetColumn(cb, 1);
         grid.Children.Add(cb);
         return grid;
+    }
+
+    private static Control BuildFilePath(ConfigEntryViewModel vm)
+    {
+        var grid = new Grid
+        {
+            Margin = new Thickness(0, 3),
+            ColumnDefinitions = new ColumnDefinitions("Auto,*,Auto")
+        };
+        ToolTip.SetTip(grid, new Binding("Descriptor.Description"));
+
+        var label = new TextBlock
+        {
+            VerticalAlignment = VerticalAlignment.Center,
+            Margin = new Thickness(0, 0, 8, 0)
+        };
+        label.Bind(TextBlock.TextProperty, new Binding("Descriptor.DisplayName"));
+        Grid.SetColumn(label, 0);
+
+        var textBox = new TextBox { VerticalAlignment = VerticalAlignment.Center };
+        textBox.Bind(TextBox.TextProperty, new Binding("StringValue"));
+        Grid.SetColumn(textBox, 1);
+
+        var browse = new Button
+        {
+            Content = "…",
+            Margin = new Thickness(4, 0, 0, 0),
+            VerticalAlignment = VerticalAlignment.Center
+        };
+        Grid.SetColumn(browse, 2);
+        browse.Click += async (_, _) => await BrowseAsync(browse, vm);
+
+        grid.Children.Add(label);
+        grid.Children.Add(textBox);
+        grid.Children.Add(browse);
+        return grid;
+    }
+
+    private static async Task BrowseAsync(Visual anchor, ConfigEntryViewModel vm)
+    {
+        try
+        {
+            var topLevel = TopLevel.GetTopLevel(anchor);
+            if (topLevel is null)
+                return;
+
+            var startLocation = await GetStartLocationAsync(topLevel, vm.StringValue);
+            var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+            {
+                Title = $"Select {vm.Descriptor.DisplayName}",
+                AllowMultiple = false,
+                FileTypeFilter = BuildFilters(vm.Descriptor.FileExtensions),
+                SuggestedStartLocation = startLocation
+            });
+
+            var path = files.Count > 0 ? files[0].TryGetLocalPath() : null;
+            if (!string.IsNullOrEmpty(path))
+                vm.StringValue = path;
+        }
+        catch
+        {
+            // A failed/cancelled picker must never bring down the UI.
+        }
+    }
+
+    private static async Task<IStorageFolder?> GetStartLocationAsync(TopLevel topLevel, string? currentPath)
+    {
+        var dir = string.IsNullOrWhiteSpace(currentPath) ? null : System.IO.Path.GetDirectoryName(currentPath);
+        if (string.IsNullOrEmpty(dir))
+            return null;
+
+        try
+        {
+            return await topLevel.StorageProvider.TryGetFolderFromPathAsync(dir);
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    private static IReadOnlyList<FilePickerFileType>? BuildFilters(string[]? extensions)
+    {
+        if (extensions is null || extensions.Length == 0)
+            return null;
+
+        var patterns = extensions
+            .Select(e => e.StartsWith('.') ? $"*{e}" : $"*.{e}")
+            .ToArray();
+
+        return
+        [
+            new FilePickerFileType("Animation files") { Patterns = patterns },
+            new FilePickerFileType("All files") { Patterns = ["*"] }
+        ];
     }
 }

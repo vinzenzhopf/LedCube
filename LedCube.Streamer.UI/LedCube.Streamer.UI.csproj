@@ -35,6 +35,7 @@
         <ProjectReference Include="..\LedCube.Streamer\LedCube.Streamer.csproj" />
         <ProjectReference Include="..\Plugin\LedCube.PluginHost\LedCube.PluginHost.csproj" />
         <ProjectReference Include="..\Plugin\LedCube.Plugins.Animation.AudioSpectrum\LedCube.Plugins.Animation.AudioSpectrum.csproj" />
+        <ProjectReference Include="..\Plugin\LedCube.Plugins.Animation.FileAnimation\LedCube.Plugins.Animation.FileAnimation.csproj" />
         <ProjectReference Include="..\Plugin\LedCube.Plugins.Animation.GameOfLife\LedCube.Plugins.Animation.GameOfLife.csproj" />
         <ProjectReference Include="..\Plugin\LedCube.Plugins.Animation.LedWalker\LedCube.Plugins.Animation.LedWalker.csproj" />
         <ProjectReference Include="..\Plugin\LedCube.Plugins.Animation.SdfTest\LedCube.Plugins.Animation.SdfTest.csproj" />
