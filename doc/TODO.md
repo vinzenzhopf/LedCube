@@ -30,12 +30,18 @@
 - [x] The FPS counter in the PlaybackControl needs to be formatted to 2 decimal places
 
 ### Animation List
-- Instead of referencing AnimationsFiles directy with Path, i would like to have a List of available AnimationFiles, like in an Music Player.
-- [ ] Define Paths in the Settings, where AnimationFiles can be found and discoverd.
-- [ ] Discover these Paths, maybe on startup, can be triggered by an tool bar entry. Build an Index of all AnimationFiles found.
-- [ ] Show the AnimationFiles in a List, with all their infos, like in an music player. (Maybe adda third Column in the MainView for that)
-- [ ] Allow the adding of those animation files to the Playlist.
-- [ ] Make the Animation List search-/filterable
+A list of available animation files (like a music player) instead of referencing files by path.
+- [x] Define library paths in the settings (`LibrarySettings` + Library page in the settings dialog;
+  supports `${LibraryPath}` and environment variables).
+- [x] Discover the paths and build an index. `LibraryService` (hosted) scans on startup and watches
+  the folders (debounced `FileSystemWatcher`); animation entries are read from the `.lcanimraw` manifest.
+- [x] Show the animations in a list with their infos — third column in the MainView (`AnimationList`):
+  type icon, stacked title/description, duration/fps, plus a detail panel for the selected entry.
+- [x] Allow adding animations to the playlist — double-click or drag-drop (`PlaylistEntryFactory` maps a
+  file entry to a `FileAnimation` with its path; plugin entries use their generator).
+- [x] Make the animation list search-/filterable (search box + sort dropdown over a `DataGridCollectionView`).
+- [ ] Populate real thumbnails (the `.lcanimraw` thumbnail entry → `LibraryAnimationEntry.Thumbnail`;
+  currently falls back to a type icon).
 
 ### Playlist File Format
 - [ ] Nail down the specification for Playlist Files in [File Formats](FileFormats.md)
@@ -45,13 +51,10 @@
   - [ ] Add an UI Control for editing the Metadata
 
 ### Media Directory
-- [ ] Allow the user to select a directory containing 'media' files 
-  - with one folder for animations, and one folder for playlists
-  - ref to #AnimationList issue 1
-  - automatically store the Playlists in this folder
-- [ ] Add Separate List with discovered Animations from that Directory
-  - Let the User freely browse through the Playlists and select one to play
-  - Just like an Music Player
+- [x] Configurable library directory with `animations`/`playlists`/`projects` subfolders (settings).
+  - [ ] Automatically store playlists in this folder (blocked on the playlist file format below).
+- [x] Separate list of discovered animations from that directory (the Animation List above).
+  - [ ] Browse discovered playlists and select one to play (blocked on the playlist file format).
 
 ## Animator (LedCube.Animator)
 
