@@ -41,5 +41,13 @@
                 </Grid>
             </StackPanel>
         </HeaderedContentControl>
+        <HeaderedContentControl Header="Diagnostics" Margin="0,0,0,8">
+            <StackPanel Margin="8">
+                <CheckBox Content="Enable trace datagram logging"
+                          IsChecked="{Binding EnableTraceDatagramLogging}"/>
+                <TextBlock Text="⚠ Logs every sent/received datagram (incl. raw bytes) at Trace level. Runs on the per-frame hot path — impacts streaming performance. Enable only for debugging."
+                           Foreground="#E0A030" TextWrapping="Wrap" FontSize="11" Margin="24,2,0,0"/>
+            </StackPanel>
+        </HeaderedContentControl>
     </StackPanel>
 </UserControl>

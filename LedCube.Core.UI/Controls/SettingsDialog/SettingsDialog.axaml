@@ -5,8 +5,9 @@
         x:DataType="local:SettingsDialogViewModel"
         Title="Settings"
         Height="500" Width="800"
+        MinHeight="350" MinWidth="600"
         WindowStartupLocation="CenterOwner"
-        CanResize="False">
+        CanResize="True">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
@@ -32,24 +33,31 @@
 
         <GridSplitter Grid.Row="0" Grid.Column="1" Width="2" HorizontalAlignment="Stretch"/>
 
-        <Border Grid.Row="0" Grid.Column="2" Padding="16">
-            <ContentControl Content="{Binding SelectedNode.Editor}">
-                <ContentControl.DataTemplates>
-                    <DataTemplate DataType="{x:Type local:GeneralCubeSettingsViewModel}">
-                        <local:SettingsPage_GeneralConfig/>
-                    </DataTemplate>
-                    <DataTemplate DataType="{x:Type local:CubeStreamerSettingsViewModel}">
-                        <local:SettingsPage_StreamerSettings/>
-                    </DataTemplate>
-                    <DataTemplate DataType="{x:Type local:CubeDisplaySettingsViewModel}">
-                        <local:SettingsPage_CubeDisplaySettings/>
-                    </DataTemplate>
-                    <DataTemplate DataType="{x:Type local:KeyboardControlSettingViewModel}">
-                        <local:SettingsPage_KeyboardControlSettings/>
-                    </DataTemplate>
-                </ContentControl.DataTemplates>
-            </ContentControl>
-        </Border>
+        <ScrollViewer Grid.Row="0" Grid.Column="2"
+                      HorizontalScrollBarVisibility="Disabled"
+                      VerticalScrollBarVisibility="Auto">
+            <Border Padding="16">
+                <ContentControl Content="{Binding SelectedNode.Editor}">
+                    <ContentControl.DataTemplates>
+                        <DataTemplate DataType="{x:Type local:GeneralCubeSettingsViewModel}">
+                            <local:SettingsPage_GeneralConfig/>
+                        </DataTemplate>
+                        <DataTemplate DataType="{x:Type local:CubeStreamerSettingsViewModel}">
+                            <local:SettingsPage_StreamerSettings/>
+                        </DataTemplate>
+                        <DataTemplate DataType="{x:Type local:CubeDisplaySettingsViewModel}">
+                            <local:SettingsPage_CubeDisplaySettings/>
+                        </DataTemplate>
+                        <DataTemplate DataType="{x:Type local:LibrarySettingsViewModel}">
+                            <local:SettingsPage_LibrarySettings/>
+                        </DataTemplate>
+                        <DataTemplate DataType="{x:Type local:KeyboardControlSettingViewModel}">
+                            <local:SettingsPage_KeyboardControlSettings/>
+                        </DataTemplate>
+                    </ContentControl.DataTemplates>
+                </ContentControl>
+            </Border>
+        </ScrollViewer>
 
         <StackPanel Grid.Row="1" Grid.ColumnSpan="3"
                     Orientation="Horizontal"

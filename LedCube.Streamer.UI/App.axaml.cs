@@ -200,6 +200,7 @@ public partial class App : Application,
             sp.GetRequiredService<ISettingsProvider<CubeSettings>>(),
             sp.GetService<ISettingsProvider<CubeStreamerSettings>>(),
             sp.GetService<ISettingsProvider<Cube3DDrawingConfig>>(),
+            sp.GetService<ISettingsProvider<LibrarySettings>>(),
             sp.GetRequiredService<IHotkeyService>()));
         services.AddSingleton<SettingsHotkeyInputDialogViewModel>();
         services.AddSingleton<SettingsHotkeyInputDialog>();

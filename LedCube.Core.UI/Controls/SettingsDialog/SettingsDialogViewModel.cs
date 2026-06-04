@@ -15,9 +15,11 @@ public partial class SettingsDialogViewModel : ObservableObject
     private readonly ISettingsProvider<CubeSettings> _cubeSettings;
     private readonly ISettingsProvider<CubeStreamerSettings>? _connectionSettings;
     private readonly ISettingsProvider<Cube3DDrawingConfig>? _displaySettings;
+    private readonly ISettingsProvider<LibrarySettings>? _librarySettings;
     private readonly GeneralCubeSettingsViewModel _generalCubeSettingsViewModel;
     private readonly CubeStreamerSettingsViewModel? _streamerSettings;
     private readonly CubeDisplaySettingsViewModel? _cubeDisplaySettingsViewModel;
+    private readonly LibrarySettingsViewModel? _librarySettingsViewModel;
     private readonly KeyboardControlSettingViewModel _keyboardControlSettingViewModel;
 
     public Action? CloseAction { get; set; }
@@ -26,11 +28,13 @@ public partial class SettingsDialogViewModel : ObservableObject
         ISettingsProvider<CubeSettings> cubeSettings,
         ISettingsProvider<CubeStreamerSettings>? connectionSettings,
         ISettingsProvider<Cube3DDrawingConfig>? displaySettings,
+        ISettingsProvider<LibrarySettings>? librarySettings,
         IHotkeyService hotkeyService)
     {
         _cubeSettings = cubeSettings;
         _connectionSettings = connectionSettings;
         _displaySettings = displaySettings;
+        _librarySettings = librarySettings;
 
         _generalCubeSettingsViewModel = new GeneralCubeSettingsViewModel
         {
@@ -46,6 +50,7 @@ public partial class SettingsDialogViewModel : ObservableObject
                 Port = conn.Port,
                 Hostname = conn.Hostname,
                 SearchPerBroadcast = conn.SearchPerBroadcast,
+                EnableTraceDatagramLogging = conn.EnableTraceDatagramLogging,
                 Projection = new CubeDataProjectionSettingsViewModel { Orientation = conn.Projection.Orientation }
             };
             var streaming = new SettingsNodeViewModel("Streaming");
@@ -72,6 +77,20 @@ public partial class SettingsDialogViewModel : ObservableObject
             var displayNode = new SettingsNodeViewModel("Display");
             displayNode.Children.Add(new SettingsNodeViewModel("Rendering", _cubeDisplaySettingsViewModel));
             Nodes.Add(displayNode);
+        }
+
+        if (librarySettings is not null)
+        {
+            var lib = librarySettings.Settings;
+            _librarySettingsViewModel = new LibrarySettingsViewModel
+            {
+                LibraryPath = lib.LibraryPath,
+                AnimationsPath = lib.AnimationsPath,
+                PlaylistsPath = lib.PlaylistsPath,
+                ProjectsPath = lib.ProjectsPath,
+                WatchDirectory = lib.WatchDirectory
+            };
+            Nodes.Add(new SettingsNodeViewModel("Library", _librarySettingsViewModel));
         }
 
         _keyboardControlSettingViewModel = new KeyboardControlSettingViewModel(hotkeyService);
@@ -105,6 +124,7 @@ public partial class SettingsDialogViewModel : ObservableObject
                 Port = _streamerSettings.Port,
                 Hostname = _streamerSettings.Hostname,
                 SearchPerBroadcast = _streamerSettings.SearchPerBroadcast,
+                EnableTraceDatagramLogging = _streamerSettings.EnableTraceDatagramLogging,
                 Projection = new CubeDataProjectionSettings
                 {
                     Orientation = _streamerSettings.Projection.Orientation
@@ -123,6 +143,18 @@ public partial class SettingsDialogViewModel : ObservableObject
                     Shape = _cubeDisplaySettingsViewModel.Cube3DDrawingConfig.LedType.Shape,
                     Tint = _cubeDisplaySettingsViewModel.Cube3DDrawingConfig.LedType.Tint
                 }
+            });
+        }
+
+        if (_librarySettingsViewModel is not null && _librarySettings is not null)
+        {
+            _librarySettings.SaveAndUpdate(_librarySettings.Settings with
+            {
+                LibraryPath = _librarySettingsViewModel.LibraryPath,
+                AnimationsPath = _librarySettingsViewModel.AnimationsPath,
+                PlaylistsPath = _librarySettingsViewModel.PlaylistsPath,
+                ProjectsPath = _librarySettingsViewModel.ProjectsPath,
+                WatchDirectory = _librarySettingsViewModel.WatchDirectory
             });
         }
 
@@ -208,6 +240,9 @@ public partial class CubeStreamerSettingsViewModel : ObservableObject
     private bool _searchPerBroadcast = true;
 
     [ObservableProperty]
+    private bool _enableTraceDatagramLogging;
+
+    [ObservableProperty]
     private CubeDataProjectionSettingsViewModel _projection = new();
 }
 
@@ -215,6 +250,24 @@ public partial class CubeDataProjectionSettingsViewModel : ObservableObject
 {
     [ObservableProperty]
     private CartesianOrientation _orientation;
+}
+
+public partial class LibrarySettingsViewModel : ObservableObject
+{
+    [ObservableProperty]
+    private string _libraryPath = string.Empty;
+
+    [ObservableProperty]
+    private string _animationsPath = string.Empty;
+
+    [ObservableProperty]
+    private string _playlistsPath = string.Empty;
+
+    [ObservableProperty]
+    private string _projectsPath = string.Empty;
+
+    [ObservableProperty]
+    private bool _watchDirectory = true;
 }
 
 public partial class Cube3DDrawingConfigViewModel : ObservableObject
