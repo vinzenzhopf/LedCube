@@ -13,6 +13,8 @@ public class SectionSettingsProvider<TRoot, TSection> : ISettingsProvider<TSecti
 
     public TSection Settings => _getter(_root.Settings);
 
+    public string FilePath => _root.FilePath;
+
     public event EventHandler<TSection>? SettingsChanged;
 
     public SectionSettingsProvider(ISettingsProvider<TRoot> root, Func<TRoot, TSection> getter, Func<TRoot, TSection, TRoot> setter)

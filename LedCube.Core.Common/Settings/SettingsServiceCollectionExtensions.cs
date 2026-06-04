@@ -14,6 +14,7 @@ public static class SettingsServiceCollectionExtensions
     {
         var provider = new SettingsProvider<T>(applicationName, filename);
         provider.Load(defaultSettings);
+        services.AddSingleton<ISettingsProvider<T>>(provider);
         return new SettingsProviderBuilder<T>(services, provider);
     }
 }

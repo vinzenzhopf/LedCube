@@ -11,6 +11,8 @@ public class SettingsProvider<T> : ISettingsProvider<T> where T : class, new()
 
     private readonly SettingsLoader<T> _loader;
 
+    public string FilePath => _loader.FilePath;
+
     public SettingsProvider(string applicationName, string filename)
     {
         _loader = new SettingsLoader<T>(applicationName, filename);
