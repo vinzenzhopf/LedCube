@@ -24,7 +24,7 @@
         <!-- Content -->
         <Grid x:Name="ContentGrid">
             <Grid.RowDefinitions>
-                <RowDefinition Height="3*" MinHeight="100"/>
+                <RowDefinition Height="4*" MinHeight="150"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="{Binding LogAppenderViewModel.ShowLog,
                                        Converter={converters:BoolToGridLengthConverter TrueValue=1*, FalseValue=0}}"
@@ -50,12 +50,13 @@
 
                 <GridSplitter Grid.Column="1" VerticalAlignment="Stretch" ResizeBehavior="BasedOnAlignment"/>
 
-                <!-- Mid: Playlist (gets the space) + Plugin Config (capped, scrolls) -->
-                <Grid Grid.Column="2" RowDefinitions="*,Auto">
-                    <HeaderedContentControl Grid.Row="0" Header="Playlist" MinHeight="180">
+                <!-- Mid: Playlist + Plugin Config, resizable via a splitter -->
+                <Grid Grid.Column="2" RowDefinitions="2*,Auto,*">
+                    <HeaderedContentControl Grid.Row="0" Header="Playlist" MinHeight="120">
                         <ContentControl Content="{Binding PlaylistControlViewModel}"/>
                     </HeaderedContentControl>
-                    <HeaderedContentControl Grid.Row="1" Header="Plugin Config" MaxHeight="340">
+                    <GridSplitter Grid.Row="1" Height="4" HorizontalAlignment="Stretch"/>
+                    <HeaderedContentControl Grid.Row="2" Header="Plugin Config" MinHeight="80">
                         <ContentControl Content="{Binding PluginConfigViewModel}"/>
                     </HeaderedContentControl>
                 </Grid>
@@ -76,7 +77,7 @@
                           IsVisible="{Binding LogAppenderViewModel.ShowLog}"/>
 
             <!-- Log panel (hidden when ShowLog=false) -->
-            <Panel Grid.Row="2" MinHeight="150" IsVisible="{Binding LogAppenderViewModel.ShowLog}">
+            <Panel Grid.Row="2" IsVisible="{Binding LogAppenderViewModel.ShowLog}">
                 <ContentControl Content="{Binding LogAppenderViewModel}"/>
             </Panel>
         </Grid>

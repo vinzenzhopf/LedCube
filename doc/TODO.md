@@ -58,7 +58,7 @@ A list of available animation files (like a music player) instead of referencing
 
 ## Animator (LedCube.Animator)
 
-- [ ] **TimelineControl** — scrubbing, multi-frame selection, comfortable frame editing
+- [x] **TimelineControl** — scrubbing, multi-frame selection, comfortable frame editing
 - [ ] **TimelineControl render thread-safety** — `TimelineRenderer` reads the live `TimelineState`
   on the Skia render thread while it is mutated on the UI thread (bindings like `FrameTime`,
   `LoopStart/End` flipping to null during playlist auto-advance). This caused render-loop
@@ -95,8 +95,6 @@ A list of available animation files (like a music player) instead of referencing
 - [x] Remove/Combine Streamer.UI and Streamer.SmallUI
 - [x] Port from WPF to Avalonia (all apps + TimelineControl.Demo;
   zero `<UseWPF>` projects remain)
-- [ ] Delete orphaned `LedCube.Streamer.SmallUI/` directory (no csproj,
-  not in solution, but source files linger)
 - [ ] Resolve Changes from AnimationTestUI
   - AnimationList vs AnimationTest control, PreviewKeyDown/Up event handlers? This was probably used for the Snake Animation?)
 - [ ] Add/Improve documentation
