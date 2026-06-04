@@ -16,6 +16,21 @@
         </MenuItem>
         <MenuItem Header="_Tools">
             <MenuItem Header="Show Debug _Log" IsChecked="{Binding AppenderViewModel.ShowLog, Mode=TwoWay}" ToggleType="CheckBox"/>
+            <MenuItem Header="Open Log _File" Command="{Binding OpenLogFileCommand}">
+                <MenuItem.Icon>
+                    <materialIcons:MaterialIcon Kind="FileDocumentOutline" Width="16" Height="16"/>
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Header="Open _Settings File" Command="{Binding OpenSettingsFileCommand}">
+                <MenuItem.Icon>
+                    <materialIcons:MaterialIcon Kind="FileCogOutline" Width="16" Height="16"/>
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Header="Open Library _Directory" Command="{Binding OpenLibraryDirectoryCommand}">
+                <MenuItem.Icon>
+                    <materialIcons:MaterialIcon Kind="FolderStarOutline" Width="16" Height="16"/>
+                </MenuItem.Icon>
+            </MenuItem>
         </MenuItem>
     </Menu>
 </UserControl>

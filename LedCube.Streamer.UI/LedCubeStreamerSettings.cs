@@ -11,6 +11,7 @@ public record LedCubeStreamerSettings
     public LastConnectionSettings LastConnection { get; init; } = new();
     public StreamerUIState UIState { get; init; } = new();
     public KeyboardControlConfig KeyboardControl { get; init; } = new();
+    public LibrarySettings Library { get; init; } = new();
 
     public static LedCubeStreamerSettings Default => new()
     {

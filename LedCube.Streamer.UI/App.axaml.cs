@@ -1,5 +1,6 @@
 using System;
 using System.Globalization;
+using System.IO;
 using System.Reflection;
 using Avalonia;
 using Avalonia.Controls;
@@ -24,6 +25,7 @@ using LedCube.Core.UI.Dialog.SimpleDialog;
 using LedCube.Core.UI.Messages;
 using LedCube.Core.UI.Services;
 using LedCube.Core.UI.Services.Hotkey;
+using LedCube.Core.UI.Services.Library;
 using LedCube.Core.UI.Services.Playback;
 using LedCube.Core.UI.Services.Playlist;
 using LedCube.PluginHost;
@@ -33,6 +35,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
+using Serilog.Events;
+using AnimationListViewModel = LedCube.Core.UI.Controls.AnimationList.AnimationListViewModel;
 using CubeStreamingStatus = LedCube.Streamer.CubeStreamer.CubeStreamingStatus;
 
 namespace LedCube.Streamer.UI;
@@ -88,17 +92,19 @@ public partial class App : Application,
             .ConfigureLogging((context, logging) =>
             {
                 var logFile = context.Configuration.GetValue<string>("LogFile") ?? "LedCube.Streamer.UI.log";
+                var logFileFullPath = Path.GetFullPath(logFile);
+                logging.Services.AddSingleton(new AppLogFileInfo(logFileFullPath));
                 var logger = new LoggerConfiguration()
                     .Enrich.WithThreadId()
                     .Enrich.FromLogContext()
-                    .MinimumLevel.Debug()
+                    .MinimumLevel.Verbose()
                     .WriteTo.File(logFile)
                     .WriteTo.Debug()
                     .WriteTo.LogAppenderControlSink(logAppenderControlSink)
                     .CreateLogger();
                 Log.Logger = logger;
                 logging.AddSerilog(logger, dispose: true);
-                Log.Verbose("Logger initialized. Logging to {0}", logFile);
+                Log.Verbose("Logger initialized. Logging to {0}", logFileFullPath);
             })
             .ConfigureServices((context, services) =>
             {
@@ -115,7 +121,8 @@ public partial class App : Application,
                     .AddSection(s => s.Cube, (s, v) => s with { Cube = v })
                     .AddSection(s => s.Connection, (s, v) => s with { Connection = v })
                     .AddSection(s => s.LastConnection, (s, v) => s with { LastConnection = v })
-                    .AddSection(s => s.KeyboardControl, (s, v) => s with { KeyboardControl = v });
+                    .AddSection(s => s.KeyboardControl, (s, v) => s with { KeyboardControl = v })
+                    .AddSection(s => s.Library, (s, v) => s with { Library = v });
                 services.AddLogAppenderControlViewModel(logAppenderControlSink);
 
                 services.SetupPluginHost(_pluginHostContext);
@@ -159,6 +166,8 @@ public partial class App : Application,
         services.AddSingleton<Controls.MenuBar.MenuBar>();
         services.AddSingleton<StreamingControlViewModel>();
         services.AddSingleton<StreamingControlView>();
+        services.AddSingleton<CubeStreamingStatusViewModel>();
+        services.AddSingleton<AnimationListViewModel>();
         services.AddSingleton<BroadcastSearchDialogViewModel>();
         services.AddSingleton<SelectAnimationDialogViewModel>();
         services.AddSingleton<EditAnimationInstanceDialogViewModel>();
@@ -166,7 +175,7 @@ public partial class App : Application,
         services.AddTransient<IUdpCubeCommunication, UdpCubeCubeCommunication>();
         services.AddSingleton<ICubeStreamingStatusMutable, CubeStreamingStatus>();
         services.AddSingleton<ICubeStreamingStatus>(p => p.GetRequiredService<ICubeStreamingStatusMutable>());
-        services.AddSingleton<CubeStreamingStatusViewModel>();
+        services.AddSingleton<AnimationListViewModel>();
         services.AddSingleton<CubeStreamerService>();
         services.AddSingleton<ICubeStreamer>(p => p.GetRequiredService<CubeStreamerService>());
         services.AddHostedService(p => p.GetRequiredService<CubeStreamerService>());
@@ -176,6 +185,10 @@ public partial class App : Application,
         services.AddSingleton<IPlaybackService>(p => p.GetRequiredService<PlaybackService>());
         services.AddHostedService(p => p.GetRequiredService<PlaybackService>());
         services.AddSingleton<IPlaylistService, PlaylistService>();
+        services.AddSingleton<IPlaylistEntryFactory, PlaylistEntryFactory>();
+        services.AddSingleton<LibraryService>();
+        services.AddSingleton<ILibraryService>(p => p.GetRequiredService<LibraryService>());
+        services.AddHostedService(p => p.GetRequiredService<LibraryService>());
         services.AddSingleton<PlaylistControlViewModel>();
         services.AddSingleton<PlaylistControl>();
         services.AddSingleton<PluginConfigControlViewModel>();
