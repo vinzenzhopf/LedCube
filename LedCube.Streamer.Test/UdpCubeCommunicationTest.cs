@@ -51,20 +51,4 @@ public class UdpCubeCommunicationTest : TestWithLoggingBase
         Assert.True(response.SendTicks > 0);
         Assert.True(response.ReceivedTicks > 0);
     }
-
-    [Fact]
-    public void Test()
-    {
-        double index = 61 * 0.5;
-        double res = index % 1;
-        bool isWhole = (index % 1) == 0;
-        Logger.LogInformation("61*0.5 isWhole={isWhole}, res={res}", isWhole, res);
-        Assert.False(isWhole);
-        
-        index = 60 * 0.5;
-        res = index % 1;
-        isWhole = (index % 1) == 0;
-        Logger.LogInformation("60*0.5 isWhole={isWhole}, res={res}", isWhole, res);
-        Assert.True(isWhole);
-    }
 }
