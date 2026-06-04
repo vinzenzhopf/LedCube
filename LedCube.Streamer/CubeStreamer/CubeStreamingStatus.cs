@@ -18,13 +18,19 @@ public class CubeStreamingStatus : ICubeStreamingStatusMutable
     
     public TimeSpan PingMean => TimeSpan.FromMilliseconds(_pingStatsMs.Mean);
     
-    public TimeSpan FrameTimeCurrent => TimeSpan.FromMilliseconds(_frameTimeStatsMs.Last);
-    
-    public TimeSpan FrameTimeMean => TimeSpan.FromMilliseconds(_frameTimeStatsMs.Mean);
-    
-    public TimeSpan FrameTime95Pct => TimeSpan.FromMilliseconds(_frameTimeStatsMs.Pct95);
-    
-    public TimeSpan FrameTime05Pct => TimeSpan.FromMilliseconds(_frameTimeStatsMs.Pct05);
+    // Cube-reported render time (LastFrameTimeUs is microseconds per the protocol).
+    public TimeSpan FrameTimeCurrent => TimeSpan.FromMicroseconds(_frameRenderTimeStatsUs.Last);
+
+    public TimeSpan FrameTimeMean => TimeSpan.FromMicroseconds(_frameRenderTimeStatsUs.Mean);
+
+    public TimeSpan FrameTime95Pct => TimeSpan.FromMicroseconds(_frameRenderTimeStatsUs.Pct95);
+
+    public TimeSpan FrameTime05Pct => TimeSpan.FromMicroseconds(_frameRenderTimeStatsUs.Pct05);
+
+    // Streamer-measured wall-clock interval between consecutive sent frames.
+    public TimeSpan MeasuredFrameTimeCurrent => TimeSpan.FromMicroseconds(_measuredFrameTimeStatsUs.Last);
+
+    public TimeSpan MeasuredFrameTimeMean => TimeSpan.FromMicroseconds(_measuredFrameTimeStatsUs.Mean);
 
     public long FrameNumber { get; set; }
     
@@ -39,8 +45,10 @@ public class CubeStreamingStatus : ICubeStreamingStatusMutable
     public bool ConnectionStable { get; set; }
     
 
-    private StatisticList _frameTimeStatsMs = new(100);
-    
+    private StatisticList _frameRenderTimeStatsUs = new(100);
+
+    private StatisticList _measuredFrameTimeStatsUs = new(100);
+
     private StatisticList _pingStatsMs = new(100);
     
     public CubeStreamingStatus(ILoggerFactory loggerFactory)
@@ -53,7 +61,7 @@ public class CubeStreamingStatus : ICubeStreamingStatusMutable
         ConnectionStable = true;
         AnimationStatus = payloadStatus;
         FrameNumber = (int) payloadFrameNumber;
-        _frameTimeStatsMs.AddValue(payloadLastFrameTimeUs);
+        _frameRenderTimeStatsUs.AddValue(payloadLastFrameTimeUs);
         // _logger.LogDebug("UpdateFrameTime: payloadStatus={status}, payloadLastFrameTimeUs={LastFrameTime}, payloadFrameNumber={FrameNumber}", 
         //     payloadStatus, payloadLastFrameTimeUs, payloadFrameNumber);
     }
@@ -81,9 +89,14 @@ public class CubeStreamingStatus : ICubeStreamingStatusMutable
         AnimationStatus = payloadStatus;
         CubeErrorCode = payloadErrorCode;
         CubeVersion = payloadVersion;
-        _frameTimeStatsMs.AddValue(payloadLastFrameTimeUs);
-        
-        // _logger.LogDebug("UpdateInfo: payloadStatus={payloadStatus}, payloadLastFrameTimeUs={payloadLastFrameTimeUs}, payloadVersion={payloadVersion}, payloadErrorCode={payloadErrorCode}", 
+        _frameRenderTimeStatsUs.AddValue(payloadLastFrameTimeUs);
+
+        // _logger.LogDebug("UpdateInfo: payloadStatus={payloadStatus}, payloadLastFrameTimeUs={payloadLastFrameTimeUs}, payloadVersion={payloadVersion}, payloadErrorCode={payloadErrorCode}",
         //     payloadStatus, payloadLastFrameTimeUs, payloadVersion, payloadErrorCode);
+    }
+
+    public void CommitFrameInterval(double intervalUs)
+    {
+        _measuredFrameTimeStatsUs.AddValue(intervalUs);
     }
 }

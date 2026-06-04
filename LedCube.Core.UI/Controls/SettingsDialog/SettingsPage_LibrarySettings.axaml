@@ -1,0 +1,31 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:LedCube.Core.UI.Controls.SettingsDialog"
+             x:Class="LedCube.Core.UI.Controls.SettingsDialog.SettingsPage_LibrarySettings"
+             x:DataType="vm:LibrarySettingsViewModel">
+    <StackPanel>
+        <TextBlock FontSize="16" FontWeight="SemiBold" Text="Library" Margin="0,0,0,8"/>
+        <HeaderedContentControl Header="Paths" Margin="0,0,0,8">
+            <StackPanel Margin="8">
+                <Grid ColumnDefinitions="180,*" RowDefinitions="Auto,Auto,Auto,Auto">
+                    <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="Library directory"/>
+                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding LibraryPath}"/>
+                    <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Text="Animations" Margin="0,8,0,0"/>
+                    <TextBox Grid.Row="1" Grid.Column="1" Margin="0,8,0,0" Text="{Binding AnimationsPath}"/>
+                    <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="Playlists" Margin="0,8,0,0"/>
+                    <TextBox Grid.Row="2" Grid.Column="1" Margin="0,8,0,0" Text="{Binding PlaylistsPath}"/>
+                    <TextBlock Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" Text="Projects" Margin="0,8,0,0"/>
+                    <TextBox Grid.Row="3" Grid.Column="1" Margin="0,8,0,0" Text="{Binding ProjectsPath}"/>
+                </Grid>
+                <TextBlock Text="Supports ${LibraryPath} and environment variables such as %UserProfile%. Changes apply after saving."
+                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                           TextWrapping="Wrap" FontSize="11" Margin="0,8,0,0"/>
+            </StackPanel>
+        </HeaderedContentControl>
+        <HeaderedContentControl Header="Discovery" Margin="0,0,0,8">
+            <StackPanel Margin="8">
+                <CheckBox Content="Watch directories for changes" IsChecked="{Binding WatchDirectory}"/>
+            </StackPanel>
+        </HeaderedContentControl>
+    </StackPanel>
+</UserControl>

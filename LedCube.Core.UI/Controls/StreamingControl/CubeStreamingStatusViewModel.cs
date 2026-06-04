@@ -19,9 +19,14 @@ public partial class CubeStreamingStatusViewModel : ObservableObject, IDisposabl
     [NotifyPropertyChangedFor(nameof(FpsMean))]
     private CubeStreamingStatusSnapshot _streamingStatus = new CubeStreamingStatusSnapshot();
     
-    public double FpsCurrent => 1 / StreamingStatus.FrameTimeCurrent.TotalSeconds;
-    
-    public double FpsMean => 1 / StreamingStatus.FrameTimeMean.TotalSeconds;
+    // FPS derived from the streamer-measured frame interval, guarded against div-by-zero.
+    public double FpsCurrent => StreamingStatus.MeasuredFrameTimeCurrent.TotalSeconds > 0
+        ? 1 / StreamingStatus.MeasuredFrameTimeCurrent.TotalSeconds
+        : 0;
+
+    public double FpsMean => StreamingStatus.MeasuredFrameTimeMean.TotalSeconds > 0
+        ? 1 / StreamingStatus.MeasuredFrameTimeMean.TotalSeconds
+        : 0;
     
     private PeriodicTimer _timer;
     private CancellationTokenSource _cancellationTokenSource;
@@ -66,8 +71,8 @@ public partial class CubeStreamingStatusViewModel : ObservableObject, IDisposabl
             FrameTimeMean: status.FrameTimeMean,
             FrameTime95Pct: status.FrameTime95Pct,
             FrameTime05Pct: status.FrameTime05Pct,
-            FpsMean: 1 / StreamingStatus.FrameTimeCurrent.TotalSeconds,
-            FpsCurrent: 1 / StreamingStatus.FrameTimeMean.TotalSeconds,
+            MeasuredFrameTimeCurrent: status.MeasuredFrameTimeCurrent,
+            MeasuredFrameTimeMean: status.MeasuredFrameTimeMean,
             FrameNumber: status.FrameNumber,
             AnimationStatus: status.AnimationStatus,
             CurrentAnimation: status.CurrentAnimation,

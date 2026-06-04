@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 
 namespace LedCube.Core.Common.Util;
 
@@ -25,10 +24,14 @@ public class StatisticList
     private int _head;
     private int _currentSamples;
 
+    // Reused for the per-update in-place sort so UpdateStats allocates nothing.
+    private readonly double[] _sortBuffer;
+
     public StatisticList(int samples)
     {
         Samples = samples;
         Data = new double[Samples];
+        _sortBuffer = new double[Samples];
         _head = 0;
         _currentSamples = 0;
     }
@@ -67,7 +70,12 @@ public class StatisticList
 
     private void UpdateStats()
     {
-        Span<double> ordered = Data.Take(_currentSamples).Order().ToArray();
+        // Copy the valid samples into the reusable buffer and sort in place — no
+        // LINQ, no per-call array allocations on this hot path.
+        Span<double> ordered = _sortBuffer.AsSpan(0, _currentSamples);
+        Data.AsSpan(0, _currentSamples).CopyTo(ordered);
+        ordered.Sort();
+
         var sum = 0.0;
         var min = double.MaxValue;
         var max = double.MinValue;
@@ -81,7 +89,8 @@ public class StatisticList
         var varianceSum = 0.0;
         foreach (var t in ordered)
         {
-            varianceSum += Math.Pow(t - mean, 2);
+            var diff = t - mean;
+            varianceSum += diff * diff;
         }
         var variance = varianceSum / _currentSamples;
         var stdDev = Math.Sqrt(variance);

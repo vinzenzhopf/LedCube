@@ -23,6 +23,12 @@ public interface IUdpCommunication : IDisposable
     /// Gets the current packet count.
     /// </summary>
     ushort CurrentPacketCount { get; }
+
+    /// <summary>
+    /// When true, raw datagram traffic is logged at Trace level. Diagnostics only —
+    /// keep off during normal streaming as it runs on the per-frame hot path.
+    /// </summary>
+    bool TraceDatagramLogging { get; set; }
     
     /// <summary>
     /// Occurs when an unlisted message is received.

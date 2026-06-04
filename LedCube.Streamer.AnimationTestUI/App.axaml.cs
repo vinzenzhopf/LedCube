@@ -34,6 +34,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Extensions.Logging;
+using AnimationListViewModel = LedCube.Core.UI.Controls.AnimationList.AnimationListViewModel;
 using CubeStreamingStatus = LedCube.Streamer.CubeStreamer.CubeStreamingStatus;
 
 namespace LedCube.Streamer.AnimationTestUI;
@@ -170,7 +171,7 @@ public partial class App : Application,
         services.AddTransient<IUdpCubeCommunication, UdpCubeCubeCommunication>();
         services.AddSingleton<ICubeStreamingStatusMutable, CubeStreamingStatus>();
         services.AddSingleton<ICubeStreamingStatus>(p => p.GetRequiredService<ICubeStreamingStatusMutable>());
-        services.AddSingleton<CubeStreamingStatusViewModel>();
+        services.AddSingleton<AnimationListViewModel>();
         services.AddSingleton<CubeStreamerService>();
         services.AddSingleton<ICubeStreamer>(p => p.GetRequiredService<CubeStreamerService>());
         services.AddHostedService(p => p.GetRequiredService<CubeStreamerService>());

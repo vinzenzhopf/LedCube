@@ -4,7 +4,10 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
+using LedCube.Core.Common.Config;
 using LedCube.Core.Common.CubeData.Repository;
+using LedCube.Core.Common.Extensions;
+using LedCube.Core.Common.Settings;
 using LedCube.Streamer.Datagram;
 using LedCube.Streamer.UdpCom;
 using Microsoft.Extensions.Hosting;
@@ -20,6 +23,7 @@ public partial class CubeStreamerService : BackgroundService, ICubeStreamer
     private readonly IUdpCubeCommunication _communication;
     private readonly ICubeRepository _cubeRepository;
     private readonly ICubeStreamingStatusMutable _cubeStreamingStatus;
+    private readonly ISettingsProvider<CubeStreamerSettings>? _connectionSettings;
     
     private readonly PeriodicTimer _updateTimer = new PeriodicTimer(TimeSpan.FromMilliseconds(500));
     private PeriodicTimer? _frameTimer = null;
@@ -28,6 +32,10 @@ public partial class CubeStreamerService : BackgroundService, ICubeStreamer
     
     private CancellationTokenSource? _streamerStoppingToken;
     private ushort _frameCounter;
+
+    // Measures the realized wall-clock interval between consecutive sent frames.
+    private readonly Stopwatch _frameIntervalStopwatch = Stopwatch.StartNew();
+    private long _lastFrameTicks = -1;
 
     [ObservableProperty]
     private StreamerSettings _settings = StreamerSettings.Default;
@@ -44,12 +52,25 @@ public partial class CubeStreamerService : BackgroundService, ICubeStreamer
     public CubeStreamerService(ILoggerFactory loggerFactory,
         IUdpCubeCommunication communication,
         ICubeRepository cubeRepository,
-        ICubeStreamingStatusMutable cubeStreamingStatus)
+        ICubeStreamingStatusMutable cubeStreamingStatus,
+        ISettingsProvider<CubeStreamerSettings>? connectionSettings = null)
     {
         _logger = loggerFactory.CreateLogger(GetType());
         _communication = communication;
         _cubeRepository = cubeRepository;
         _cubeStreamingStatus = cubeStreamingStatus;
+        _connectionSettings = connectionSettings;
+
+        if (_connectionSettings is not null)
+        {
+            _communication.TraceDatagramLogging = _connectionSettings.Settings.EnableTraceDatagramLogging;
+            _connectionSettings.SettingsChanged += OnConnectionSettingsChanged;
+        }
+    }
+
+    private void OnConnectionSettingsChanged(object? sender, CubeStreamerSettings settings)
+    {
+        _communication.TraceDatagramLogging = settings.EnableTraceDatagramLogging;
     }
     
     public async Task<bool> ConnectAsync(int localPort, IPAddress localAddress, HostAndPort hostAndPort, CancellationToken token)
@@ -191,14 +212,28 @@ public partial class CubeStreamerService : BackgroundService, ICubeStreamer
     
     private async Task SendFrame(CancellationToken token)
     {
+        // Record the realized interval since the previous frame was sent.
+        var nowTicks = _frameIntervalStopwatch.ElapsedTicks;
+        if (_lastFrameTicks >= 0)
+        {
+            _cubeStreamingStatus.CommitFrameInterval(StopwatchUtil.TicksToMicroseconds(nowTicks - _lastFrameTicks));
+        }
+        _lastFrameTicks = nowTicks;
+
         var cubeData = new FramePayloadData();
         _cubeRepository.GetCubeData().Serialize(cubeData);
         try
         {
-            var result = await _communication.SendFrameAsync(++_frameCounter, 
-                (uint)_activeFrameTime.Microseconds, cubeData, token);
+            var result = await _communication.SendFrameAsync(++_frameCounter,
+                (uint)_activeFrameTime.TotalMicroseconds, cubeData, token);
             if (result?.Payload is FrameResponsePayload payload)
             {
+                if (_communication.TraceDatagramLogging)
+                {
+                    _logger.LogTrace("FrameAck: LastFrameTimeUs={lastFrameTimeUs}, ReceivedTicks={receivedTicks}, " +
+                        "CurrentTicks={currentTicks}, FrameNumber={frameNumber}, Status={status}",
+                        payload.LastFrameTimeUs, payload.ReceivedTicks, payload.CurrentTicks, payload.FrameNumber, payload.Status);
+                }
                 _cubeStreamingStatus.UpdateFrameTime(payload.Status, payload.LastFrameTimeUs, payload.FrameNumber);
                 _cubeStreamingStatus.CommitTimings(result.SendTicks, result.ReceivedTicks, payload.ReceivedTicks,
                     payload.CurrentTicks);
@@ -237,6 +272,7 @@ public partial class CubeStreamerService : BackgroundService, ICubeStreamer
     {
         StreamingState = StreamingState.Active;
         FrameTransmissionEnabled = true;
+        _lastFrameTicks = -1; //Reset interval baseline so the first frame isn't a huge gap
         return Task.CompletedTask;
     }
 
@@ -244,6 +280,7 @@ public partial class CubeStreamerService : BackgroundService, ICubeStreamer
     {
         StreamingState = StreamingState.Stopped;
         FrameTransmissionEnabled = false;
+        _lastFrameTicks = -1;
         return Task.CompletedTask;
     }
 
@@ -260,6 +297,8 @@ public partial class CubeStreamerService : BackgroundService, ICubeStreamer
     {
         try
         {
+            if (_connectionSettings is not null)
+                _connectionSettings.SettingsChanged -= OnConnectionSettingsChanged;
             _updateTimer.Dispose();
             _frameTimer?.Dispose();
         }

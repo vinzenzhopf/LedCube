@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Net;
-using System.Threading;
+using System.Threading.Tasks;
 using LedCube.Streamer.Datagram;
 
 namespace LedCube.Streamer.UdpCom;
@@ -24,7 +24,7 @@ public record ReceivedDatagram(IPEndPoint Remote, CubeDatagramHeader Header, obj
 
 public record DatagramResponse()
 {
-    public CancellationTokenSource? PackageReceivedToken { get; set; }
+    public TaskCompletionSource? PackageReceived { get; set; }
     public ReceivedDatagram? Data { get; set; }
 }
 

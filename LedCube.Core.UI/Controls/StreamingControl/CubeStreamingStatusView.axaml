@@ -25,10 +25,10 @@
             <c:StatRow Label="Cube Version: "     Value="{Binding StreamingStatus.CubeVersion}"/>
             <c:StatRow Label="Streamer Version: " Value="{Binding StreamingStatus.StreamerVersion}"/>
             <c:StatRow Label="ErrorCode: "        Value="{Binding StreamingStatus.CubeErrorCode}"/>
-            <c:StatRow Label="Ping: "             Unit="ms"
-                       Value="{Binding StreamingStatus.Ping, StringFormat='{}{0:F2}', Converter={StaticResource TimeSpanToMs}}"/>
-            <c:StatRow Label="Ping Mean: "        Unit="ms"
-                       Value="{Binding StreamingStatus.PingMean, StringFormat='{}{0:F2}', Converter={StaticResource TimeSpanToMs}}"/>
+            <c:StatRow Label="Ping: "             Unit="µs"
+                       Value="{Binding StreamingStatus.Ping, StringFormat='{}{0:F1}', Converter={StaticResource TimeSpanToMs}, ConverterParameter=us}"/>
+            <c:StatRow Label="Ping Mean: "        Unit="µs"
+                       Value="{Binding StreamingStatus.PingMean, StringFormat='{}{0:F1}', Converter={StaticResource TimeSpanToMs}, ConverterParameter=us}"/>
             <c:StatRow Label="CurrentTicks: "     Value="{Binding StreamingStatus.CurrentTicks}"/>
             <c:StatRow Label="ConnectionStable: " Value="{Binding StreamingStatus.ConnectionStable}"/>
         </StackPanel>
@@ -37,15 +37,19 @@
             <c:StatRow Label="CurrentAnimation: " Value="{Binding StreamingStatus.CurrentAnimation}"/>
             <c:StatRow Label="FrameCount: "       Value="{Binding StreamingStatus.FrameNumber}"/>
             <c:StatRow Label="FPS Mean: "         Value="{Binding FpsMean, StringFormat='{}{0:F2}', Mode=OneWay}"/>
-            <c:StatRow Label="FPS Current: "      Value="{Binding FpsCurrent, Mode=OneWay}"/>
-            <c:StatRow Label="FrameTime Mean: "   Unit="ms"
-                       Value="{Binding StreamingStatus.FrameTimeMean, StringFormat='{}{0:F2}', Converter={StaticResource TimeSpanToMs}}"/>
-            <c:StatRow Label="FrameTime Current: " Unit="ms"
-                       Value="{Binding StreamingStatus.FrameTimeCurrent, StringFormat='{}{0:F2}', Converter={StaticResource TimeSpanToMs}}"/>
-            <c:StatRow Label="FrameTime 95%: "    Unit="ms"
-                       Value="{Binding StreamingStatus.FrameTime95Pct, StringFormat='{}{0:F2}', Converter={StaticResource TimeSpanToMs}}"/>
-            <c:StatRow Label="FrameTime 5%: "     Unit="ms"
-                       Value="{Binding StreamingStatus.FrameTime05Pct, StringFormat='{}{0:F2}', Converter={StaticResource TimeSpanToMs}}"/>
+            <c:StatRow Label="FPS Current: "      Value="{Binding FpsCurrent, StringFormat='{}{0:F2}', Mode=OneWay}"/>
+            <c:StatRow Label="FrameTime Cur (meas): "  Unit="ms"
+                       Value="{Binding StreamingStatus.MeasuredFrameTimeCurrent, StringFormat='{}{0:F2}', Converter={StaticResource TimeSpanToMs}, ConverterParameter=ms}"/>
+            <c:StatRow Label="FrameTime Mean (meas): " Unit="ms"
+                       Value="{Binding StreamingStatus.MeasuredFrameTimeMean, StringFormat='{}{0:F2}', Converter={StaticResource TimeSpanToMs}, ConverterParameter=ms}"/>
+            <c:StatRow Label="RenderTime Cur (cube): "  Unit="ms"
+                       Value="{Binding StreamingStatus.FrameTimeCurrent, StringFormat='{}{0:F2}', Converter={StaticResource TimeSpanToMs}, ConverterParameter=ms}"/>
+            <c:StatRow Label="RenderTime Mean (cube): " Unit="ms"
+                       Value="{Binding StreamingStatus.FrameTimeMean, StringFormat='{}{0:F2}', Converter={StaticResource TimeSpanToMs}, ConverterParameter=ms}"/>
+            <c:StatRow Label="RenderTime 95% (cube): "  Unit="ms"
+                       Value="{Binding StreamingStatus.FrameTime95Pct, StringFormat='{}{0:F2}', Converter={StaticResource TimeSpanToMs}, ConverterParameter=ms}"/>
+            <c:StatRow Label="RenderTime 5% (cube): "   Unit="ms"
+                       Value="{Binding StreamingStatus.FrameTime05Pct, StringFormat='{}{0:F2}', Converter={StaticResource TimeSpanToMs}, ConverterParameter=ms}"/>
         </StackPanel>
     </Grid>
 </UserControl>

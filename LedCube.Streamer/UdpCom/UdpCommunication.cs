@@ -24,6 +24,8 @@ public class UdpCommunication : IUdpCommunication
     private ushort _packetCount = 0;
     // ReSharper disable once ConvertToAutoPropertyWhenPossible
     public ushort CurrentPacketCount => _packetCount;
+
+    public bool TraceDatagramLogging { get; set; }
     
     private readonly Stopwatch _stopwatch = new();
     private readonly ConcurrentDictionary<int, DatagramResponse> _datagramListeners = new();
@@ -150,20 +152,27 @@ public class UdpCommunication : IUdpCommunication
             {
                 var result = await Client.ReceiveAsync(token);
                 var datagram = CubeDatagramUtils.ResolveDatagramContent(result);
+                datagram.ReceivedTicks = _stopwatch.ElapsedTicks;
 
-                if (_datagramListeners.TryGetValue(datagram.Header.PacketCount, out var listener))
+                var matched = _datagramListeners.TryGetValue(datagram.Header.PacketCount, out var listener);
+
+                // All per-datagram tracing is behind this gate so nothing (param boxing,
+                // ToString, ToHexString) runs on the hot path when tracing is disabled.
+                if (TraceDatagramLogging)
                 {
-                    Logger.LogTrace("UDP Message received: Type={type}, Counter={counter} - Data={data}",
-                        datagram.Header.PayloadType, datagram.Header.PacketCount, datagram.Payload);
-                    datagram.ReceivedTicks = _stopwatch.ElapsedTicks;
-                    listener.Data = datagram;
-                    listener.PackageReceivedToken!.Cancel();
+                    Logger.LogTrace("Datagram {kind}: Type={type}, Counter={counter}, {len} bytes - Data={data} - {hex}",
+                        matched ? "received" : "unpaired",
+                        datagram.Header.PayloadType, datagram.Header.PacketCount,
+                        result.Buffer.Length, datagram.Payload, Convert.ToHexString(result.Buffer));
+                }
+
+                if (matched)
+                {
+                    listener!.Data = datagram;
+                    listener.PackageReceived?.TrySetResult();
                 }
                 else
                 {
-                    Logger.LogTrace("UDP Unpaired datagram received: Type={type}, Counter={counter} - Data={data}",
-                        datagram.Header.PayloadType, datagram.Header.PacketCount, datagram.Payload);
-                    datagram.ReceivedTicks = _stopwatch.ElapsedTicks;
                     OnUnlistedMessageReceived(new UnlistedMessageArgs(datagram));
                 }
             }
@@ -322,10 +331,13 @@ public class UdpCommunication : IUdpCommunication
         {
             throw new Exception("Not connected.");
         }
-        var listenerToken = CancellationTokenSource.CreateLinkedTokenSource(cts);
+        // The receive loop completes this TCS when the matching response arrives.
+        // RunContinuationsAsynchronously keeps the receive loop from running our
+        // (and the caller's) continuation inline, which would stall reception.
+        var tcs = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var entry = new DatagramResponse()
         {
-            PackageReceivedToken = listenerToken
+            PackageReceived = tcs
         };
         var packetCount = GetAndIncrementPacketCount();
         try
@@ -334,24 +346,28 @@ public class UdpCommunication : IUdpCommunication
             var outputBuffer = BuildOutputBuffer(packetCount, type, dataSpan.Span);
             long sendTicks = _stopwatch.ElapsedTicks;
             await Client.SendAsync(outputBuffer, cts).ConfigureAwait(false);
-            try
+
+            // Wait for the response or the timeout without throwing on the happy
+            // path: a timer/cancellation completes the TCS instead of raising.
+            using var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(cts);
+            timeoutCts.CancelAfter(timeout);
+            await using (timeoutCts.Token.Register(static state => ((TaskCompletionSource)state!).TrySetResult(), tcs))
             {
-                await Task.Delay(timeout, entry.PackageReceivedToken.Token);
+                await tcs.Task.ConfigureAwait(false);
+            }
+
+            if (entry.Data is null)
+            {
+                // No response arrived before the deadline (or the caller cancelled).
+                cts.ThrowIfCancellationRequested();
                 throw new TimeoutException("Request timeout occurred. No Response datagram received in Time");
             }
-            catch (OperationCanceledException)
-            {
-                entry.PackageReceivedToken = null;
-                if (entry.Data is not null)
-                {
-                    entry.Data.SendTicks = sendTicks;
-                    entry.Data.ReceivedTicks = _stopwatch.ElapsedTicks;
-                }
-            }
+
+            entry.Data.SendTicks = sendTicks;
+            entry.Data.ReceivedTicks = _stopwatch.ElapsedTicks;
         }
         finally
         {
-            listenerToken.Dispose();
             _datagramListeners.TryRemove(packetCount, out _);
         }
         return entry.Data;
