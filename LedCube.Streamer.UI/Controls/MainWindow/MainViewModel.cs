@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using LedCube.Core.Common;
+using LedCube.Core.UI.Controls.AnimationList;
 using LedCube.Core.UI.Controls.LogAppender;
 using LedCube.Core.UI.Controls.PlaybackControl;
 using LedCube.Core.UI.Controls.PlaylistControl;
@@ -26,6 +27,7 @@ public partial class MainViewModel : ObservableObject
     public PluginConfigControlViewModel PluginConfigViewModel { get; }
     public PlaybackControlViewModel PlaybackControlViewModel { get; }
     public StreamingControlViewModel StreamingControlViewModel { get; }
+    public AnimationListViewModel AnimationListViewModel { get; }
     public string TitleText => "LedCube Streamer";
     public string BuildInfo => $"Build: {_appInfo.Version}, {_appInfo.BuildDate:yy-MM-dd HH:mm zz}";
     public string BuildInfoDebug => _appInfo.DebugBuild ? ", Debug" : "";
@@ -38,7 +40,8 @@ public partial class MainViewModel : ObservableObject
         PlaylistControlViewModel playlistControlViewModel,
         PluginConfigControlViewModel pluginConfigViewModel,
         PlaybackControlViewModel playbackControlViewModel,
-        StreamingControlViewModel streamingControlViewModel)
+        StreamingControlViewModel streamingControlViewModel, 
+        AnimationListViewModel animationListViewModel)
     {
         _logger = loggerFactory.CreateLogger(GetType());
         _appInfo = appInfo;
@@ -48,6 +51,7 @@ public partial class MainViewModel : ObservableObject
         PluginConfigViewModel = pluginConfigViewModel;
         PlaybackControlViewModel = playbackControlViewModel;
         StreamingControlViewModel = streamingControlViewModel;
+        AnimationListViewModel = animationListViewModel;
     }
 
     [RelayCommand]

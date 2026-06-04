@@ -1,0 +1,175 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:animationList="clr-namespace:LedCube.Core.UI.Controls.AnimationList"
+             xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:converters="clr-namespace:Avalonia.Data.Converters;assembly=Avalonia.Base"
+             xmlns:conv="clr-namespace:LedCube.Core.UI.Converters"
+             mc:Ignorable="d" d:DesignWidth="360" d:DesignHeight="450"
+             x:Class="LedCube.Core.UI.Controls.AnimationList.AnimationList"
+             x:DataType="animationList:AnimationListViewModel">
+    <UserControl.Styles>
+        <!-- Compact rows: trim the default ListBoxItem padding/height. -->
+        <Style Selector="ListBoxItem">
+            <Setter Property="Padding" Value="6,3"/>
+            <Setter Property="MinHeight" Value="0"/>
+        </Style>
+        <!-- Detail panel label/value typography. -->
+        <Style Selector="Border.detail TextBlock">
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="Margin" Value="0,1"/>
+        </Style>
+        <Style Selector="Border.detail TextBlock.label">
+            <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}"/>
+            <Setter Property="Margin" Value="0,1,10,1"/>
+        </Style>
+    </UserControl.Styles>
+
+    <DockPanel>
+        <!-- Search + sort bar -->
+        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="2,2,2,5" Spacing="2">
+            <TextBox Width="180"
+                     Watermark="Search animations..."
+                     Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
+            <Button Classes="icon inline"
+                    IsEnabled="{Binding SearchTextHasContent}"
+                    Command="{Binding ClearSearchCommand}"
+                    ToolTip.Tip="Clear search">
+                <materialIcons:MaterialIcon Kind="Close"/>
+            </Button>
+
+            <ComboBox MinWidth="100"
+                      VerticalAlignment="Bottom"
+                      ItemsSource="{Binding SortFields}"
+                      SelectedItem="{Binding SelectedSortField, Mode=TwoWay}"
+                      ToolTip.Tip="Sort by"/>
+            <Button Classes="icon inline"
+                    Command="{Binding ToggleSortDirectionCommand}"
+                    ToolTip.Tip="Toggle sort direction">
+                <Panel>
+                    <materialIcons:MaterialIcon Kind="SortAscending" IsVisible="{Binding SortAscending}"/>
+                    <materialIcons:MaterialIcon Kind="SortDescending" IsVisible="{Binding !SortAscending}"/>
+                </Panel>
+            </Button>
+        </StackPanel>
+
+        <!-- Detail panel for the selected entry -->
+        <Border Classes="detail" DockPanel.Dock="Bottom"
+                BorderThickness="0,1,0,0"
+                BorderBrush="{DynamicResource DividerStrokeColorDefaultBrush}"
+                Padding="8,6" MaxHeight="280">
+            <Panel>
+                <TextBlock Classes="muted" FontSize="11"
+                           HorizontalAlignment="Center" VerticalAlignment="Center"
+                           Text="Select an animation to see details"
+                           IsVisible="{Binding SelectedAnimation, Converter={x:Static converters:ObjectConverters.IsNull}}"/>
+                <ScrollViewer IsVisible="{Binding SelectedAnimation, Converter={x:Static converters:ObjectConverters.IsNotNull}}">
+                    <DockPanel>
+                        <Grid DockPanel.Dock="Top" 
+                            ColumnDefinitions="*,Auto"
+                            RowDefinitions="Auto,Auto">
+                            <TextBlock Grid.Row="0" Grid.Column="0" 
+                                       Text="{Binding SelectedAnimation.Name}" 
+                                       FontWeight="SemiBold" TextWrapping="Wrap"
+                                       FontSize="14"/>
+                            <TextBlock Grid.Row="1" Grid.Column="0"
+                                       Text="{Binding SelectedAnimation.Description, Converter={conv:EmptyToDashConverter}}"
+                                       TextWrapping="Wrap"/>
+                            <StackPanel Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" Orientation="Vertical" Spacing="4">
+                                <materialIcons:MaterialIcon Kind="{Binding SelectedAnimation.TypeIcon}"
+                                                            Width="14" Height="14" VerticalAlignment="Center"/>
+                                <TextBlock Text="{Binding SelectedAnimation.TypeText}" 
+                                           VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Grid>
+                        <Grid ColumnDefinitions="Auto,*,Auto,*,Auto,*"
+                              RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto">
+                            
+                            <TextBlock Grid.Row="0" Grid.Column="0" Classes="label" Text="Frame count"/>
+                            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding SelectedAnimation.FrameCount}"/>
+                            <TextBlock Grid.Row="1" Grid.Column="0" Classes="label" Text="Frame time"/>
+                            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SelectedAnimation.FrameTimeUs, StringFormat='{}{0} µs'}"/>
+                            <TextBlock Grid.Row="2" Grid.Column="0" Classes="label" Text="FPS"/>
+                            <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding SelectedAnimation.FpsText, Converter={conv:EmptyToDashConverter}}"/>
+
+                            <TextBlock Grid.Row="0" Grid.Column="2" Classes="label" Text="Duration"/>
+                            <TextBlock Grid.Row="0" Grid.Column="3" Text="{Binding SelectedAnimation.DurationText, Converter={conv:EmptyToDashConverter}}"/>
+                            <TextBlock Grid.Row="1" Grid.Column="2" Classes="label" Text="Seamless loop"/>
+                            <TextBlock Grid.Row="1" Grid.Column="3" Text="{Binding SelectedAnimation.SeamlessLoop}"/>
+                            <TextBlock Grid.Row="2" Grid.Column="2" Classes="label" Text="FileName"/>
+                            <TextBlock Grid.Row="2" Grid.Column="3" Text="{Binding SelectedAnimation.FileName, Converter={conv:EmptyToDashConverter}}"/>
+
+                            <TextBlock Grid.Row="0" Grid.Column="4" Classes="label" Text="Author"/>
+                            <TextBlock Grid.Row="0" Grid.Column="5" Text="{Binding SelectedAnimation.Author, Converter={conv:EmptyToDashConverter}}"/>
+                            <TextBlock Grid.Row="1" Grid.Column="4" Classes="label" Text="Size"/>
+                            <TextBlock Grid.Row="1" Grid.Column="5" Text="{Binding SelectedAnimation.SizeText, Converter={conv:EmptyToDashConverter}}"/>
+                            <TextBlock Grid.Row="2" Grid.Column="4" Classes="label" Text="Created"/>
+                            <TextBlock Grid.Row="2" Grid.Column="5" Text="{Binding SelectedAnimation.CreatedText, Converter={conv:EmptyToDashConverter}}"/>
+
+                            <TextBlock Grid.Row="3" Grid.Column="0" Classes="label" Text="FilePath"/>
+                            <TextBlock Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="5"
+                                       Text="{Binding SelectedAnimation.FilePath, Converter={conv:EmptyToDashConverter}}"
+                                       TextWrapping="Wrap"/>
+                        </Grid>
+                    </DockPanel>
+                </ScrollViewer>
+            </Panel>
+        </Border>
+
+        <ListBox ItemsSource="{Binding Animations}"
+                 SelectedItem="{Binding SelectedAnimation, Mode=TwoWay}"
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                 PointerPressed="OnItemPointerPressed"
+                 PointerMoved="OnItemPointerMoved"
+                 DoubleTapped="OnItemDoubleTapped">
+            <ListBox.ItemTemplate>
+                <DataTemplate x:DataType="animationList:AnimationListEntryViewModel">
+                    <Grid ColumnDefinitions="Auto,*,Auto">
+                        <!-- Thumbnail (falls back to a type icon until thumbnails are populated) -->
+                        <Border Grid.Column="0" Width="40" Height="40" Margin="0,0,8,0"
+                                CornerRadius="4"
+                                Background="{DynamicResource ControlFillColorDefaultBrush}">
+                            <Panel>
+                                <materialIcons:MaterialIcon Width="22" Height="22"
+                                                            Classes="muted"
+                                                            Kind="Cube"
+                                                            IsVisible="{Binding Thumbnail, Converter={x:Static converters:ObjectConverters.IsNull}}"/>
+                                <Image Source="{Binding Thumbnail}"
+                                       Stretch="UniformToFill"
+                                       IsVisible="{Binding Thumbnail, Converter={x:Static converters:ObjectConverters.IsNotNull}}"/>
+                            </Panel>
+                        </Border>
+
+                        <!-- Title over Description -->
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
+                            <TextBlock Text="{Binding Name}"
+                                       FontSize="13" FontWeight="SemiBold"
+                                       TextTrimming="CharacterEllipsis"/>
+                            <TextBlock Text="{Binding Description}"
+                                       Classes="muted"
+                                       FontSize="11"
+                                       MaxLines="2"
+                                       TextWrapping="Wrap"
+                                       TextTrimming="CharacterEllipsis"/>
+                        </StackPanel>
+
+                        <!-- Right-aligned metadata -->
+                        <StackPanel Grid.Column="2" VerticalAlignment="Center" Margin="8,0,0,0" Spacing="1">
+                            <TextBlock Text="{Binding DurationText}"
+                                       Classes="muted" FontSize="11"
+                                       HorizontalAlignment="Right"/>
+                            <TextBlock Text="{Binding FpsLabel}"
+                                       Classes="muted" FontSize="10"
+                                       HorizontalAlignment="Right"/>
+                            <materialIcons:MaterialIcon Kind="{Binding TypeIcon}"
+                                                        Classes="muted"
+                                                        Width="14" Height="14"
+                                                        HorizontalAlignment="Right"/>
+                        </StackPanel>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </DockPanel>
+</UserControl>
