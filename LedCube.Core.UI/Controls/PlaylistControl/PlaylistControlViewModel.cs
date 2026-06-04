@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using LedCube.Core.UI.Controls.AnimationList;
 using LedCube.Core.UI.Dialog.EditAnimationInstanceDialog;
 using LedCube.Core.UI.Dialog.SelectAnimationDialog;
 using LedCube.Core.UI.Services.Playback;
@@ -19,6 +20,7 @@ public partial class PlaylistControlViewModel : ObservableObject,
 {
     private readonly IPlaylistService _playlistService;
     private readonly IPlaybackService _playbackService;
+    private readonly IPlaylistEntryFactory _playlistEntryFactory;
     private readonly Dictionary<PlaylistEntry, PlaylistEntryControlViewModel> _entryMap = new();
 
     public ObservableCollection<PlaylistEntryControlViewModel> Instances { get; } = [];
@@ -26,10 +28,12 @@ public partial class PlaylistControlViewModel : ObservableObject,
     [ObservableProperty]
     private PlaylistEntryControlViewModel? _selectedInstance;
 
-    public PlaylistControlViewModel(IPlaylistService playlistService, IPlaybackService playbackService)
+    public PlaylistControlViewModel(IPlaylistService playlistService, IPlaybackService playbackService,
+        IPlaylistEntryFactory playlistEntryFactory)
     {
         _playlistService = playlistService;
         _playbackService = playbackService;
+        _playlistEntryFactory = playlistEntryFactory;
         ((INotifyCollectionChanged)playlistService.Entries).CollectionChanged += OnEntriesChanged;
         ((INotifyPropertyChanged)playbackService).PropertyChanged += OnPlaybackPropertyChanged;
         WeakReferenceMessenger.Default.Register<PlaylistSelectionChangedMessage>(this);
@@ -113,6 +117,14 @@ public partial class PlaylistControlViewModel : ObservableObject,
     {
         for (var i = 0; i < Instances.Count; i++)
             Instances[i].Index = i;
+    }
+
+    /// <summary>Appends a playlist entry built from an animation list entry (used by drag-and-drop).</summary>
+    public void AddFromAnimationEntry(AnimationListEntryViewModel entry)
+    {
+        var playlistEntry = _playlistEntryFactory.FromAnimationListEntry(entry);
+        if (playlistEntry is not null)
+            _playlistService.Add(playlistEntry);
     }
 
     [RelayCommand(AllowConcurrentExecutions = false)]

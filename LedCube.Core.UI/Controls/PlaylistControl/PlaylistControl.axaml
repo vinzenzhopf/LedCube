@@ -4,7 +4,7 @@
              xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              x:Class="LedCube.Core.UI.Controls.PlaylistControl.PlaylistControl"
              x:DataType="local:PlaylistControlViewModel">
-    <DockPanel>
+    <DockPanel DragDrop.AllowDrop="True">
         <StackPanel DockPanel.Dock="Top" Classes="toolbar">
             <Button Classes="icon" Command="{Binding AddAnimationCommand}">
                 <materialIcons:MaterialIcon Kind="Plus"/>
