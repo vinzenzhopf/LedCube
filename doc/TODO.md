@@ -37,6 +37,22 @@
 - [ ] Allow the adding of those animation files to the Playlist.
 - [ ] Make the Animation List search-/filterable
 
+### Playlist File Format
+- [ ] Nail down the specification for Playlist Files in [File Formats](FileFormats.md)
+- [ ] Implement the File Format for the Playlist as outlined in the spec.
+- [ ] Allow the user to save the current Playlist state into the Playlist file.
+- [ ] Introduce Playlist Metadata like Name, Description, Author, Image.
+  - [ ] Add an UI Control for editing the Metadata
+
+### Media Directory
+- [ ] Allow the user to select a directory containing 'media' files 
+  - with one folder for animations, and one folder for playlists
+  - ref to #AnimationList issue 1
+  - automatically store the Playlists in this folder
+- [ ] Add Separate List with discovered Animations from that Directory
+  - Let the User freely browse through the Playlists and select one to play
+  - Just like an Music Player
+
 ## Animator (LedCube.Animator)
 
 - [ ] **TimelineControl** — scrubbing, multi-frame selection, comfortable frame editing
@@ -53,6 +69,14 @@
 - [ ] **Edit/selection stack** — command pattern for undo/redo
 - [ ] **Streamer module** — stream directly from Animator to cube
 - [ ] General: get Animator to a working/usable level
+
+### Export as Baked Animation
+- [ ] Export the current TimelineState as a baked AnimationFile
+
+### Animation Project File Format
+- [ ] Nail down the specification for AnimationProject Files in [File Formats](FileFormats.md)
+- [ ] Implement the File Format for the Animator as outlined in the spec.
+- [ ] Integrate Saving the current Animator state into the AnimationProject file.
 
 ## Plugin System
 
@@ -80,14 +104,35 @@
   covers `PlaybackControl` bindings/commands and `PlaylistService` repeat-mode
   auto-advance / navigation (with in-memory playback/playlist/plugin fakes).
 - [ ] Add unit tests for core domain logic (`LedCube.Core.Common`)
+  - `CubeData.Serialize` bit-packing covered (`CubeDataSerializeTests`); fixed copy-paste bugs in
+    `CubeDataTests` parametrization (16-cube and Z-long buffer were never actually exercised).
 - [ ] Add tests for plugin lifecycle (`FrameGeneratorBase`, `PluginManager`)
 - [ ] Add tests for UDP communication / frame serialization
+  - Frame/datagram serialization covered: round-trips for all payload structs + header
+    (`DatagramRoundtripTests`) and `CubeDatagramUtils.ResolveDatagramContent` dispatch
+    (`CubeDatagramUtilsTests`). Socket-level `UdpCommunication` send/receive still only has
+    manual hardware integration tests.
 - [ ] Integration tests for playback loop
   - The `PlaybackService` frame loop itself (timer-driven draw / repeat / finish) is still uncovered.
 
 ## Animations
 
-- [ ] FFT Audio Spectrum animation (`AudioSpectrum` plugin — finish/improve)
+Implemented as plugins: `GameOfLife`, `LedWalker`, `Snake3D`, `AudioSpectrum`, `TextWriter`,
+`SdfTest`, `FileAnimation`, plus the cube16x ports `FullOn`, `PlaneWalker`, `FallingLeds`,
+`Raindrops`, `RandomOnOff`, `RandomToggle`, `BouncingCube`, `Fireworks`, and the SDF / physics
+animations `Wave`, `Whisk`, `RotatingObject`, `BouncingBall`, `BouncingCubes`.
+
+- [x] FFT Audio Spectrum animation (`AudioSpectrum` plugin — FftSharp FFT + NAudio WASAPI capture, loopback/mic selectable, 3D spectrum waterfall)
 - [ ] Rolling text animation (`TextWriter` plugin — scrolling text display)
-- [ ] Extended animations (new ideas, more variety)
 - [ ] Keyboard input integration for interactive animations
+- [ ] Improve `PlaneWalker` (more sweep patterns / perspectives)
+- [ ] **Pong 3D** — Pong in three dimensions, driven by a keyboard / controller input.
+
+### Planned (from the cube16x roadmap)
+
+- [x] **Wave** — a configurable waveform that travels across the cube; LEDs under the function are lit, above are off (`Wave` plugin).
+- [x] **Whisk** — a cross of two intersecting planes that rotates around an axis (`Whisk` plugin, SDF).
+- [x] **Rotating objects** — rotate arbitrary objects / SDFs within the cube (`RotatingObject` plugin: box-frame / octahedron / torus / box).
+- [x] **Bouncing ball** — a round object that bounces around inside the cube, optional gravity (`BouncingBall` plugin, SDF).
+- [x] **Bouncing cubes** — multiple cubes that collide and bounce off one another (`BouncingCubes` plugin, SDF + elastic collisions).
+
