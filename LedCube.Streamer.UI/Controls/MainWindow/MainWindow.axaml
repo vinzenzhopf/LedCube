@@ -50,15 +50,15 @@
 
                 <GridSplitter Grid.Column="1" VerticalAlignment="Stretch" ResizeBehavior="BasedOnAlignment"/>
 
-                <!-- Mid: Playback + Playlist -->
-                <DockPanel Grid.Column="2">
-                    <HeaderedContentControl DockPanel.Dock="Bottom" Header="Plugin Config">
-                        <ContentControl Content="{Binding PluginConfigViewModel}"/>
-                    </HeaderedContentControl>
-                    <HeaderedContentControl Header="Playlist">
+                <!-- Mid: Playlist (gets the space) + Plugin Config (capped, scrolls) -->
+                <Grid Grid.Column="2" RowDefinitions="*,Auto">
+                    <HeaderedContentControl Grid.Row="0" Header="Playlist" MinHeight="180">
                         <ContentControl Content="{Binding PlaylistControlViewModel}"/>
                     </HeaderedContentControl>
-                </DockPanel>
+                    <HeaderedContentControl Grid.Row="1" Header="Plugin Config" MaxHeight="340">
+                        <ContentControl Content="{Binding PluginConfigViewModel}"/>
+                    </HeaderedContentControl>
+                </Grid>
                 
                 <GridSplitter Grid.Column="3" VerticalAlignment="Stretch" ResizeBehavior="BasedOnAlignment"/>
 
