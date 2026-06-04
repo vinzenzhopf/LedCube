@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Controls.Templates;
 using Avalonia.Data;
 using Avalonia.Layout;
@@ -25,8 +26,8 @@ public class ConfigEntryDataTemplate : IDataTemplate
         return vm.Descriptor.Type switch
         {
             AnimationConfigType.Bool => BuildBool(),
-            AnimationConfigType.Int => BuildText(80),
-            AnimationConfigType.Float => BuildText(80),
+            AnimationConfigType.Int => vm.HasRange ? BuildSlider(vm) : BuildText(80),
+            AnimationConfigType.Float => vm.HasRange ? BuildSlider(vm) : BuildText(80),
             AnimationConfigType.String => BuildText(120),
             AnimationConfigType.Enum => BuildEnum(),
             AnimationConfigType.FilePath => BuildFilePath(vm),
@@ -81,6 +82,53 @@ public class ConfigEntryDataTemplate : IDataTemplate
         cb.Bind(ComboBox.SelectedItemProperty, new Binding("EnumValue"));
         Grid.SetColumn(cb, 1);
         grid.Children.Add(cb);
+        return grid;
+    }
+
+    private static Control BuildSlider(ConfigEntryViewModel vm)
+    {
+        // Single row: label | slider | value box.
+        var grid = new Grid
+        {
+            Margin = new Thickness(0, 3),
+            ColumnDefinitions = new ColumnDefinitions("Auto,*,Auto")
+        };
+        ToolTip.SetTip(grid, new Binding("Descriptor.Description"));
+
+        var label = new TextBlock
+        {
+            VerticalAlignment = VerticalAlignment.Center,
+            Margin = new Thickness(0, 0, 8, 0)
+        };
+        label.Bind(TextBlock.TextProperty, new Binding("Descriptor.DisplayName"));
+        Grid.SetColumn(label, 0);
+
+        var slider = new Slider { VerticalAlignment = VerticalAlignment.Center, MinWidth = 60 };
+        slider.Bind(RangeBase.MinimumProperty, new Binding("Minimum"));
+        slider.Bind(RangeBase.MaximumProperty, new Binding("Maximum"));
+        slider.Bind(RangeBase.ValueProperty, new Binding("DoubleValue") { Mode = BindingMode.TwoWay });
+        if (vm.IsInteger)
+        {
+            slider.IsSnapToTickEnabled = true;
+            slider.TickFrequency = 1;
+        }
+
+        Grid.SetColumn(slider, 1);
+
+        var valueBox = new TextBox
+        {
+            Width = 64,
+            Margin = new Thickness(8, 0, 0, 0),
+            VerticalAlignment = VerticalAlignment.Center,
+            HorizontalContentAlignment = HorizontalAlignment.Right,
+            Padding = new Thickness(4, 2)
+        };
+        valueBox.Bind(TextBox.TextProperty, new Binding("StringValue"));
+        Grid.SetColumn(valueBox, 2);
+
+        grid.Children.Add(label);
+        grid.Children.Add(slider);
+        grid.Children.Add(valueBox);
         return grid;
     }
 

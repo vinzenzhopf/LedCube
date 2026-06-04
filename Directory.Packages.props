@@ -16,6 +16,8 @@
     <PackageVersion Include="Material.Icons.Avalonia" Version="3.0.2" />
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.2" />
     <PackageVersion Include="coverlet.collector" Version="10.0.1" />
+    <PackageVersion Include="FftSharp" Version="2.2.0" />
+    <PackageVersion Include="NAudio" Version="2.2.1" />
     <PackageVersion Include="HelixToolkit.Core.Wpf" Version="2.27.2" />
     <PackageVersion Include="Microsoft.Extensions.Configuration" Version="10.0.8" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.8" />

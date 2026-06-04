@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using LedCube.PluginBase;
 
@@ -20,6 +21,7 @@ public partial class ConfigEntryViewModel : ObservableObject
         OnPropertyChanged(nameof(StringValue));
         OnPropertyChanged(nameof(BoolValue));
         OnPropertyChanged(nameof(EnumValue));
+        OnPropertyChanged(nameof(DoubleValue));
         _onChanged?.Invoke();
     }
 
@@ -49,6 +51,36 @@ public partial class ConfigEntryViewModel : ObservableObject
         get => Value?.ToString();
         set => Value = value;
     }
+
+    /// <summary>Numeric value for slider-style editors. Writes back as int or float per the descriptor type.</summary>
+    public double DoubleValue
+    {
+        get => ToDouble(Value, 0.0);
+        set => Value = Descriptor.Type == AnimationConfigType.Int
+            ? (int)Math.Round(value)
+            : (float)Math.Round(value, 2);
+    }
+
+    public double Minimum => ToDouble(Descriptor.MinValue, 0.0);
+
+    public double Maximum => ToDouble(Descriptor.MaxValue, 1.0);
+
+    /// <summary>True when this is a numeric entry with both bounds set — render it as a slider.</summary>
+    public bool HasRange => Descriptor.Type is AnimationConfigType.Int or AnimationConfigType.Float
+        && Descriptor.MinValue is not null && Descriptor.MaxValue is not null;
+
+    public bool IsInteger => Descriptor.Type == AnimationConfigType.Int;
+
+    private static double ToDouble(object? value, double fallback) => value switch
+    {
+        float f => f,
+        double d => d,
+        int i => i,
+        long l => l,
+        _ => double.TryParse(value?.ToString(), NumberStyles.Float, CultureInfo.InvariantCulture, out var v)
+            ? v
+            : fallback,
+    };
 
     public ConfigEntryViewModel(AnimationConfigDescriptor descriptor, AnimationConfig config, Action? onChanged = null)
     {
