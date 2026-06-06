@@ -37,6 +37,7 @@
         <ProjectReference Include="..\Plugin\LedCube.Plugins.Animation.AudioSpectrum\LedCube.Plugins.Animation.AudioSpectrum.csproj" />
         <ProjectReference Include="..\Plugin\LedCube.Plugins.Animation.FileAnimation\LedCube.Plugins.Animation.FileAnimation.csproj" />
         <ProjectReference Include="..\Plugin\LedCube.Plugins.Animation.FullOn\LedCube.Plugins.Animation.FullOn.csproj" />
+        <ProjectReference Include="..\Plugin\LedCube.Plugins.Animation.MetropolisDrive\LedCube.Plugins.Animation.MetropolisDrive.csproj" />
         <ProjectReference Include="..\Plugin\LedCube.Plugins.Animation.PlaneWalker\LedCube.Plugins.Animation.PlaneWalker.csproj" />
         <ProjectReference Include="..\Plugin\LedCube.Plugins.Animation.RandomToggle\LedCube.Plugins.Animation.RandomToggle.csproj" />
         <ProjectReference Include="..\Plugin\LedCube.Plugins.Animation.RandomOnOff\LedCube.Plugins.Animation.RandomOnOff.csproj" />

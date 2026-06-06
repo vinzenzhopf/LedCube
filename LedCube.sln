@@ -112,6 +112,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LedCube.Plugins.Animation.B
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LedCube.Plugins.Animation.BouncingCubes", "Plugin\LedCube.Plugins.Animation.BouncingCubes\LedCube.Plugins.Animation.BouncingCubes.csproj", "{C8C043D9-C6D3-4DD9-B0DE-FE69B4182570}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LedCube.Plugins.Animation.MetropolisDrive", "Plugin\LedCube.Plugins.Animation.MetropolisDrive\LedCube.Plugins.Animation.MetropolisDrive.csproj", "{D479F46C-0E79-42A1-A9F3-87E8BFE98585}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -662,6 +664,18 @@ Global
 		{C8C043D9-C6D3-4DD9-B0DE-FE69B4182570}.Release|x64.Build.0 = Release|Any CPU
 		{C8C043D9-C6D3-4DD9-B0DE-FE69B4182570}.Release|x86.ActiveCfg = Release|Any CPU
 		{C8C043D9-C6D3-4DD9-B0DE-FE69B4182570}.Release|x86.Build.0 = Release|Any CPU
+		{D479F46C-0E79-42A1-A9F3-87E8BFE98585}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D479F46C-0E79-42A1-A9F3-87E8BFE98585}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D479F46C-0E79-42A1-A9F3-87E8BFE98585}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D479F46C-0E79-42A1-A9F3-87E8BFE98585}.Debug|x64.Build.0 = Debug|Any CPU
+		{D479F46C-0E79-42A1-A9F3-87E8BFE98585}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D479F46C-0E79-42A1-A9F3-87E8BFE98585}.Debug|x86.Build.0 = Debug|Any CPU
+		{D479F46C-0E79-42A1-A9F3-87E8BFE98585}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D479F46C-0E79-42A1-A9F3-87E8BFE98585}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D479F46C-0E79-42A1-A9F3-87E8BFE98585}.Release|x64.ActiveCfg = Release|Any CPU
+		{D479F46C-0E79-42A1-A9F3-87E8BFE98585}.Release|x64.Build.0 = Release|Any CPU
+		{D479F46C-0E79-42A1-A9F3-87E8BFE98585}.Release|x86.ActiveCfg = Release|Any CPU
+		{D479F46C-0E79-42A1-A9F3-87E8BFE98585}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -707,5 +721,6 @@ Global
 		{DF137D35-5C67-4ADA-AF85-2473B74B019A} = {C2DE345E-5A08-4C96-8677-2C5BB6B92248}
 		{3B919C2A-0C99-4AE6-90B7-22D939FEC7E1} = {C2DE345E-5A08-4C96-8677-2C5BB6B92248}
 		{C8C043D9-C6D3-4DD9-B0DE-FE69B4182570} = {C2DE345E-5A08-4C96-8677-2C5BB6B92248}
+		{D479F46C-0E79-42A1-A9F3-87E8BFE98585} = {C2DE345E-5A08-4C96-8677-2C5BB6B92248}
 	EndGlobalSection
 EndGlobal
