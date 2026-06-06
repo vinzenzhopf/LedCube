@@ -17,6 +17,17 @@ public static class Sdf
             return Vector3.Max(q, Vector3.Zero).Length() + MathF.Min(MathF.Max(q.X, MathF.Max(q.Y, q.Z)), 0);
         };
 
+    /// <summary>A box specified by its full edge lengths instead of half-extents (see <see cref="Box"/>).</summary>
+    public static Sdf3D BoxSize(Vector3 size)
+        => Box(size * 0.5f);
+
+    /// <summary>
+    /// An axis-aligned box spanning the corners <paramref name="min"/> to <paramref name="max"/>,
+    /// rather than a centered box with half-extents.
+    /// </summary>
+    public static Sdf3D BoxBounds(Vector3 min, Vector3 max)
+        => Translate(Box((max - min) * 0.5f), (min + max) * 0.5f);
+
     public static Sdf3D BoxFrame(Vector3 dimensions, float thickness)
         => (position, _) =>
         {
@@ -100,6 +111,20 @@ public static class Sdf
     public static Sdf3D Union(Sdf3D a, Sdf3D b)
         => (position, time) => MathF.Min(a(position, time), b(position, time));
 
+    /// <summary>Union of any number of fields (the nearest surface wins). Empty input is <see cref="Void"/>.</summary>
+    public static Sdf3D UnionAll(params Sdf3D[] sdfs)
+    {
+        if (sdfs.Length == 0)
+            return Void();
+        return (position, time) =>
+        {
+            var d = float.PositiveInfinity;
+            foreach (var sdf in sdfs)
+                d = MathF.Min(d, sdf(position, time));
+            return d;
+        };
+    }
+
     public static Sdf3D Subtraction(Sdf3D a, Sdf3D b)
         => (position, time) => MathF.Max(-a(position, time), b(position, time));
 
@@ -125,4 +150,20 @@ public static class Sdf
 
     public static Sdf3D Scale(Sdf3D sdf, float scale)
         => (position, time) => sdf(position / scale, time) * scale;
+
+    /// <summary>
+    /// Infinite domain repetition: tiles <paramref name="sdf"/> on a lattice with the given period per
+    /// axis. A period component of 0 (or less) disables repetition on that axis.
+    /// </summary>
+    public static Sdf3D Repeat(Sdf3D sdf, Vector3 period)
+        => (position, time) =>
+        {
+            position.X = RepeatAxis(position.X, period.X);
+            position.Y = RepeatAxis(position.Y, period.Y);
+            position.Z = RepeatAxis(position.Z, period.Z);
+            return sdf(position, time);
+        };
+
+    private static float RepeatAxis(float p, float period)
+        => period > 0f ? p - period * MathF.Round(p / period) : p;
 }
