@@ -28,7 +28,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="{Binding LogAppenderViewModel.ShowLog,
                                        Converter={converters:BoolToGridLengthConverter TrueValue=1*, FalseValue=0}}"
-                               MinHeight="50"/>
+                               MinHeight="40"/>
             </Grid.RowDefinitions>
 
             <Grid Grid.Row="0">
@@ -53,14 +53,21 @@
 
                 <!-- Mid: Playlist selection + Playlist + Plugin Config, resizable via a splitter -->
                 <Grid Grid.Column="2" RowDefinitions="Auto,2*,Auto,*">
-                    <HeaderedContentControl Grid.Row="0" Header="Library Playlist">
+                    <HeaderedContentControl Grid.Row="0" 
+                                            Header="Library Playlist">
                         <ContentControl Content="{Binding PlaylistSelectionViewModel}"/>
                     </HeaderedContentControl>
-                    <HeaderedContentControl Grid.Row="1" Header="Playlist" MinHeight="120">
+                    <HeaderedContentControl Grid.Row="1" 
+                                            Header="Playlist" 
+                                            MinHeight="120">
                         <ContentControl Content="{Binding PlaylistControlViewModel}"/>
                     </HeaderedContentControl>
                     <GridSplitter Grid.Row="2" Height="4" HorizontalAlignment="Stretch"/>
-                    <HeaderedContentControl Grid.Row="3" Header="Plugin Config" MinHeight="80" Margin="0" Padding="0">
+                    <HeaderedContentControl Grid.Row="3" 
+                                            Header="Plugin Config" 
+                                            MinHeight="80" 
+                                            Margin="0" 
+                                            Padding="0">
                         <ContentControl Content="{Binding PluginConfigViewModel}"/>
                     </HeaderedContentControl>
                 </Grid>

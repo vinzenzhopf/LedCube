@@ -16,7 +16,8 @@ namespace LedCube.Core.UI.Controls.PlaylistControl;
 
 public partial class PlaylistControlViewModel : ObservableObject,
     IRecipient<PlaylistSelectionChangedMessage>,
-    IRecipient<PlaylistEntryEditedMessage>
+    IRecipient<PlaylistEntryEditedMessage>,
+    IRecipient<PlaylistEntryConfigChangedMessage>
 {
     private readonly IPlaylistService _playlistService;
     private readonly IPlaybackService _playbackService;
@@ -38,6 +39,7 @@ public partial class PlaylistControlViewModel : ObservableObject,
         ((INotifyPropertyChanged)playbackService).PropertyChanged += OnPlaybackPropertyChanged;
         WeakReferenceMessenger.Default.Register<PlaylistSelectionChangedMessage>(this);
         WeakReferenceMessenger.Default.Register<PlaylistEntryEditedMessage>(this);
+        WeakReferenceMessenger.Default.Register<PlaylistEntryConfigChangedMessage>(this);
     }
 
     private void OnPlaybackPropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -83,6 +85,13 @@ public partial class PlaylistControlViewModel : ObservableObject,
         vm.FrameTimeOverride = message.Entry.FrameTimeOverride;
     }
 
+    public void Receive(PlaylistEntryConfigChangedMessage message)
+    {
+        // A config change may point a file animation at a different file — refresh its details.
+        if (_entryMap.TryGetValue(message.Entry, out var vm))
+            _ = vm.LoadDetailsAsync();
+    }
+
     private void OnEntriesChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
         switch (e.Action)
@@ -93,6 +102,7 @@ public partial class PlaylistControlViewModel : ObservableObject,
                     var vm = new PlaylistEntryControlViewModel(entry);
                     _entryMap[entry] = vm;
                     Instances.Add(vm);
+                    _ = vm.LoadDetailsAsync();
                 }
                 break;
             case NotifyCollectionChangedAction.Remove:

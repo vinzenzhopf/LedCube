@@ -72,6 +72,18 @@ public static class LcAnimRawReader
         return manifest;
     }
 
+    /// <summary>
+    /// Reads only the optional <c>thumbnail.png</c> bytes without decompressing the frame pool.
+    /// Returns null when the container has no thumbnail. Cheap regardless of file size.
+    /// </summary>
+    public static byte[]? ReadThumbnail(Stream stream)
+    {
+        ArgumentNullException.ThrowIfNull(stream);
+
+        using var archive = new ZipArchive(stream, ZipArchiveMode.Read, leaveOpen: true);
+        return ZipEntries.ReadOptional(archive, LcAnimRawFormat.ThumbnailEntry);
+    }
+
     private static List<Frame> SliceFrames(byte[] framesBytes, int stride)
     {
         if (stride <= 0)
