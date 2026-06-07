@@ -27,6 +27,7 @@ public sealed class SpectrumAnalyzer
         float maxFrequency = 16000f,
         float floorDb = -60f,
         float tiltDbPerOctave = 3f,
+        float pivotFrequency = 1000f,
         float decay = 0.85f)
     {
         _fftSize = fftSize;
@@ -38,7 +39,7 @@ public sealed class SpectrumAnalyzer
 
         maxFrequency = MathF.Min(maxFrequency, sampleRate / 2f);
         _bandEdges = ComputeBandEdges(sampleRate, fftSize, bands, minFrequency, maxFrequency);
-        _tiltDb = ComputeTilt(bands, minFrequency, maxFrequency, tiltDbPerOctave);
+        _tiltDb = ComputeTilt(bands, minFrequency, maxFrequency, tiltDbPerOctave, pivotFrequency);
     }
 
     /// <summary>
@@ -103,18 +104,24 @@ public sealed class SpectrumAnalyzer
     }
 
     /// <summary>
-    /// Per-band tilt in dB: 0 at the lowest band, rising by <paramref name="dbPerOctave"/> for every
-    /// octave above <paramref name="minFrequency"/>, so higher bands are progressively boosted.
+    /// Per-band tilt in dB, rotated around <paramref name="pivotFrequency"/>: bands below the pivot
+    /// are attenuated and bands above it are boosted by <paramref name="dbPerOctave"/> per octave, so
+    /// the overall level stays balanced while the highs are lifted relative to the lows. A pivot of
+    /// 0 (or less) falls back to the geometric centre of the displayed range.
     /// </summary>
-    private static double[] ComputeTilt(int bands, float minFrequency, float maxFrequency, float dbPerOctave)
+    private static double[] ComputeTilt(int bands, float minFrequency, float maxFrequency, float dbPerOctave, float pivotFrequency)
     {
-        var tilt = new double[bands];
+        var pivot = pivotFrequency > 0f
+            ? Math.Clamp(pivotFrequency, minFrequency, maxFrequency)
+            : MathF.Sqrt(minFrequency * maxFrequency);
         var log2 = Math.Log(2.0);
+
+        var tilt = new double[bands];
         for (var b = 0; b < bands; b++)
         {
             var fraction = (b + 0.5f) / bands;
             var centerFrequency = minFrequency * MathF.Pow(maxFrequency / minFrequency, fraction);
-            var octaves = Math.Log(centerFrequency / minFrequency) / log2;
+            var octaves = Math.Log(centerFrequency / pivot) / log2;
             tilt[b] = dbPerOctave * octaves;
         }
 

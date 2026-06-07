@@ -37,6 +37,9 @@ public sealed class AudioSpectrumAnimation(ILogger<AudioSpectrumAnimation> logge
             new AnimationConfigDescriptor("Tilt", "Tilt (dB/oct)", AnimationConfigType.Float,
                 DefaultValue: 4.0f, MinValue: 0.0f, MaxValue: 9.0f,
                 Description: "Boosts higher bands to offset music's natural low-frequency emphasis."),
+            new AnimationConfigDescriptor("PivotHz", "Tilt pivot (Hz)", AnimationConfigType.Float,
+                DefaultValue: 1000.0f, MinValue: 0.0f, MaxValue: 12000.0f,
+                Description: "Frequency the tilt rotates around (0 = auto / geometric centre of the range)."),
             new AnimationConfigDescriptor("MinFreq", "Min frequency (Hz)", AnimationConfigType.Float,
                 DefaultValue: 40.0f, MinValue: 20.0f, MaxValue: 2000.0f),
             new AnimationConfigDescriptor("MaxFreq", "Max frequency (Hz)", AnimationConfigType.Float,
@@ -54,6 +57,7 @@ public sealed class AudioSpectrumAnimation(ILogger<AudioSpectrumAnimation> logge
     private float _decay = 0.85f;
     private float _floorDb = -60.0f;
     private float _tilt = 3.0f;
+    private float _pivotHz = 1000.0f;
     private float _minFreq = 40.0f;
     private float _maxFreq = 16000.0f;
     private float _durationSeconds;
@@ -79,6 +83,8 @@ public sealed class AudioSpectrumAnimation(ILogger<AudioSpectrumAnimation> logge
             _floorDb = floorDb;
         if (config.Get<float>("Tilt") is { } tilt)
             _tilt = tilt;
+        if (config.Get<float>("PivotHz") is { } pivotHz)
+            _pivotHz = pivotHz;
         if (config.Get<float>("MinFreq") is { } minFreq)
             _minFreq = minFreq;
         if (config.Get<float>("MaxFreq") is { } maxFreq)
@@ -103,7 +109,7 @@ public sealed class AudioSpectrumAnimation(ILogger<AudioSpectrumAnimation> logge
             {
                 _audio = new NAudioCaptureSource(loopback: _source != "Microphone", ringCapacity: FftSize * 4);
                 _analyzer = new SpectrumAnalyzer(
-                    _audio.SampleRate, FftSize, _bands, _minFreq, _maxFreq, _floorDb, _tilt, _decay);
+                    _audio.SampleRate, FftSize, _bands, _minFreq, _maxFreq, _floorDb, _tilt, _pivotHz, _decay);
                 _audio.Start();
             }
             else
