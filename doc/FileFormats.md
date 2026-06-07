@@ -6,7 +6,7 @@ This doc defines the on-disk formats the LedCube apps read and write.
 |---------------|--------------------------------------------------|------------|
 | `.lcanimraw`  | Baked animation — frames ready for playback      | Spec v1    |
 | `.lcanim`     | Animation project — editor's source-of-truth     | Deferred   |
-| `.lcplst`     | Playlist referencing baked animations            | Sketched   |
+| `.lcplst`     | Playlist referencing baked animations            | Spec v1    |
 
 All three are ZIP containers with a JSON manifest plus binary payload(s).
 
@@ -37,19 +37,9 @@ LedCube.Animation.FileFormat.Playlist        — .lcplst    (root type: Playlist
    │   AnimationRaw       │ │   Playlist          │ │   Animation             │
    │   (.lcanimraw)       │ │   (.lcplst)         │ │   (.lcanim)             │
    └──────────────────────┘ └─────────────────────┘ └─────────────────────────┘
-              ▲                      │                      │
-              │                      │                      │
-              └──────────────────────┘                      │
-              Playlist may embed                            │
-              .lcanimraw entries                            │
-                                                            │
-              ┌─────────────────────────────────────────────┘
-              │  AnimationProject.Bake() → Animation
-              ▼
-   ┌──────────────────────┐
-   │ FileFormat.          │
-   │   AnimationRaw       │
-   └──────────────────────┘
+              ▲                                             │
+              │  AnimationProject.Bake() → Animation        │
+              └─────────────────────────────────────────────┘
 ```
 
 Hard rules:
@@ -57,12 +47,13 @@ Hard rules:
 - `Common` references no other LedCube package except `LedCube.Core.Common` (for `Point3D`).
 - `AnimationRaw` references `Common` only — never `Animation` or `Playlist`.
 - `Animation` references `Common` + `AnimationRaw` (for `Bake()`).
-- `Playlist` references `Common` + `AnimationRaw` (for embedded entries).
+- `Playlist` references `Common` only — entries reference animations by plugin type or by file path, never by embedding.
 - `Animation` ⊥ `Playlist`.
 
 Consumers stack cleanly:
 
-- **Streamer / FileAnimation plugin** → `AnimationRaw` + `Common`. Never sees project or playlist types.
+- **FileAnimation plugin** → `AnimationRaw` + `Common`. Never sees project or playlist types.
+- **Streamer app** → `AnimationRaw` + `Playlist` + `Common` — plays baked files and opens/saves playlists.
 - **Animator** → all three formats + `Common`.
 - **Unified app (later)** → superset, same rules.
 
@@ -247,17 +238,21 @@ Anything that requires interpretation at render time is the project format's job
 
 What's not yet defined: every field of the project manifest, the serialization of these types, and the bake algorithm. These follow the editor.
 
-## `.lcplst` — playlist (sketched)
+## `.lcplst` — playlist (v1)
 
-A playlist file the Streamer can open instead of (or in addition to) the in-memory playlist. Same container shape as `.lcanimraw`.
+A playlist the Streamer can open, play, and save the current in-memory playlist into. Same ZIP-with-manifest container as `.lcanimraw`.
+
+### Container
 
 ```
 my-show.lcplst
 ├── manifest.json
-└── animations/             (optional) embedded .lcanimraw files for self-contained playlists
-    ├── sunrise.lcanimraw
-    └── ...
+└── thumbnail.png          (optional) PNG, recommended 128×128, used for browse UIs
 ```
+
+Animations are **referenced, never embedded** — by plugin type or by file path (see [File animations](#file-animations)). Unknown manifest fields and ZIP entries are preserved on round-trip.
+
+### `manifest.json`
 
 ```json
 {
@@ -266,57 +261,89 @@ my-show.lcplst
   "author": "vinzenz",
   "description": "Sunset to deep-night sequence.",
   "createdUtc": "2026-05-31T14:00:00Z",
+  "repeatMode": "LoopWholePlaylist",
   "entries": [
     {
       "id": "1f9c…",
       "instanceName": "Sunrise",
-      "source": { "kind": "external", "path": "anims/sunrise.lcanimraw" },
+      "typeName": "LedCube.Plugins.Animation.FileAnimation.FileAnimationGenerator",
       "repeatCount": 1,
-      "frameTimeUsOverride": null
-    },
-    {
-      "id": "3e7b…",
-      "instanceName": "Heartbeat",
-      "source": { "kind": "embedded", "name": "heartbeat.lcanimraw" },
-      "repeatCount": 0,
-      "frameTimeUsOverride": 25000
+      "frameTimeUsOverride": null,
+      "config": { "FilePath": "sunrise.lcanimraw" }
     },
     {
       "id": "8a02…",
       "instanceName": "Snake",
-      "source": { "kind": "plugin", "typeName": "LedCube.Plugins.Animation.Snake3D.Snake3DAnimation" },
+      "typeName": "LedCube.Plugins.Animation.Snake3D.Snake3DAnimation",
       "repeatCount": 0,
-      "frameTimeUsOverride": null,
+      "frameTimeUsOverride": 25000,
       "config": { "Speed": 1.5 }
     }
   ]
 }
 ```
 
-### Source kinds
+| Field           | Type     | Required | Notes                                                                                       |
+|-----------------|----------|----------|---------------------------------------------------------------------------------------------|
+| `formatVersion` | int      | yes      | Bump on **breaking** changes only. v1 = this document.                                       |
+| `name`          | string   | yes      | Display name. Not unique, not used for lookup.                                               |
+| `author`        | string   | no       | Free-text.                                                                                   |
+| `description`   | string   | no       | Free-text.                                                                                   |
+| `createdUtc`    | ISO-8601 | no       | UTC timestamp.                                                                               |
+| `repeatMode`    | enum str | no       | Auto-advance policy: `StopAtEnd`, `LoopWholePlaylist`, `RepeatCurrentEntry`, `FairRandomPlay`, `TrueRandomPlay`. Default `LoopWholePlaylist`; unknown values fall back to the default. |
+| `entries`       | array    | yes      | **Play order = array order.** May be empty (`[]`).                                           |
 
-- `external` — `{ "kind": "external", "path": "<string>" }`. Points to a `.lcanimraw` file. **Paths use forward slashes**; relative paths resolve from the playlist file's directory; absolute paths are honoured as-is. Writers should prefer relative paths for portability.
-- `embedded` — `{ "kind": "embedded", "name": "<string>" }`. References an entry under `animations/<name>` in the same `.lcplst` archive. Used for self-contained playlists that can be moved as a single file.
-- `plugin` — `{ "kind": "plugin", "typeName": "<string>" }`. References a code-defined `IFrameGenerator` by full type name; the `config` field on the entry carries its `AnimationConfig` dictionary.
+### Entries
 
-### Entry semantics
+Every entry maps 1:1 to the in-memory `PlaylistEntry`, which is always a plugin `IFrameGenerator` instance plus its config — file animations are not a separate kind.
 
-- **Array order = play order.** No explicit sort key; the JSON array order is authoritative.
-- `instanceName` — display label only. Not unique, not used for lookup.
-- `id` — opaque string (UUID recommended). Stable across playlist edits so external tools can reference entries.
-- `repeatCount` — `0` = infinite, `1` = play once, `N` = play N times. Mirrors in-memory `PlaylistEntry`.
-- `frameTimeUsOverride` — optional, `null` to use the entry's native frame time. **Applies to all source kinds**, not just `external`.
-- `config` — only meaningful for `kind: plugin`; ignored for other kinds.
+| Field                | Type   | Required | Notes                                                                                  |
+|----------------------|--------|----------|----------------------------------------------------------------------------------------|
+| `id`                 | string | no       | Opaque, stable id (UUID recommended) for external referencing. Writer generates one when absent. |
+| `instanceName`       | string | no       | Display label. Not unique. Defaults to the generator/file name.                        |
+| `typeName`           | string | yes      | Full type name of the `IFrameGenerator`, resolved via `PluginManager`.                 |
+| `repeatCount`        | int    | no       | `0` = infinite, `1` = once (default), `N` = N times, before auto-advance.              |
+| `frameTimeUsOverride`| uint   | no       | Microseconds; `null`/absent uses the entry's native frame time.                        |
+| `config`             | object | no       | The generator's `AnimationConfig` as JSON primitives.                                  |
 
-### Top-level fields
+### Config values
 
-Same metadata conventions as `.lcanimraw`: `name` required; `author`, `description`, `createdUtc` optional and round-tripped. `entries` may be empty (`[]`) — a valid empty playlist.
+`config` is a flat JSON object keyed by the generator's config-descriptor keys. Values are JSON primitives mapped from `AnimationConfigType`: `String` / `Enum` / `FilePath` → string, `Int` → integer, `Float` → number, `Bool` → boolean. The format model keeps values normalized (string / long / double / bool / null); the consumer coerces each to its descriptor type when building the live `AnimationConfig`. Keys with no matching descriptor are preserved but ignored.
+
+### File animations
+
+A file animation is the `FileAnimation` generator — identified structurally as the generator exposing an `AnimationConfigType.FilePath` descriptor (no direct plugin reference needed). Its `.lcanimraw` is named by the `FilePath` config value, resolved at load in order:
+
+1. Absolute / rooted path → used as-is.
+2. Else, relative to the configured `Library/Animations` folder.
+3. Else, relative to the playlist file's own directory.
+
+Writers store the bare filename (or a library-relative subpath) for animations inside the library, and an absolute path for files outside it. Paths use forward slashes.
+
+### Resolution and missing references (consumer concern)
+
+The format library returns pure data; mapping entries to live `PlaylistEntry` instances happens in the Streamer, where `PluginManager` and the library live:
+
+- `typeName` resolves via `PluginManager`. An unknown type is skipped from the live playlist with a warning but preserved verbatim on round-trip save.
+- A missing or unreadable file is **not** a load error — the `FileAnimation` entry is kept; the failure surfaces at play time.
+
+### Reader / Writer API
+
+`LcPlstReader.Read(Stream) → Playlist` and `LcPlstWriter.Write(Stream, Playlist)` (root type `Playlist` in `LedCube.Animation.FileFormat.Playlist`; `Model` / `Io` namespaces, versioned DTOs under `Io/Versions/V1`). `Playlist` is pure data: a `PlaylistManifest` (name / author / description / createdUtc / repeatMode) plus `IReadOnlyList<PlaylistEntry>` — a format-layer record distinct from the UI `PlaylistEntry`. The writer always writes the current version and preserves unknown manifest fields and ZIP entries.
+
+### Validation (reader MUST validate, writer MUST guarantee)
+
+1. `name` is present and non-empty.
+2. Every entry has a non-empty `typeName`.
+3. `repeatCount ≥ 0`.
+4. `frameTimeUsOverride`, when present, is `> 0`.
+5. `formatVersion > CurrentVersion` → `UnsupportedFormatVersionException`.
+
+An empty `entries` array is valid.
 
 ### Versioning
 
 Same `formatVersion` policy as `.lcanimraw`: bumps only on breaking changes; additive fields are silent; unknown content is preserved on round-trip.
-
-This section is **not yet implemented**. Field names may still change in v0 of the implementation. Detailed validation rules and the `LcPlstReader` / `LcPlstWriter` land with the playlist-file feature.
 
 ## Versioning & migrations
 
@@ -502,7 +529,7 @@ Long-term plan: one unified `LedCube.UI` app contains both authoring and streami
 | App                | Reads                              | Writes                             | Notes                              |
 |--------------------|------------------------------------|------------------------------------|------------------------------------|
 | `LedCube.Animator` | `.lcanim`, `.lcanimraw`            | `.lcanim`, `.lcanimraw`            | Edits projects; bakes to playable. |
-| `LedCube.Streamer` | `.lcanimraw`, `.lcplst` (later)    | (none)                             | Plays via the FileAnimation plugin.|
+| `LedCube.Streamer` | `.lcanimraw`, `.lcplst`            | `.lcplst`                          | Plays via the FileAnimation plugin; saves the current playlist. |
 | Future unified app | all three                          | all three                          |                                    |
 
 Both apps reference `LedCube.Animation.FileFormat.*` for IO — no format code is duplicated. Both apps depend on `LedCube.Core.Animation` for rendering / interpolation.
