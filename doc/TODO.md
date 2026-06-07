@@ -44,17 +44,29 @@ A list of available animation files (like a music player) instead of referencing
   currently falls back to a type icon).
 
 ### Playlist File Format
-- [ ] Nail down the specification for Playlist Files in [File Formats](FileFormats.md)
-- [ ] Implement the File Format for the Playlist as outlined in the spec.
-- [ ] Allow the user to save the current Playlist state into the Playlist file.
-- [ ] Introduce Playlist Metadata like Name, Description, Author, Image.
-  - [ ] Add an UI Control for editing the Metadata
+- [x] Nail down the specification for Playlist Files in [File Formats](FileFormats.md)
+  (`.lcplst` v1: ZIP + manifest; uniform plugin entries by `typeName` + `config`; file animations
+  via the `FileAnimation` generator's `FilePath` with library-first resolution; `repeatMode` stored).
+- [x] Implement the File Format for the Playlist as outlined in the spec.
+  (`LedCube.Animation.FileFormat.Playlist`: `Model` + `Io` with V1 DTOs, `LcPlstReader`/`LcPlstWriter`,
+  `PlaylistValidator`; 32 tests in `LedCube.Animation.FileFormat.Test/Playlist`.)
+- [x] Allow the user to save the current Playlist state into the Playlist file.
+  - [x] Core.UI mapping layer: `IPlaylistFileConverter`/`PlaylistFileConverter` maps the `.lcplst`
+    model ↔ live `PlaylistService` entries (resolves `typeName` via `PluginManager`, coerces config
+    to descriptor types, library-first file-path resolution); `PlaylistMetadata` record. 7 tests.
+  - [x] `PlaylistSessionService` (current file / dirty / metadata; load+save) + `PlaylistSelectionView`
+    above the playlist: dropdown of discovered playlists (+ `<Unsaved playlist>`), Save/Reload, and a
+    save/discard/cancel prompt on dirty switch/reload. New playlists auto-save to `Library/Playlists`
+    under a file name derived from the playlist name (no file picker). Saves all entries + per-entry config.
+- [x] Introduce Playlist Metadata like Name, Description, Author, Image.
+  - [x] Inline metadata editor (name/author/description) in the `PlaylistSelectionView`; edits mark
+    the playlist dirty and persist on save. (Thumbnail/image editing still open.)
 
 ### Media Directory
 - [x] Configurable library directory with `animations`/`playlists`/`projects` subfolders (settings).
-  - [ ] Automatically store playlists in this folder (blocked on the playlist file format below).
+  - [x] Save playlists into `Library/Playlists` (save-as defaults there; watcher indexes them).
 - [x] Separate list of discovered animations from that directory (the Animation List above).
-  - [ ] Browse discovered playlists and select one to play (blocked on the playlist file format).
+  - [x] Browse discovered playlists and select one to load via the `PlaylistSelectionView` dropdown.
 
 ## Animator (LedCube.Animator)
 

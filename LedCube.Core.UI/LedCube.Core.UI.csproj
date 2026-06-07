@@ -24,6 +24,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\LedCube.Animation.FileFormat.AnimationRaw\LedCube.Animation.FileFormat.AnimationRaw.csproj" />
+        <ProjectReference Include="..\LedCube.Animation.FileFormat.Playlist\LedCube.Animation.FileFormat.Playlist.csproj" />
         <ProjectReference Include="..\LedCube.Core.Common\LedCube.Core.Common.csproj" />
         <ProjectReference Include="..\LedCube.Core.UI.TimelineControl.Core\LedCube.Core.UI.TimelineControl.Core.csproj" />
         <ProjectReference Include="..\LedCube.Core.UI.TimelineControl\LedCube.Core.UI.TimelineControl.csproj" />

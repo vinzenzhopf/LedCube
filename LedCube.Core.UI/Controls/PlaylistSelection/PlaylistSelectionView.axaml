@@ -1,0 +1,70 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:playlistSelection="clr-namespace:LedCube.Core.UI.Controls.PlaylistSelection"
+             xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             mc:Ignorable="d" d:DesignWidth="360" d:DesignHeight="160"
+             x:Class="LedCube.Core.UI.Controls.PlaylistSelection.PlaylistSelectionView"
+             x:DataType="playlistSelection:PlaylistSelectionViewModel">
+    <StackPanel Margin="4" 
+                Spacing="6">
+        <!-- Selector + actions -->
+        <Grid ColumnDefinitions="*,Auto,Auto">
+            <ComboBox Grid.Column="0"
+                      HorizontalAlignment="Stretch"
+                      ItemsSource="{Binding Playlists}"
+                      SelectedItem="{Binding SelectedPlaylist, Mode=TwoWay}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate x:DataType="playlistSelection:PlaylistOptionViewModel">
+                        <TextBlock Text="{Binding DisplayName}"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+
+            <Button Grid.Column="1" Margin="4,0,0,0"
+                    Command="{Binding SaveCommand}"
+                    ToolTip.Tip="Save playlist">
+                <StackPanel Orientation="Horizontal" Spacing="4">
+                    <materialIcons:MaterialIcon Kind="ContentSave"/>
+                    <TextBlock Text="Save"/>
+                </StackPanel>
+            </Button>
+
+            <Button Grid.Column="2" Margin="4,0,0,0"
+                    Command="{Binding ReloadCommand}"
+                    ToolTip.Tip="Reload from file (discard changes)">
+                <materialIcons:MaterialIcon Kind="Refresh"/>
+            </Button>
+        </Grid>
+
+        <!-- Dirty indicator -->
+        <TextBlock Text="● Unsaved changes"
+                   FontSize="11"
+                   Foreground="{DynamicResource SystemFillColorCautionBrush}"
+                   IsVisible="{Binding IsDirty}"/>
+
+        <!-- Metadata -->
+        <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto" >
+            <TextBlock Grid.Row="0" Grid.Column="0" Classes="compactLabel" Text="Name"/>
+            <TextBox Grid.Row="0" Grid.Column="1" Classes="compact"
+                     Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
+
+            <TextBlock Grid.Row="1" Grid.Column="0" Classes="compactLabel" Text="Author"/>
+            <TextBox Grid.Row="1" Grid.Column="1" Classes="compact" Margin="0,4,0,0"
+                     Text="{Binding Author, UpdateSourceTrigger=PropertyChanged}"/>
+
+            <TextBlock Grid.Row="2" Grid.Column="0" Classes="compactLabel" Text="Description"/>
+            <TextBox Grid.Row="2" Grid.Column="1" Classes="compact" Margin="0,4,0,0"
+                     AcceptsReturn="True" TextWrapping="Wrap" MaxHeight="60"
+                     Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}"/>
+
+            <TextBlock Grid.Row="3" Grid.Column="0" Classes="compactLabel" Text="Created"
+                       IsVisible="{Binding CreatedText, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+            <TextBlock Grid.Row="3" Grid.Column="1" FontSize="12" Margin="0,4,0,0"
+                       VerticalAlignment="Center"
+                       Text="{Binding CreatedText}"
+                       IsVisible="{Binding CreatedText, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+        </Grid>
+    </StackPanel>
+</UserControl>

@@ -67,6 +67,8 @@ public partial class PlaylistService : ObservableObject, IPlaylistService,
 
     public void Remove(PlaylistEntry entry) => _entries.Remove(entry);
 
+    public void Clear() => _entries.Clear();
+
     public void Move(int fromIndex, int toIndex) => _entries.Move(fromIndex, toIndex);
 
     public void Select(PlaylistEntry? entry) => SelectedEntry = entry;

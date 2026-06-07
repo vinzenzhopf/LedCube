@@ -16,6 +16,9 @@ public interface IPlaylistService : INotifyPropertyChanged
     void Add(PlaylistEntry entry);
     void Insert(int index, PlaylistEntry entry);
     void Remove(PlaylistEntry entry);
+
+    /// <summary>Removes all entries (raises a single Reset). Used when loading a playlist file.</summary>
+    void Clear();
     void Move(int fromIndex, int toIndex);
     void Select(PlaylistEntry? entry);
 

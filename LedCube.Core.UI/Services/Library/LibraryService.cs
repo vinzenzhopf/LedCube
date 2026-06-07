@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using LedCube.Animation.FileFormat.AnimationRaw.Io;
+using LedCube.Animation.FileFormat.Playlist.Io;
 using LedCube.Core.Common.Config;
 using LedCube.Core.Common.Settings;
 using LedCube.Core.UI.Services.Library.Model;
@@ -134,9 +135,33 @@ public partial class LibraryService : ObservableObject, ILibraryService, IHosted
         }, cancellationToken).ConfigureAwait(false);
     }
 
-    // Playlists and projects are not parsed yet — only the path is tracked for now.
-    private static Task<LibraryPlaylistEntry> BuildPlaylistEntry(string fullPath, CancellationToken cancellationToken)
-        => Task.FromResult(new LibraryPlaylistEntry { FilePath = fullPath });
+    private static async Task<LibraryPlaylistEntry> BuildPlaylistEntry(string fullPath, CancellationToken cancellationToken)
+    {
+        // Reading the manifest is cheap (no entry resolution); run it off the calling thread so the
+        // watcher/scan pipeline stays responsive. A malformed file falls back to a path-only entry.
+        return await Task.Run(() =>
+        {
+            try
+            {
+                using var stream = File.OpenRead(fullPath);
+                var manifest = LcPlstReader.ReadManifest(stream);
+                return new LibraryPlaylistEntry
+                {
+                    FilePath = fullPath,
+                    Name = manifest.Name,
+                    Author = manifest.Author,
+                    Description = manifest.Description,
+                    CreatedUtc = manifest.CreatedUtc,
+                };
+            }
+            catch
+            {
+                return new LibraryPlaylistEntry { FilePath = fullPath };
+            }
+        }, cancellationToken).ConfigureAwait(false);
+    }
+
+    // Projects are not parsed yet — only the path is tracked for now.
 
     private static Task<LibraryProjectEntry> BuildProjectEntry(string fullPath, CancellationToken cancellationToken)
         => Task.FromResult(new LibraryProjectEntry { FilePath = fullPath });

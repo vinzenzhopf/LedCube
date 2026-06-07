@@ -15,6 +15,7 @@ using LedCube.Core.Common.Settings;
 using LedCube.Core.UI.Controls.LogAppender;
 using LedCube.Core.UI.Controls.PlaybackControl;
 using LedCube.Core.UI.Controls.PlaylistControl;
+using LedCube.Core.UI.Controls.PlaylistSelection;
 using LedCube.Core.UI.Controls.SettingsDialog;
 using LedCube.Core.UI.Controls.PluginConfigControl;
 using LedCube.Core.UI.Controls.StreamingControl;
@@ -186,6 +187,9 @@ public partial class App : Application,
         services.AddHostedService(p => p.GetRequiredService<PlaybackService>());
         services.AddSingleton<IPlaylistService, PlaylistService>();
         services.AddSingleton<IPlaylistEntryFactory, PlaylistEntryFactory>();
+        services.AddSingleton<IPlaylistFileConverter, PlaylistFileConverter>();
+        services.AddSingleton<IPlaylistSessionService, PlaylistSessionService>();
+        services.AddSingleton<PlaylistSelectionViewModel>();
         services.AddSingleton<LibraryService>();
         services.AddSingleton<ILibraryService>(p => p.GetRequiredService<LibraryService>());
         services.AddHostedService(p => p.GetRequiredService<LibraryService>());

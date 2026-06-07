@@ -8,6 +8,7 @@ using LedCube.Core.UI.Controls.AnimationList;
 using LedCube.Core.UI.Controls.LogAppender;
 using LedCube.Core.UI.Controls.PlaybackControl;
 using LedCube.Core.UI.Controls.PlaylistControl;
+using LedCube.Core.UI.Controls.PlaylistSelection;
 using LedCube.Core.UI.Controls.PluginConfigControl;
 using LedCube.Core.UI.Controls.StreamingControl;
 using LedCube.Core.UI.Dialog.BroadcastSearchDialog;
@@ -23,6 +24,7 @@ public partial class MainViewModel : ObservableObject
     private readonly AppInfo _appInfo;
     public LogAppenderViewModel LogAppenderViewModel { get; }
     public MenuBarViewModel MenuBarViewModel { get; }
+    public PlaylistSelectionViewModel PlaylistSelectionViewModel { get; }
     public PlaylistControlViewModel PlaylistControlViewModel { get; }
     public PluginConfigControlViewModel PluginConfigViewModel { get; }
     public PlaybackControlViewModel PlaybackControlViewModel { get; }
@@ -37,6 +39,7 @@ public partial class MainViewModel : ObservableObject
         AppInfo appInfo,
         LogAppenderViewModel logAppenderViewModel,
         MenuBarViewModel menuBarViewModel,
+        PlaylistSelectionViewModel playlistSelectionViewModel,
         PlaylistControlViewModel playlistControlViewModel,
         PluginConfigControlViewModel pluginConfigViewModel,
         PlaybackControlViewModel playbackControlViewModel,
@@ -47,6 +50,7 @@ public partial class MainViewModel : ObservableObject
         _appInfo = appInfo;
         LogAppenderViewModel = logAppenderViewModel;
         MenuBarViewModel = menuBarViewModel;
+        PlaylistSelectionViewModel = playlistSelectionViewModel;
         PlaylistControlViewModel = playlistControlViewModel;
         PluginConfigViewModel = pluginConfigViewModel;
         PlaybackControlViewModel = playbackControlViewModel;
