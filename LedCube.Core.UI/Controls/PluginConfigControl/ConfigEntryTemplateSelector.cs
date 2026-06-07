@@ -35,18 +35,17 @@ public class ConfigEntryDataTemplate : IDataTemplate
         };
     }
 
+    // Tight vertical gap between rows; field/label sizing comes from the shared "compact" classes.
+    private static readonly Thickness RowMargin = new(0, 1);
+
     private static Grid MakeRow(double valueWidth, out TextBlock label)
     {
         var grid = new Grid
         {
-            Margin = new Avalonia.Thickness(0, 3),
+            Margin = RowMargin,
             ColumnDefinitions = new ColumnDefinitions($"*,{valueWidth}")
         };
-        label = new TextBlock
-        {
-            VerticalAlignment = VerticalAlignment.Center,
-            Margin = new Avalonia.Thickness(0, 0, 8, 0)
-        };
+        label = new TextBlock { Classes = { "compactLabel" } };
         label.Bind(TextBlock.TextProperty, new Binding("Descriptor.DisplayName"));
         ToolTip.SetTip(grid, new Binding("Descriptor.Description"));
         Grid.SetColumn(label, 0);
@@ -57,7 +56,7 @@ public class ConfigEntryDataTemplate : IDataTemplate
     private static Control BuildBool()
     {
         var grid = MakeRow(double.NaN, out _);
-        var cb = new CheckBox { VerticalAlignment = VerticalAlignment.Center };
+        var cb = new CheckBox { VerticalAlignment = VerticalAlignment.Center, MinHeight = 0 };
         cb.Bind(CheckBox.IsCheckedProperty, new Binding("BoolValue"));
         Grid.SetColumn(cb, 1);
         grid.Children.Add(cb);
@@ -67,7 +66,7 @@ public class ConfigEntryDataTemplate : IDataTemplate
     private static Control BuildText(double width)
     {
         var grid = MakeRow(width, out _);
-        var tb = new TextBox();
+        var tb = new TextBox { Classes = { "compact" } };
         tb.Bind(TextBox.TextProperty, new Binding("StringValue"));
         Grid.SetColumn(tb, 1);
         grid.Children.Add(tb);
@@ -77,7 +76,11 @@ public class ConfigEntryDataTemplate : IDataTemplate
     private static Control BuildEnum()
     {
         var grid = MakeRow(120, out _);
-        var cb = new ComboBox();
+        var cb = new ComboBox
+        {
+            Classes = { "compact" },
+            HorizontalAlignment = HorizontalAlignment.Stretch,
+        };
         cb.Bind(ComboBox.ItemsSourceProperty, new Binding("Descriptor.EnumValues"));
         cb.Bind(ComboBox.SelectedItemProperty, new Binding("EnumValue"));
         Grid.SetColumn(cb, 1);
@@ -90,20 +93,27 @@ public class ConfigEntryDataTemplate : IDataTemplate
         // Single row: label | slider | value box.
         var grid = new Grid
         {
-            Margin = new Thickness(0, 3),
+            Margin = RowMargin,
             ColumnDefinitions = new ColumnDefinitions("Auto,*,Auto")
         };
         ToolTip.SetTip(grid, new Binding("Descriptor.Description"));
 
-        var label = new TextBlock
-        {
-            VerticalAlignment = VerticalAlignment.Center,
-            Margin = new Thickness(0, 0, 8, 0)
-        };
+        var label = new TextBlock { Classes = { "compactLabel" } };
         label.Bind(TextBlock.TextProperty, new Binding("Descriptor.DisplayName"));
         Grid.SetColumn(label, 0);
 
-        var slider = new Slider { VerticalAlignment = VerticalAlignment.Center, MinWidth = 60 };
+        var slider = new Slider
+        {
+            VerticalAlignment = VerticalAlignment.Center,
+            MinWidth = 60,
+            MinHeight = 0,
+            Margin = new Thickness(0),
+        };
+        // The Fluent slider reserves a ~62px slot (pre 15 + track 32 + post 15). Collapse the
+        // content margins and shrink the track so it fits a compact row without clipping the thumb.
+        slider.Resources["SliderPreContentMargin"] = new GridLength(0);
+        slider.Resources["SliderPostContentMargin"] = new GridLength(0);
+        slider.Resources["SliderHorizontalHeight"] = 24.0;
         slider.Bind(RangeBase.MinimumProperty, new Binding("Minimum"));
         slider.Bind(RangeBase.MaximumProperty, new Binding("Maximum"));
         slider.Bind(RangeBase.ValueProperty, new Binding("DoubleValue") { Mode = BindingMode.TwoWay });
@@ -117,11 +127,11 @@ public class ConfigEntryDataTemplate : IDataTemplate
 
         var valueBox = new TextBox
         {
+            Classes = { "compact" },
             Width = 64,
             Margin = new Thickness(8, 0, 0, 0),
             VerticalAlignment = VerticalAlignment.Center,
             HorizontalContentAlignment = HorizontalAlignment.Right,
-            Padding = new Thickness(4, 2)
         };
         valueBox.Bind(TextBox.TextProperty, new Binding("StringValue"));
         Grid.SetColumn(valueBox, 2);
@@ -136,20 +146,20 @@ public class ConfigEntryDataTemplate : IDataTemplate
     {
         var grid = new Grid
         {
-            Margin = new Thickness(0, 3),
+            Margin = RowMargin,
             ColumnDefinitions = new ColumnDefinitions("Auto,*,Auto")
         };
         ToolTip.SetTip(grid, new Binding("Descriptor.Description"));
 
-        var label = new TextBlock
-        {
-            VerticalAlignment = VerticalAlignment.Center,
-            Margin = new Thickness(0, 0, 8, 0)
-        };
+        var label = new TextBlock { Classes = { "compactLabel" } };
         label.Bind(TextBlock.TextProperty, new Binding("Descriptor.DisplayName"));
         Grid.SetColumn(label, 0);
 
-        var textBox = new TextBox { VerticalAlignment = VerticalAlignment.Center };
+        var textBox = new TextBox
+        {
+            Classes = { "compact" },
+            VerticalAlignment = VerticalAlignment.Center,
+        };
         textBox.Bind(TextBox.TextProperty, new Binding("StringValue"));
         Grid.SetColumn(textBox, 1);
 
@@ -157,7 +167,9 @@ public class ConfigEntryDataTemplate : IDataTemplate
         {
             Content = "…",
             Margin = new Thickness(4, 0, 0, 0),
-            VerticalAlignment = VerticalAlignment.Center
+            MinHeight = 0,
+            Padding = new Thickness(8, 0),
+            VerticalAlignment = VerticalAlignment.Stretch
         };
         Grid.SetColumn(browse, 2);
         browse.Click += async (_, _) => await BrowseAsync(browse, vm);

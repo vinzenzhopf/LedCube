@@ -68,4 +68,29 @@
     <Style Selector="materialIcons|MaterialIcon.muted">
         <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}"/>
     </Style>
+
+    <!--
+        Compact form fields — small font + tight padding for dense config / metadata panels
+        (plugin config, playlist metadata). Label sits left of its value control.
+        Use: <TextBlock Classes="compactLabel"/>, <TextBox Classes="compact"/>,
+             <ComboBox Classes="compact"/>, <Slider Classes="compact"/>.
+    -->
+    <Style Selector="TextBlock.compactLabel">
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}"/>
+        <Setter Property="Margin" Value="0,0,8,0"/>
+    </Style>
+    <Style Selector="TextBox.compact">
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="MinHeight" Value="0"/>
+        <Setter Property="Padding" Value="6,2"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+    </Style>
+    <Style Selector="ComboBox.compact">
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="MinHeight" Value="0"/>
+        <Setter Property="Padding" Value="6,2"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+    </Style>
 </Styles>

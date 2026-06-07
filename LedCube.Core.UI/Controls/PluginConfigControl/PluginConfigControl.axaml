@@ -24,34 +24,23 @@
                     <Grid Margin="4">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="80"/>
+                            <ColumnDefinition Width="150"/>
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
-                        <TextBlock Grid.Row="0" Grid.Column="0"
-                                   Text="Name"
-                                   VerticalAlignment="Center"
-                                   Margin="0,3,8,3"/>
-                        <TextBox Grid.Row="0" Grid.Column="1"
-                                 Margin="0,3,0,3"
+                        <TextBlock Grid.Row="0" Grid.Column="0" Classes="compactLabel" Text="Name"/>
+                        <TextBox Grid.Row="0" Grid.Column="1" Classes="compact"
                                  Text="{Binding InstanceName}"/>
-                        <TextBlock Grid.Row="1" Grid.Column="0"
-                                   Text="Repeat (0=∞)"
-                                   VerticalAlignment="Center"
-                                   Margin="0,3,8,3"/>
-                        <TextBox Grid.Row="1" Grid.Column="1"
-                                 Margin="0,3,0,3"
+                        <TextBlock Grid.Row="1" Grid.Column="0" Classes="compactLabel" Text="Repeat (0=∞)"/>
+                        <TextBox Grid.Row="1" Grid.Column="1" Classes="compact" Margin="0,2,0,0"
                                  Text="{Binding RepeatCount}"/>
-                        <TextBlock Grid.Row="2" Grid.Column="0"
+                        <TextBlock Grid.Row="2" Grid.Column="0" Classes="compactLabel"
                                    Text="Frame Time (ms)"
-                                   VerticalAlignment="Center"
-                                   Margin="0,3,8,3"
                                    ToolTip.Tip="Override the animation's default frame time. Leave empty to use plugin default."/>
-                        <TextBox Grid.Row="2" Grid.Column="1"
-                                 Margin="0,3,0,3"
+                        <TextBox Grid.Row="2" Grid.Column="1" Classes="compact" Margin="0,2,0,0"
                                  Text="{Binding FrameTimeOverrideMs}"/>
                     </Grid>
                 </HeaderedContentControl>
@@ -63,7 +52,7 @@
                     <ItemsControl ItemsSource="{Binding ConfigEntries}"
                                   Margin="4">
                         <ItemsControl.ItemTemplate>
-                            <local:ConfigEntryDataTemplate/>
+                            <local:ConfigEntryDataTemplate />
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
                 </HeaderedContentControl>
