@@ -18,9 +18,10 @@ public class RandomToggleAnimation : IFrameGenerator
             new AnimationConfigDescriptor("TogglesPerFrame", "Toggles per frame", AnimationConfigType.Int,
                 DefaultValue: 6, MinValue: 1, MaxValue: 64),
             DurationConfig.Descriptor(12.0f),
-        ]);
+        ],
+        FrameTime: TimeSpan.FromMilliseconds(16));
 
-    public TimeSpan? FrameTime { get; } = TimeSpan.FromMilliseconds(16);
+    public TimeSpan? FrameTime => Info.FrameTime;
 
     private readonly Random _random = new();
     private int _togglesPerFrame = 6;

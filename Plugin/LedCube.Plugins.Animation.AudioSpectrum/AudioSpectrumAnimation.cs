@@ -45,11 +45,12 @@ public sealed class AudioSpectrumAnimation(ILogger<AudioSpectrumAnimation> logge
             new AnimationConfigDescriptor("MaxFreq", "Max frequency (Hz)", AnimationConfigType.Float,
                 DefaultValue: 12000.0f, MinValue: 1000.0f, MaxValue: 24000.0f),
             DurationConfig.Descriptor(0.0f),
-        ]);
+        ],
+        FrameTime: TimeSpan.FromMilliseconds(25));
 
     private const int FftSize = 2048;
 
-    public TimeSpan? FrameTime { get; } = TimeSpan.FromMilliseconds(25);
+    public TimeSpan? FrameTime => Info.FrameTime;
 
     private string _source = "Loopback";
     private float _inputVolume = 1.0f;

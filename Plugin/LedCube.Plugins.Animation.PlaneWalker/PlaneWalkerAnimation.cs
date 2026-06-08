@@ -13,9 +13,12 @@ namespace LedCube.Plugins.Animation.PlaneWalker;
 /// </summary>
 public class PlaneWalkerAnimation : IFrameGenerator
 {
-    public static FrameGeneratorInfo Info => new("Plane Walker", "Sweeps a lit plane along each axis, back and forth.");
+    public static FrameGeneratorInfo Info => new("Plane Walker", "Sweeps a lit plane along each axis, back and forth.",
+        FrameTime: TimeSpan.FromMilliseconds(60),
+        // One cycle sweeps Z, Y and X each forward and back: 2*(X+Y+Z) plane positions.
+        EstimateFrameCount: (cube, _) => (cube.Size.X + cube.Size.Y + cube.Size.Z) * 2);
 
-    public TimeSpan? FrameTime { get; } = TimeSpan.FromMilliseconds(60);
+    public TimeSpan? FrameTime => Info.FrameTime;
 
     private int _state;
     private int _index;

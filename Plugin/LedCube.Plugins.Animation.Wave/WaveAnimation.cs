@@ -20,9 +20,10 @@ public class WaveAnimation : IFrameGenerator
             new AnimationConfigDescriptor("Waves", "Wave count", AnimationConfigType.Float,
                 DefaultValue: 1.5f, MinValue: 0.5f, MaxValue: 6.0f),
             DurationConfig.Descriptor(15.0f),
-        ]);
+        ],
+        FrameTime: TimeSpan.FromMilliseconds(30));
 
-    public TimeSpan? FrameTime { get; } = TimeSpan.FromMilliseconds(30);
+    public TimeSpan? FrameTime => Info.FrameTime;
 
     private float _speed = 2.0f;
     private float _waves = 1.5f;

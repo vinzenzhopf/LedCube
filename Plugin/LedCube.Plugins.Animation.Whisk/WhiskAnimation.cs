@@ -21,9 +21,10 @@ public class WhiskAnimation : IFrameGenerator
             new AnimationConfigDescriptor("RotationSpeed", "Rotation speed", AnimationConfigType.Float,
                 DefaultValue: 1.0f, MinValue: 0.0f, MaxValue: 5.0f),
             DurationConfig.Descriptor(15.0f),
-        ]);
+        ],
+        FrameTime: TimeSpan.FromMilliseconds(20));
 
-    public TimeSpan? FrameTime { get; } = TimeSpan.FromMilliseconds(20);
+    public TimeSpan? FrameTime => Info.FrameTime;
 
     private float _rotationSpeed = 1.0f;
     private float _durationSeconds = 15.0f;

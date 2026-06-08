@@ -34,7 +34,8 @@ public sealed class Snake3DAnimation(IOptions<Snake3DConfiguration> options, ILo
                 DefaultValue: 1.0f, MinValue: 0.1f, MaxValue: 10.0f),
             new AnimationConfigDescriptor("ActiveFoodCount", "Active Food Count", AnimationConfigType.Int,
                 DefaultValue: 1, MinValue: 1, MaxValue: 20),
-        ]);
+        ],
+        FrameTime: TimeSpan.FromMilliseconds(20));
 
     private readonly Snake3DConfiguration _configuration = options.Value;
     
@@ -49,7 +50,7 @@ public sealed class Snake3DAnimation(IOptions<Snake3DConfiguration> options, ILo
     
     private Random _random = Random.Shared;
     
-    public TimeSpan? FrameTime { get; } = TimeSpan.FromMilliseconds(20);
+    public TimeSpan? FrameTime => Info.FrameTime;
 
     public void Dispose()
     {

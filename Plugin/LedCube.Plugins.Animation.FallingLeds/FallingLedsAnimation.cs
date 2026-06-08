@@ -11,9 +11,10 @@ namespace LedCube.Plugins.Animation.FallingLeds;
 /// </summary>
 public class FallingLedsAnimation : IFrameGenerator
 {
-    public static FrameGeneratorInfo Info => new("Falling LEDs", "A surface of LEDs that drains to the floor, then rises again.");
+    public static FrameGeneratorInfo Info => new("Falling LEDs", "A surface of LEDs that drains to the floor, then rises again.",
+        FrameTime: TimeSpan.FromMilliseconds(16));
 
-    public TimeSpan? FrameTime { get; } = TimeSpan.FromMilliseconds(16);
+    public TimeSpan? FrameTime => Info.FrameTime;
 
     private const int StepsPerFrame = 8;
 

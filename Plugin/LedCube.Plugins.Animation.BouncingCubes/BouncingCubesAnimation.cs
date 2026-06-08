@@ -29,7 +29,7 @@ public class BouncingCubesAnimation : IFrameGenerator
             DurationConfig.Descriptor(20.0f),
         ]);
 
-    public TimeSpan? FrameTime { get; } = TimeSpan.FromMilliseconds(30);
+    public TimeSpan? FrameTime => Info.FrameTime;
 
     private readonly Random _random = new();
 

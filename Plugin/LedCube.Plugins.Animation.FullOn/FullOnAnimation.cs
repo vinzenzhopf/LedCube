@@ -13,9 +13,10 @@ public class FullOnAnimation : IFrameGenerator
     public static FrameGeneratorInfo Info => new(
         "Full On",
         "Turns every LED of the cube on.",
-        ConfigDescriptors: [DurationConfig.Descriptor(6.0f)]);
+        ConfigDescriptors: [DurationConfig.Descriptor(6.0f)],
+        FrameTime: TimeSpan.FromMilliseconds(100));
 
-    public TimeSpan? FrameTime { get; } = TimeSpan.FromMilliseconds(100);
+    public TimeSpan? FrameTime => Info.FrameTime;
 
     private float _durationSeconds = 6.0f;
 

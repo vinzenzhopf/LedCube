@@ -10,9 +10,12 @@ namespace LedCube.Plugins.Animation.RandomOnOff;
 /// </summary>
 public class RandomOnOffAnimation : IFrameGenerator
 {
-    public static FrameGeneratorInfo Info => new("Random On/Off", "Randomly fills the cube, then randomly clears it, on repeat.");
+    public static FrameGeneratorInfo Info => new("Random On/Off", "Randomly fills the cube, then randomly clears it, on repeat.",
+        FrameTime: TimeSpan.FromMilliseconds(16),
+        // One cycle is a fixed fill phase + clear phase, independent of cube size.
+        FrameCount: PhaseFrames * 2);
 
-    public TimeSpan? FrameTime { get; } = TimeSpan.FromMilliseconds(16);
+    public TimeSpan? FrameTime => Info.FrameTime;
 
     private const int LedsPerFrame = 30;
     private const int PhaseFrames = 220;

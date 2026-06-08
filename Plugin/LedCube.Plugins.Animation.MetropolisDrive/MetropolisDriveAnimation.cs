@@ -27,9 +27,10 @@ public sealed class MetropolisDriveAnimation(ILogger<MetropolisDriveAnimation> l
                 DefaultValue: 12.0f, MinValue: 1.0f, MaxValue: 32.0f,
                 Description: "How fast the scenery streams past, in cube cells per second."),
             DurationConfig.Descriptor(0.0f)
-        ]);
+        ],
+        FrameTime: TimeSpan.FromMilliseconds(10));
 
-    public TimeSpan? FrameTime { get; } = TimeSpan.FromMilliseconds(10);
+    public TimeSpan? FrameTime => Info.FrameTime;
 
     private const int BuildingsPerSide = 8;
     private const float Far = 1E6f;

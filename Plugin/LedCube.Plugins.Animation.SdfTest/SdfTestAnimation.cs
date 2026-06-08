@@ -10,12 +10,13 @@ namespace LedCube.Plugins.Animation.SdfTest;
 public class SdfTestAnimation(IConfiguration configuration, ILogger<SdfTestAnimation> logger)
     : IFrameGenerator
 {
-    public static FrameGeneratorInfo Info => new("SDF Test Animation", "SDF Test.");
+    public static FrameGeneratorInfo Info => new("SDF Test Animation", "SDF Test.",
+        FrameTime: TimeSpan.FromMilliseconds(20));
     
     private readonly IConfiguration _configuration = configuration;
     private readonly ILogger<SdfTestAnimation> _logger = logger;
 
-    public TimeSpan? FrameTime { get; } = TimeSpan.FromMilliseconds(20);
+    public TimeSpan? FrameTime => Info.FrameTime;
     
     private Sdf3D _sdf = Sdf.Core.Sdf.Void();
 

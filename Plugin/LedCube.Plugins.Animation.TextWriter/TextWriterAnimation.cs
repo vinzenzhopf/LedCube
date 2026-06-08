@@ -10,8 +10,9 @@ namespace LedCube.Plugins.Animation.TextWriter;
 public class TextWriterAnimation(IConfiguration configuration, ILogger<TextWriterAnimation> logger)
     : IFrameGenerator
 {
-    public static FrameGeneratorInfo Info => new("Text Writer", "Animation to Write Text to the Cube.");
-    public TimeSpan? FrameTime { get; } = TimeSpan.FromMilliseconds(10);
+    public static FrameGeneratorInfo Info => new("Text Writer", "Animation to Write Text to the Cube.",
+        FrameTime: TimeSpan.FromMilliseconds(10));
+    public TimeSpan? FrameTime => Info.FrameTime;
     
     public void Start(AnimationContext animationContext)
     {

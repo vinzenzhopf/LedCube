@@ -23,9 +23,10 @@ public class BouncingBallAnimation : IFrameGenerator
             new AnimationConfigDescriptor("Gravity", "Gravity", AnimationConfigType.Float,
                 DefaultValue: 0.0f, MinValue: 0.0f, MaxValue: 30.0f),
             DurationConfig.Descriptor(20.0f),
-        ]);
+        ],
+        FrameTime: TimeSpan.FromMilliseconds(20));
 
-    public TimeSpan? FrameTime { get; } = TimeSpan.FromMilliseconds(20);
+    public TimeSpan? FrameTime => Info.FrameTime;
 
     private readonly Random _random = new();
     private readonly Sdf3D _ball;

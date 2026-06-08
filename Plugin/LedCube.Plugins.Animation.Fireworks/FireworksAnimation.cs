@@ -22,9 +22,10 @@ public class FireworksAnimation : IFrameGenerator
             new AnimationConfigDescriptor("SparksPerBurst", "Sparks per burst", AnimationConfigType.Int,
                 DefaultValue: 24, MinValue: 4, MaxValue: 80),
             DurationConfig.Descriptor(20.0f),
-        ]);
+        ],
+        FrameTime: TimeSpan.FromMilliseconds(30));
 
-    public TimeSpan? FrameTime { get; } = TimeSpan.FromMilliseconds(30);
+    public TimeSpan? FrameTime => Info.FrameTime;
 
     private const float Gravity = 11f; // cube units / s^2, pulling toward -Z
 

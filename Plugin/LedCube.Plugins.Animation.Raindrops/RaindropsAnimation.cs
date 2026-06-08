@@ -19,9 +19,10 @@ public class RaindropsAnimation : IFrameGenerator
             new AnimationConfigDescriptor("DropsPerFrame", "Drops per frame", AnimationConfigType.Int,
                 DefaultValue: 6, MinValue: 1, MaxValue: 32),
             DurationConfig.Descriptor(20.0f),
-        ]);
+        ],
+        FrameTime: TimeSpan.FromMilliseconds(20));
 
-    public TimeSpan? FrameTime { get; } = TimeSpan.FromMilliseconds(20);
+    public TimeSpan? FrameTime => Info.FrameTime;
 
     private readonly Random _random = new();
     private int _sizeX, _sizeZ, _columns;
