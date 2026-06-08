@@ -47,13 +47,14 @@
                        Classes="muted" FontSize="11"
                        MaxLines="2" TextWrapping="Wrap" TextTrimming="CharacterEllipsis"/>
             <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,1,0,0"
-                        IsVisible="{Binding HasFrameInfo}">
-                <StackPanel Orientation="Horizontal">
+                        IsVisible="{Binding HasTiming}">
+                <StackPanel Orientation="Horizontal" IsVisible="{Binding HasFrameCount}">
                     <TextBlock Text="Frames: " Classes="muted" FontSize="10"/>
                     <TextBlock Text="{Binding FrameCount}" Classes="muted" FontSize="10"/>
                 </StackPanel>
-                <TextBlock Text="{Binding FpsText}" Classes="muted" FontSize="10"/>
-                <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{Binding FpsText}" Classes="muted" FontSize="10"
+                           IsVisible="{Binding HasFps}"/>
+                <StackPanel Orientation="Horizontal" IsVisible="{Binding HasFrameCount}">
                     <materialIcons:MaterialIcon Kind="ClockOutline" Width="11" Height="11"
                                                 Classes="muted" VerticalAlignment="Center" Margin="0,0,2,0"/>
                     <TextBlock Text="{Binding DurationText}" Classes="muted" FontSize="10"/>

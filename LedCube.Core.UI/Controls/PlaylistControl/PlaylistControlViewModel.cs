@@ -9,8 +9,12 @@ using CommunityToolkit.Mvvm.Messaging;
 using LedCube.Core.UI.Controls.AnimationList;
 using LedCube.Core.UI.Dialog.EditAnimationInstanceDialog;
 using LedCube.Core.UI.Dialog.SelectAnimationDialog;
+using LedCube.Core.Common.Config;
+using LedCube.Core.Common.Model;
+using LedCube.Core.Common.Settings;
 using LedCube.Core.UI.Services.Playback;
 using LedCube.Core.UI.Services.Playlist;
+using LedCube.PluginBase;
 
 namespace LedCube.Core.UI.Controls.PlaylistControl;
 
@@ -22,6 +26,7 @@ public partial class PlaylistControlViewModel : ObservableObject,
     private readonly IPlaylistService _playlistService;
     private readonly IPlaybackService _playbackService;
     private readonly IPlaylistEntryFactory _playlistEntryFactory;
+    private readonly ISettingsProvider<CubeSettings> _cubeSettings;
     private readonly Dictionary<PlaylistEntry, PlaylistEntryControlViewModel> _entryMap = new();
 
     public ObservableCollection<PlaylistEntryControlViewModel> Instances { get; } = [];
@@ -30,11 +35,12 @@ public partial class PlaylistControlViewModel : ObservableObject,
     private PlaylistEntryControlViewModel? _selectedInstance;
 
     public PlaylistControlViewModel(IPlaylistService playlistService, IPlaybackService playbackService,
-        IPlaylistEntryFactory playlistEntryFactory)
+        IPlaylistEntryFactory playlistEntryFactory, ISettingsProvider<CubeSettings> cubeSettings)
     {
         _playlistService = playlistService;
         _playbackService = playbackService;
         _playlistEntryFactory = playlistEntryFactory;
+        _cubeSettings = cubeSettings;
         ((INotifyCollectionChanged)playlistService.Entries).CollectionChanged += OnEntriesChanged;
         ((INotifyPropertyChanged)playbackService).PropertyChanged += OnPlaybackPropertyChanged;
         WeakReferenceMessenger.Default.Register<PlaylistSelectionChangedMessage>(this);
@@ -89,7 +95,14 @@ public partial class PlaylistControlViewModel : ObservableObject,
     {
         // A config change may point a file animation at a different file — refresh its details.
         if (_entryMap.TryGetValue(message.Entry, out var vm))
-            _ = vm.LoadDetailsAsync();
+            _ = vm.LoadDetailsAsync(CurrentCube());
+    }
+
+    // The configured cube size, passed to plugin frame-count/time estimators.
+    private CubeInfo CurrentCube()
+    {
+        var d = _cubeSettings.Settings.Dimensions;
+        return new CubeInfo(new Point3D(d.X, d.Y, d.Z));
     }
 
     private void OnEntriesChanged(object? sender, NotifyCollectionChangedEventArgs e)
@@ -102,7 +115,7 @@ public partial class PlaylistControlViewModel : ObservableObject,
                     var vm = new PlaylistEntryControlViewModel(entry);
                     _entryMap[entry] = vm;
                     Instances.Add(vm);
-                    _ = vm.LoadDetailsAsync();
+                    _ = vm.LoadDetailsAsync(CurrentCube());
                 }
                 break;
             case NotifyCollectionChangedAction.Remove:

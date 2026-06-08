@@ -42,14 +42,16 @@ public partial class PlaylistEntryControlViewModel : ObservableObject
     private string _description = string.Empty;
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(FpsText))]
     [NotifyPropertyChangedFor(nameof(DurationText))]
-    [NotifyPropertyChangedFor(nameof(HasFrameInfo))]
+    [NotifyPropertyChangedFor(nameof(HasFrameCount))]
+    [NotifyPropertyChangedFor(nameof(HasTiming))]
     private int _frameCount;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(FpsText))]
     [NotifyPropertyChangedFor(nameof(DurationText))]
+    [NotifyPropertyChangedFor(nameof(HasFps))]
+    [NotifyPropertyChangedFor(nameof(HasTiming))]
     private TimeSpan _frameTime = TimeSpan.Zero;
 
     /// <summary>Thumbnail from the linked animation file; null falls back to a type icon in the UI.</summary>
@@ -77,8 +79,14 @@ public partial class PlaylistEntryControlViewModel : ObservableObject
     public bool ShowSecondaryName => !string.IsNullOrEmpty(Name)
         && !string.Equals(Name, InstanceName, StringComparison.Ordinal);
 
-    /// <summary>True when frame stats are known (file animations); plugins are dynamic and have none.</summary>
-    public bool HasFrameInfo => FrameCount > 0;
+    /// <summary>Frame rate is known (most plugins expose a frame time; file animations carry one).</summary>
+    public bool HasFps => Fps > 0;
+
+    /// <summary>Total frame count is known — file animations only; procedural plugins are open-ended.</summary>
+    public bool HasFrameCount => FrameCount > 0;
+
+    /// <summary>Any timing info to show (fps and/or frame count).</summary>
+    public bool HasTiming => HasFps || HasFrameCount;
 
     public double Fps => FrameTime.TotalSeconds > 0 ? 1.0 / FrameTime.TotalSeconds : 0;
 
@@ -142,18 +150,27 @@ public partial class PlaylistEntryControlViewModel : ObservableObject
         info.ConfigDescriptors?.Any(d => d.Type == AnimationConfigType.FilePath) == true;
 
     /// <summary>
-    /// Populates display details. For a file animation with a valid linked file, loads the name,
-    /// description, frame stats and thumbnail from the <c>.lcanimraw</c> manifest. Plugin entries
-    /// keep the name/description already taken from the generator info.
+    /// Populates display details. File animations read name/description/frame stats/thumbnail from
+    /// the linked <c>.lcanimraw</c> manifest; other plugins are instantiated and configured to read
+    /// their frame time / frame count (mirrors how PlaybackService resolves them).
     /// </summary>
-    public async Task LoadDetailsAsync()
+    public async Task LoadDetailsAsync(CubeInfo cube)
     {
         if (Entry is null) return;
 
         var fileDescriptor = Entry.Info.ConfigDescriptors?.FirstOrDefault(d => d.Type == AnimationConfigType.FilePath);
-        if (fileDescriptor is null) return;
+        if (fileDescriptor is not null)
+        {
+            await LoadFileDetailsAsync(fileDescriptor.Key).ConfigureAwait(true);
+            return;
+        }
 
-        var path = Config.GetString(fileDescriptor.Key);
+        LoadPluginTiming(cube);
+    }
+
+    private async Task LoadFileDetailsAsync(string filePathKey)
+    {
+        var path = Config.GetString(filePathKey);
         if (string.IsNullOrEmpty(path) || !File.Exists(path)) return;
 
         try
@@ -174,23 +191,55 @@ public partial class PlaylistEntryControlViewModel : ObservableObject
                 bitmap = new Bitmap(ms);
             }
 
+            var frameTime = Entry!.FrameTimeOverride ?? TimeSpan.FromMicroseconds(manifest.FrameTimeUs);
+
             void Apply()
             {
                 Name = manifest.Name;
                 Description = manifest.Description ?? string.Empty;
                 FrameCount = manifest.FrameCount;
-                FrameTime = TimeSpan.FromMicroseconds(manifest.FrameTimeUs);
+                FrameTime = frameTime;
                 Thumbnail = bitmap;
             }
 
-            if (Dispatcher.UIThread.CheckAccess())
-                Apply();
-            else
-                Dispatcher.UIThread.Post(Apply);
+            RunOnUi(Apply);
         }
         catch
         {
             // A missing or corrupt file must not break the row — keep the generic name.
         }
+    }
+
+    // Resolves plugin timing purely from declarative metadata + config — no instantiation.
+    // FrameTime:  override -> Info.FrameTime -> Info.EstimateFrameTime(cube, config).
+    // FrameCount: Info.FrameCount -> Info.EstimateFrameCount(cube, config) -> DurationConfig-derived.
+    private void LoadPluginTiming(CubeInfo cube)
+    {
+        var info = Entry!.Info;
+
+        var frameTime = Entry.FrameTimeOverride
+            ?? info.FrameTime
+            ?? info.EstimateFrameTime?.Invoke(cube, Config);
+
+        var frameCount = info.FrameCount
+            ?? info.EstimateFrameCount?.Invoke(cube, Config);
+
+        // Generic DurationConfig convention: a configured run time gives the frame count for free.
+        if (frameCount is null && frameTime is { } ft && ft > TimeSpan.Zero
+            && Config.Get<float>(DurationConfig.Key) is { } seconds && seconds > 0f)
+        {
+            frameCount = (int)Math.Round(seconds * 1000.0 / ft.TotalMilliseconds);
+        }
+
+        if (frameTime is { } t) FrameTime = t;
+        if (frameCount is { } c) FrameCount = c;
+    }
+
+    private static void RunOnUi(Action action)
+    {
+        if (Dispatcher.UIThread.CheckAccess())
+            action();
+        else
+            Dispatcher.UIThread.Post(action);
     }
 }
