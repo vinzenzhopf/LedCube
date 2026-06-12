@@ -17,56 +17,59 @@
     <StackPanel>
         <HeaderedContentControl Header="Connection">
             <StackPanel>
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="3*"/>
-                        <ColumnDefinition Width="1*"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
+                <Grid ColumnDefinitions="3*,1*,Auto,Auto,Auto,Auto" RowDefinitions="Auto,Auto,Auto">
 
-                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Host:" VerticalAlignment="Bottom" Margin="2,0"/>
-                    <TextBlock Grid.Row="0" Grid.Column="1" Text="Port:" VerticalAlignment="Bottom" Margin="2,0"/>
-                    <TextBox Grid.Row="1" Grid.Column="0" Margin="2,0,2,5"
+                    <TextBlock Grid.Row="0" Grid.Column="0" 
+                               Text="Host:" Classes="compactLabel" VerticalAlignment="Bottom" Margin="5,0"/>
+                    <TextBlock Grid.Row="0" Grid.Column="1"
+                               Text="Port:" Classes="compactLabel" VerticalAlignment="Bottom" Margin="5,0"/>
+                    <TextBox Grid.Row="1" Grid.Column="0" Margin="5,0,0,5"
                              IsEnabled="{Binding HostEditingEnabled}"
                              Text="{Binding Host}"/>
-                    <TextBox Grid.Row="1" Grid.Column="1" Margin="2,0,2,5"
+                    <TextBox Grid.Row="1" Grid.Column="1" Margin="5,0,0,5"
                              IsEnabled="{Binding HostEditingEnabled}"
                              Text="{Binding Port}"/>
                     
                     <!-- Broadcast search button -->
                     <Button Grid.Row="0" Grid.Column="2" Grid.RowSpan="2"
                             Classes="icon inline"
+                            Margin="5,0,0,5"
                             IsEnabled="{Binding HostEditingEnabled}"
                             Command="{Binding OpenBroadcastSearchCommand}"
                             ToolTip.Tip="Broadcast search...">
                         <materialIcons:MaterialIcon Kind="HomeSearchOutline"/>
                     </Button>
-                    
-                    <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4"
-                                Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Bottom"
-                                Margin="0,0,0,3">
+                    <Grid Grid.Row="0" Grid.Column="3" Grid.RowSpan="2">
                         <!-- Connect / Disconnect buttons -->
-                        <Button Classes="icon"
+                        <Button Classes="icon inline"
+                                Margin="2,0,0,5"
                                 Command="{Binding ConnectCommand}"
-                                IsVisible="{Binding !IsConnectingOrConnected}">
+                                IsVisible="{Binding !IsConnectingOrConnected}"
+                                ToolTip.Tip="Connect...">
                             <materialIcons:MaterialIcon Kind="LanConnect"/>
                         </Button>
-                        <Button Classes="icon"
+                        <Button Classes="icon inline"
+                                Margin="2,0,0,5"
                                 Command="{Binding DisconnectCommand}"
-                                IsVisible="{Binding IsConnectingOrConnected}">
+                                IsVisible="{Binding IsConnectingOrConnected}"
+                                ToolTip.Tip="Disconnect...">
                             <materialIcons:MaterialIcon Kind="LanDisconnect"/>
                         </Button>
+                    </Grid>
+                    <TextBlock Grid.Row="0" Grid.Column="4" 
+                               Text="Status:" Classes="compactLabel" VerticalAlignment="Bottom" Margin="2,0"/>
+                    <StackPanel Grid.Row="1" Grid.Column="4"
+                                Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Bottom"
+                                Margin="2,7">
                         <!-- Connection state indicator -->
-                        <cubeView2D:Led Size="24"
+                        <cubeView2D:Led Size="20"
+                                        Margin="0"
                                         IsChecked="{Binding IsConnected, Mode=OneWay}"
                                         Foreground="{Binding ConnectionState, Converter={StaticResource ConnectionStateToColor}}"/>
-                        <TextBlock VerticalAlignment="Center" 
+                        <TextBlock FontSize="12"
+                                   Width="80"
+                                   Margin="0"
+                                   VerticalAlignment="Center" 
                                    HorizontalAlignment="Left"
                                    Foreground="{Binding ConnectionState, Converter={StaticResource ConnectionStateToColor}}"
                                    Text="{Binding ConnectionState, Converter={StaticResource EnumToString}}"
@@ -74,19 +77,8 @@
                     </StackPanel>
                 </Grid>
 
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="1*"/>
-                        <ColumnDefinition Width="1*"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
+                <Grid ColumnDefinitions="Auto,Auto,1*,1*" RowDefinitions="Auto,Auto">
 
-                    
                     <Button Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Classes="icon inline" 
                             Command="{Binding StartStreamingCommand}"
                             Margin="0,0,0,5">
@@ -98,16 +90,29 @@
                         <materialIcons:MaterialIcon Kind="Stop"/>
                     </Button>
                     
-                    <TextBlock Grid.Row="0" Grid.Column="2" Text="AnimationName:" VerticalAlignment="Bottom" Margin="2,0"/>
+                    <TextBlock Grid.Row="0" Grid.Column="2" Text="AnimationName:" Classes="compactLabel" VerticalAlignment="Bottom" Margin="2,0"/>
                     <TextBox Grid.Row="1" Grid.Column="2" Margin="2,0,2,5" Text="{Binding AnimationName}"/>
-                    <TextBlock Grid.Row="0" Grid.Column="3" Text="FrameTime Ms:" VerticalAlignment="Bottom" Margin="2,0"/>
+                    <TextBlock Grid.Row="0" Grid.Column="3" Text="FrameTime Ms:" Classes="compactLabel" VerticalAlignment="Bottom" Margin="2,0"/>
                     <TextBox Grid.Row="1" Grid.Column="3" Margin="2,0,2,5" Text="{Binding FrameTimeMs}"/>
                 </Grid>
+                <Expander Margin="0"
+                          Padding="5"
+                          FontSize="12">
+                    <Expander.Resources>
+                        <x:Double x:Key="ExpanderMinHeight">26</x:Double>
+                        <Thickness x:Key="ExpanderHeaderPadding">8,4</Thickness>
+                        <x:Double x:Key="ExpanderChevronButtonSize">20</x:Double>
+                        <Thickness x:Key="ExpanderChevronMargin">5,2,5,2</Thickness>
+                    </Expander.Resources>
+                    <Expander.Header>
+                        <StackPanel Orientation="Horizontal" Spacing="6" Margin="0">
+                            <materialIcons:MaterialIcon Kind="InformationSlabCircleOutline" IconSize="16"/>
+                            <TextBlock FontSize="12" Text="Connection Stats"/>
+                        </StackPanel>
+                    </Expander.Header>
+                    <vm:CubeStreamingStatusView DataContext="{Binding StreamingStatusViewModel}"/>
+                </Expander>
             </StackPanel>
-        </HeaderedContentControl>
-
-        <HeaderedContentControl Header="Connection Stats">
-            <vm:CubeStreamingStatusView DataContext="{Binding StreamingStatusViewModel}"/>
         </HeaderedContentControl>
     </StackPanel>
 </UserControl>
