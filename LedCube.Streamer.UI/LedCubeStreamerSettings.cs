@@ -1,5 +1,6 @@
 using LedCube.Core.Common.Config;
 using LedCube.Core.Common.Config.Entities;
+using LedCube.Core.Common.Model;
 using LedCube.Streamer.UI.Settings;
 
 namespace LedCube.Streamer.UI;
@@ -27,7 +28,12 @@ public record LedCubeStreamerSettings
             SearchPerBroadcast = true,
             Projection = new CubeDataProjectionSettings
             {
-                Orientation = CartesianOrientation.LeftHanded
+                // Canonical animation space is right-handed with LED 0 at front-bottom-left (identity).
+                // This physical cube is left-handed (same LED-0 corner) and installed turned so its
+                // real right side faces front — change these in Settings → Cube orientation.
+                HardwareFront = Orientation3D.Front,
+                Orientation = CartesianOrientation.LeftHanded,
+                InstallationFront = Orientation3D.Right
             }
         }
     };

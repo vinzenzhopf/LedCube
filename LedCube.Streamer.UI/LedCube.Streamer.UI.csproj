@@ -32,12 +32,14 @@
 
     <ItemGroup>
         <ProjectReference Include="..\LedCube.Core.UI\LedCube.Core.UI.csproj" />
+        <ProjectReference Include="..\LedCube.Core.UI.CubeView3D\LedCube.Core.UI.CubeView3D.csproj" />
         <ProjectReference Include="..\LedCube.Streamer\LedCube.Streamer.csproj" />
         <ProjectReference Include="..\Plugin\LedCube.PluginHost\LedCube.PluginHost.csproj" />
         <ProjectReference Include="..\Plugin\LedCube.Plugins.Animation.AudioSpectrum\LedCube.Plugins.Animation.AudioSpectrum.csproj" />
         <ProjectReference Include="..\Plugin\LedCube.Plugins.Animation.FileAnimation\LedCube.Plugins.Animation.FileAnimation.csproj" />
         <ProjectReference Include="..\Plugin\LedCube.Plugins.Animation.FullOn\LedCube.Plugins.Animation.FullOn.csproj" />
         <ProjectReference Include="..\Plugin\LedCube.Plugins.Animation.MetropolisDrive\LedCube.Plugins.Animation.MetropolisDrive.csproj" />
+        <ProjectReference Include="..\Plugin\LedCube.Plugins.Animation.NightCityDrive\LedCube.Plugins.Animation.NightCityDrive.csproj" />
         <ProjectReference Include="..\Plugin\LedCube.Plugins.Animation.PlaneWalker\LedCube.Plugins.Animation.PlaneWalker.csproj" />
         <ProjectReference Include="..\Plugin\LedCube.Plugins.Animation.RandomToggle\LedCube.Plugins.Animation.RandomToggle.csproj" />
         <ProjectReference Include="..\Plugin\LedCube.Plugins.Animation.RandomOnOff\LedCube.Plugins.Animation.RandomOnOff.csproj" />

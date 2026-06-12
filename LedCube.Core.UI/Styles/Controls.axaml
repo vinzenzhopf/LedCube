@@ -94,9 +94,13 @@
         <Setter Property="Template">
             <ControlTemplate TargetType="c:StatRow">
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="{TemplateBinding Label}"/>
-                    <TextBlock Text="{TemplateBinding Value}"/>
-                    <TextBlock Margin="3,0,0,0"
+                    <TextBlock FontSize="9"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                               Text="{TemplateBinding Label}"/>
+                    <TextBlock FontSize="10"
+                               Text="{TemplateBinding Value}"/>
+                    <TextBlock FontSize="9"
+                               Margin="3,0,0,0"
                                Text="{TemplateBinding Unit}"
                                IsVisible="{TemplateBinding Unit, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
                 </StackPanel>

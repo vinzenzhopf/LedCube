@@ -161,6 +161,8 @@ public partial class App : Application,
     private static void ConfigureServices(IServiceCollection services)
     {
         services.AddSingleton<ICubeRepository, CubeRepository>();
+        services.AddSingleton<LedCube.Core.UI.CubeView3D.Cube3DViewModel>();
+        services.AddSingleton<LedCube.Core.UI.Controls.Cube3DWrapper.Cube3DWrapperViewModel>();
         services.AddSingleton<Controls.MainWindow.MainViewModel>();
         services.AddSingleton<Controls.MainWindow.MainWindow>();
         services.AddSingleton<Controls.MenuBar.MenuBarViewModel>();

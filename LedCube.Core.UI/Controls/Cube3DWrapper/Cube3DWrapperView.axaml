@@ -1,0 +1,116 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:c3d="clr-namespace:LedCube.Core.UI.CubeView3D.Controls;assembly=LedCube.Core.UI.CubeView3D"
+             xmlns:vm="clr-namespace:LedCube.Core.UI.Controls.Cube3DWrapper"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="vm:Cube3DWrapperViewModel"
+             x:Class="LedCube.Core.UI.Controls.Cube3DWrapper.Cube3DWrapperView">
+    <UserControl.Resources>
+        <Thickness x:Key="SliderTopHeaderMargin">0,0,0,4</Thickness><!-- Default: 0,0,0,4 -->
+        <GridLength x:Key="SliderPreContentMargin">8</GridLength><!-- Default: 15 -->
+        <GridLength x:Key="SliderPostContentMargin">8</GridLength><!-- Default: 15 -->
+        <x:Double x:Key="SliderHorizontalHeight">24</x:Double><!-- Default: 32 -->
+        <CornerRadius x:Key="SliderThumbCornerRadius">8</CornerRadius><!-- Default: 10 -->
+        <x:Double x:Key="SliderHorizontalThumbWidth">14</x:Double><!-- Default: 20 -->
+        <x:Double x:Key="SliderHorizontalThumbHeight">14</x:Double><!-- Default: 20 -->
+        
+        <x:Double x:Key="CheckBoxMinHeight">24</x:Double><!-- Default: 32 -->
+
+        <!-- Mute the checkbox label in every state. The Fluent template re-applies the foreground
+             on PART_ContentPresenter per visual state, so a plain Foreground setter is shadowed;
+             overriding these keyed brushes is the reliable way. -->
+        <SolidColorBrush x:Key="CheckBoxForegroundUnchecked" Color="{DynamicResource TextFillColorSecondary}"/>
+        <SolidColorBrush x:Key="CheckBoxForegroundUncheckedPointerOver" Color="{DynamicResource TextFillColorSecondary}"/>
+        <SolidColorBrush x:Key="CheckBoxForegroundUncheckedPressed" Color="{DynamicResource TextFillColorSecondary}"/>
+        <SolidColorBrush x:Key="CheckBoxForegroundChecked" Color="{DynamicResource TextFillColorSecondary}"/>
+        <SolidColorBrush x:Key="CheckBoxForegroundCheckedPointerOver" Color="{DynamicResource TextFillColorSecondary}"/>
+        <SolidColorBrush x:Key="CheckBoxForegroundCheckedPressed" Color="{DynamicResource TextFillColorSecondary}"/>
+    </UserControl.Resources>
+    <UserControl.Styles>
+        <!-- Toggle in the options row. Foreground is muted via the CheckBoxForeground* resource
+             overrides above (a Foreground setter here would only hold at rest). -->
+        <Style Selector="CheckBox.option">
+            <Setter Property="Margin" Value="0,0,6,0"/>
+            <Setter Property="Padding" Value="4,6"/>
+            <Setter Property="FontSize" Value="14" />
+        </Style>
+        <!-- Shrink the box from the Fluent default 20x20 to 16x16. The box (Border#NormalRectangle)
+             and the glyph Viewbox are hardcoded literals in the template; /template/ setters override
+             them. The 20px host column is fixed (ColumnDefinitions isn't an AvaloniaProperty, so it
+             can't be restyled) — the 16px box just centers in it. -->
+        <Style Selector="CheckBox.option /template/ Border#NormalRectangle">
+            <Setter Property="Width" Value="16"/>
+            <Setter Property="Height" Value="16"/>
+        </Style>
+        <Style Selector="CheckBox.option /template/ Viewbox">
+            <Setter Property="Width" Value="12"/>
+            <Setter Property="Height" Value="12"/>
+        </Style>
+        <!-- Caption preceding a row of color swatches -->
+        <Style Selector="TextBlock.swatchLabel">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}"/>
+        </Style>
+        <!-- Color swatch button -->
+        <Style Selector="Button.swatch">
+            <Setter Property="Width" Value="24"/>
+            <Setter Property="Height" Value="20"/>
+            <Setter Property="Padding" Value="0"/>
+        </Style>
+        <!-- Compact slider -->
+        <Style Selector="Slider.compact">
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Margin" Value="0"/>
+        </Style>
+    </UserControl.Styles>
+    <DockPanel>
+        <StackPanel DockPanel.Dock="Top" Margin="0,0,0,5" Spacing="0"
+                    DataContext="{Binding Cube3DViewModel}">
+            <WrapPanel Margin="0">
+                <CheckBox Classes="option" Content="Show as installed"
+                          IsChecked="{Binding ShowAsInstalled}"
+                          ToolTip.Tip="Apply the configured cube orientation so the preview mirrors the physical cube."/>
+                <CheckBox Classes="option" Content="Podest" IsChecked="{Binding ShowPodest}"
+                          ToolTip.Tip="Shows the Podest under the cube."/>
+                <CheckBox Classes="option" Content="Labels" IsChecked="{Binding ShowAnnotations}"
+                          ToolTip.Tip="Shows the decal to show the direction of the cube."/>
+                <CheckBox Classes="option" Content="Axes" IsChecked="{Binding ShowAxisGizmo}"
+                          ToolTip.Tip="Shows the Axis gizmo."/>
+                <CheckBox Classes="option" Content="LED 0" IsChecked="{Binding ShowLed0Arrow}"
+                          ToolTip.Tip="Show the decal to indicate the first LED."/>
+            </WrapPanel>
+            <Grid ColumnDefinitions="Auto,*,Auto,*" >
+                <TextBlock Grid.Column="0" Classes="swatchLabel" Text="LED size:" VerticalAlignment="Center" Margin="0,0,6,4"/>
+                <Slider Grid.Column="1" Classes="compact" Minimum="0.2" Maximum="2.0" Value="{Binding LedScale}"/>
+                <TextBlock Grid.Column="2" Classes="swatchLabel" Text="Transp.:" VerticalAlignment="Center" Margin="8,0,6,4"/>
+                <Slider Grid.Column="3" Classes="compact" Minimum="0" Maximum="1" Value="{Binding Transparency}"/>
+            </Grid>
+            <StackPanel Orientation="Horizontal" Spacing="4">
+                <TextBlock Classes="swatchLabel" Text="LED:" Margin="0,0,0,0"/>
+                <Button Classes="swatch" Background="#2864EB" Command="{Binding SetLedColorCommand}" CommandParameter="#2864EB"/>
+                <Button Classes="swatch" Background="#16C0FF" Command="{Binding SetLedColorCommand}" CommandParameter="#16C0FF"/>
+                <Button Classes="swatch" Background="#E03030" Command="{Binding SetLedColorCommand}" CommandParameter="#E03030"/>
+                <Button Classes="swatch" Background="#30D060" Command="{Binding SetLedColorCommand}" CommandParameter="#30D060"/>
+                <Button Classes="swatch" Background="#FFB020" Command="{Binding SetLedColorCommand}" CommandParameter="#FFB020"/>
+                <Button Classes="swatch" Background="#F0F0F0" Command="{Binding SetLedColorCommand}" CommandParameter="#F0F0F0"/>
+                <TextBlock Classes="swatchLabel" Text="BG:" Margin="10,0,0,0"/>
+                <Button Classes="swatch" Background="#121218" Command="{Binding SetBackgroundColorCommand}" CommandParameter="#121218"/>
+                <Button Classes="swatch" Background="#000000" Command="{Binding SetBackgroundColorCommand}" CommandParameter="#000000"/>
+                <Button Classes="swatch" Background="#0A1430" Command="{Binding SetBackgroundColorCommand}" CommandParameter="#0A1430"/>
+                <Button Classes="swatch" Background="#202832" Command="{Binding SetBackgroundColorCommand}" CommandParameter="#202832"/>
+            </StackPanel>
+        </StackPanel>
+        <c3d:Cube3DView CubeRepository="{Binding Cube3DViewModel.Repository}"
+                        Orientation="{Binding Cube3DViewModel.Orientation}"
+                        LedScale="{Binding Cube3DViewModel.LedScale}"
+                        Transparency="{Binding Cube3DViewModel.Transparency}"
+                        LedColor="{Binding Cube3DViewModel.LedColor}"
+                        BackgroundColor="{Binding Cube3DViewModel.BackgroundColor}"
+                        ShowPodest="{Binding Cube3DViewModel.ShowPodest}"
+                        ShowAnnotations="{Binding Cube3DViewModel.ShowAnnotations}"
+                        ShowAxisGizmo="{Binding Cube3DViewModel.ShowAxisGizmo}"
+                        ShowLed0Arrow="{Binding Cube3DViewModel.ShowLed0Arrow}"/>
+    </DockPanel>
+</UserControl>

@@ -27,17 +27,23 @@
                 <CheckBox Content="Search per broadcast" IsChecked="{Binding SearchPerBroadcast}"/>
             </StackPanel>
         </HeaderedContentControl>
-        <HeaderedContentControl Header="Projection" Margin="0,0,0,8">
-            <StackPanel Margin="8">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="180"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="Orientation"/>
-                    <ComboBox Grid.Column="1"
+        <HeaderedContentControl Header="Cube orientation" Margin="0,0,0,8">
+            <StackPanel Margin="8" Spacing="6">
+                <TextBlock Text="Maps the canonical animation space onto your physical cube. Applied to the streamed (UDP) output and to the preview's 'Show as installed' mode; animations stay authored in canonical space."
+                           TextWrapping="Wrap" FontSize="11" Foreground="#A0A0A0"/>
+                <Grid ColumnDefinitions="180,*" RowDefinitions="Auto,Auto,Auto">
+                    <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="Hardware front (wiring)"/>
+                    <ComboBox Grid.Row="0" Grid.Column="1"
+                              ItemsSource="{x:Static helpers:EnumValues.Orientation3Ds}"
+                              SelectedItem="{Binding Projection.HardwareFront}"/>
+                    <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Text="Handedness" Margin="0,6,0,0"/>
+                    <ComboBox Grid.Row="1" Grid.Column="1" Margin="0,6,0,0"
                               ItemsSource="{x:Static helpers:EnumValues.CartesianOrientations}"
                               SelectedItem="{Binding Projection.Orientation}"/>
+                    <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="Installed front" Margin="0,6,0,0"/>
+                    <ComboBox Grid.Row="2" Grid.Column="1" Margin="0,6,0,0"
+                              ItemsSource="{x:Static helpers:EnumValues.Orientation3Ds}"
+                              SelectedItem="{Binding Projection.InstallationFront}"/>
                 </Grid>
             </StackPanel>
         </HeaderedContentControl>

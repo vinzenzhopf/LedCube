@@ -46,7 +46,9 @@
                     <HeaderedContentControl DockPanel.Dock="Top" Header="Active Animation">
                         <ContentControl Content="{Binding PlaybackControlViewModel}"/>
                     </HeaderedContentControl>
-                    <Border />
+                    <HeaderedContentControl Header="3D Preview">
+                        <ContentControl Content="{Binding Cube3DWrapperViewModel}"/>
+                    </HeaderedContentControl>
                 </DockPanel>
 
                 <GridSplitter Grid.Column="1" VerticalAlignment="Stretch" ResizeBehavior="BasedOnAlignment"/>

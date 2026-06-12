@@ -7,6 +7,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using LedCube.Core.Common.Config;
 using LedCube.Core.Common.CubeData.Repository;
 using LedCube.Core.Common.Extensions;
+using LedCube.Core.Common.Model;
+using LedCube.Core.Common.Model.Orientation;
 using LedCube.Core.Common.Settings;
 using LedCube.Streamer.Datagram;
 using LedCube.Streamer.UdpCom;
@@ -24,7 +26,8 @@ public partial class CubeStreamerService : BackgroundService, ICubeStreamer
     private readonly ICubeRepository _cubeRepository;
     private readonly ICubeStreamingStatusMutable _cubeStreamingStatus;
     private readonly ISettingsProvider<CubeStreamerSettings>? _connectionSettings;
-    
+    private OrientationStreamMapper? _streamMapper;
+
     private readonly PeriodicTimer _updateTimer = new PeriodicTimer(TimeSpan.FromMilliseconds(500));
     private PeriodicTimer? _frameTimer = null;
     
@@ -71,6 +74,16 @@ public partial class CubeStreamerService : BackgroundService, ICubeStreamer
     private void OnConnectionSettingsChanged(object? sender, CubeStreamerSettings settings)
     {
         _communication.TraceDatagramLogging = settings.EnableTraceDatagramLogging;
+        _streamMapper = null; // rebuilt next frame with the new orientation
+    }
+
+    /// <summary>Returns the orientation mapper for the current settings + cube size (rebuilt on change).</summary>
+    private OrientationStreamMapper GetStreamMapper(Point3D size)
+    {
+        var orientation = _connectionSettings?.Settings.Projection.ToConfig().Resolve() ?? CubeOrientation.Default;
+        if (_streamMapper is null || _streamMapper.Size != size || _streamMapper.Orientation != orientation)
+            _streamMapper = new OrientationStreamMapper(size, orientation);
+        return _streamMapper;
     }
     
     public async Task<bool> ConnectAsync(int localPort, IPAddress localAddress, HostAndPort hostAndPort, CancellationToken token)
@@ -221,7 +234,8 @@ public partial class CubeStreamerService : BackgroundService, ICubeStreamer
         _lastFrameTicks = nowTicks;
 
         var cubeData = new FramePayloadData();
-        _cubeRepository.GetCubeData().Serialize(cubeData);
+        var data = _cubeRepository.GetCubeData();
+        GetStreamMapper(data.Size).Serialize(data, cubeData); // applies the configured orientation
         try
         {
             var result = await _communication.SendFrameAsync(++_frameCounter,

@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using LedCube.Core.Common.Config;
 using LedCube.Core.Common.Config.Entities;
+using LedCube.Core.Common.Model;
 using LedCube.Core.Common.Settings;
 using LedCube.Core.UI.Services.Hotkey;
 
@@ -51,7 +52,12 @@ public partial class SettingsDialogViewModel : ObservableObject
                 Hostname = conn.Hostname,
                 SearchPerBroadcast = conn.SearchPerBroadcast,
                 EnableTraceDatagramLogging = conn.EnableTraceDatagramLogging,
-                Projection = new CubeDataProjectionSettingsViewModel { Orientation = conn.Projection.Orientation }
+                Projection = new CubeDataProjectionSettingsViewModel
+                {
+                    Orientation = conn.Projection.Orientation,
+                    HardwareFront = conn.Projection.HardwareFront,
+                    InstallationFront = conn.Projection.InstallationFront
+                }
             };
             var streaming = new SettingsNodeViewModel("Streaming");
             streaming.Children.Add(new SettingsNodeViewModel("Connection", _streamerSettings));
@@ -127,7 +133,9 @@ public partial class SettingsDialogViewModel : ObservableObject
                 EnableTraceDatagramLogging = _streamerSettings.EnableTraceDatagramLogging,
                 Projection = new CubeDataProjectionSettings
                 {
-                    Orientation = _streamerSettings.Projection.Orientation
+                    Orientation = _streamerSettings.Projection.Orientation,
+                    HardwareFront = _streamerSettings.Projection.HardwareFront,
+                    InstallationFront = _streamerSettings.Projection.InstallationFront
                 }
             });
         }
@@ -250,6 +258,12 @@ public partial class CubeDataProjectionSettingsViewModel : ObservableObject
 {
     [ObservableProperty]
     private CartesianOrientation _orientation;
+
+    [ObservableProperty]
+    private Orientation3D _hardwareFront = Orientation3D.Front;
+
+    [ObservableProperty]
+    private Orientation3D _installationFront = Orientation3D.Front;
 }
 
 public partial class LibrarySettingsViewModel : ObservableObject

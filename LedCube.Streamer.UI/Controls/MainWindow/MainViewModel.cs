@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using LedCube.Core.Common;
 using LedCube.Core.UI.Controls.AnimationList;
+using LedCube.Core.UI.Controls.Cube3DWrapper;
 using LedCube.Core.UI.Controls.LogAppender;
 using LedCube.Core.UI.Controls.PlaybackControl;
 using LedCube.Core.UI.Controls.PlaylistControl;
@@ -30,6 +31,7 @@ public partial class MainViewModel : ObservableObject
     public PlaybackControlViewModel PlaybackControlViewModel { get; }
     public StreamingControlViewModel StreamingControlViewModel { get; }
     public AnimationListViewModel AnimationListViewModel { get; }
+    public Cube3DWrapperViewModel Cube3DWrapperViewModel { get; }
     public string TitleText => "LedCube Streamer";
     public string BuildInfo => $"Build: {_appInfo.Version}, {_appInfo.BuildDate:yy-MM-dd HH:mm zz}";
     public string BuildInfoDebug => _appInfo.DebugBuild ? ", Debug" : "";
@@ -43,8 +45,9 @@ public partial class MainViewModel : ObservableObject
         PlaylistControlViewModel playlistControlViewModel,
         PluginConfigControlViewModel pluginConfigViewModel,
         PlaybackControlViewModel playbackControlViewModel,
-        StreamingControlViewModel streamingControlViewModel, 
-        AnimationListViewModel animationListViewModel)
+        StreamingControlViewModel streamingControlViewModel,
+        AnimationListViewModel animationListViewModel,
+        Cube3DWrapperViewModel cube3DWrapperViewModel)
     {
         _logger = loggerFactory.CreateLogger(GetType());
         _appInfo = appInfo;
@@ -56,6 +59,7 @@ public partial class MainViewModel : ObservableObject
         PlaybackControlViewModel = playbackControlViewModel;
         StreamingControlViewModel = streamingControlViewModel;
         AnimationListViewModel = animationListViewModel;
+        Cube3DWrapperViewModel = cube3DWrapperViewModel;
     }
 
     [RelayCommand]
