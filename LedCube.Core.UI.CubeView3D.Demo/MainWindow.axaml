@@ -1,0 +1,55 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:c3d="clr-namespace:LedCube.Core.UI.CubeView3D.Controls;assembly=LedCube.Core.UI.CubeView3D"
+        x:Class="LedCube.Core.UI.CubeView3D.Demo.MainWindow"
+        Title="CubeView3D Demo" Height="760" Width="980"
+        Background="#181820">
+    <DockPanel>
+        <Border DockPanel.Dock="Top" Padding="8" Background="#202028">
+            <StackPanel Spacing="6">
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                    <TextBlock Text="Drag = orbit · Wheel = zoom" VerticalAlignment="Center" Foreground="#C0C0C0"/>
+                    <TextBlock Text="LED size:" VerticalAlignment="Center" Foreground="#C0C0C0"/>
+                    <Slider Name="LedScaleSlider" Width="110" Minimum="0.2" Maximum="2.0" Value="0.85" VerticalAlignment="Center"/>
+                    <TextBlock Text="Transparency:" VerticalAlignment="Center" Foreground="#C0C0C0"/>
+                    <Slider Width="110" Minimum="0" Maximum="1" Value="{Binding #Cube.Transparency, Mode=TwoWay}" VerticalAlignment="Center"/>
+                    <CheckBox Content="Podest" IsChecked="{Binding #Cube.ShowPodest, Mode=TwoWay}" Foreground="#C0C0C0"/>
+                    <CheckBox Content="Labels" IsChecked="{Binding #Cube.ShowAnnotations, Mode=TwoWay}" Foreground="#C0C0C0"/>
+                    <CheckBox Content="Axes" IsChecked="{Binding #Cube.ShowAxisGizmo, Mode=TwoWay}" Foreground="#C0C0C0"/>
+                    <CheckBox Content="LED0" IsChecked="{Binding #Cube.ShowLed0Arrow, Mode=TwoWay}" Foreground="#C0C0C0"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                    <TextBlock Text="LED:" VerticalAlignment="Center" Foreground="#C0C0C0" Width="34"/>
+                    <Button Background="#2864EB" Width="26" Height="22" Tag="#2864EB" Click="LedColor_Click"/>
+                    <Button Background="#16C0FF" Width="26" Height="22" Tag="#16C0FF" Click="LedColor_Click"/>
+                    <Button Background="#E03030" Width="26" Height="22" Tag="#E03030" Click="LedColor_Click"/>
+                    <Button Background="#30D060" Width="26" Height="22" Tag="#30D060" Click="LedColor_Click"/>
+                    <Button Background="#FFB020" Width="26" Height="22" Tag="#FFB020" Click="LedColor_Click"/>
+                    <Button Background="#F0F0F0" Width="26" Height="22" Tag="#F0F0F0" Click="LedColor_Click"/>
+                    <TextBlock Text="BG:" VerticalAlignment="Center" Foreground="#C0C0C0" Width="34" Margin="12,0,0,0"/>
+                    <Button Background="#121218" Width="26" Height="22" Tag="#121218" Click="BgColor_Click"/>
+                    <Button Background="#000000" Width="26" Height="22" Tag="#000000" Click="BgColor_Click"/>
+                    <Button Background="#0A1430" Width="26" Height="22" Tag="#0A1430" Click="BgColor_Click"/>
+                    <Button Background="#202832" Width="26" Height="22" Tag="#202832" Click="BgColor_Click"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                    <TextBlock Text="HW front:" VerticalAlignment="Center" Foreground="#C0C0C0"/>
+                    <ComboBox Name="HwFrontCombo" Width="92" SelectionChanged="Orientation_Changed"/>
+                    <CheckBox Name="HandednessCheck" Content="Left-handed" Foreground="#C0C0C0"
+                              IsCheckedChanged="Handedness_Changed"/>
+                    <TextBlock Text="Installed front:" VerticalAlignment="Center" Foreground="#C0C0C0" Margin="12,0,0,0"/>
+                    <ComboBox Name="InstallFrontCombo" Width="92" SelectionChanged="Orientation_Changed"/>
+                    <Button Content="Reset" Click="OrientationReset_Click"/>
+                    <CheckBox Name="ShowInstalledCheck" Content="Show as installed" Foreground="#C0C0C0"
+                              Margin="12,0,0,0" IsCheckedChanged="ShowInstalled_Changed"/>
+                    <CheckBox Name="Led0TestCheck" Content="LED 0 test" Foreground="#C0C0C0"
+                              IsCheckedChanged="Led0Test_Changed"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+        <c3d:Cube3DView Name="Cube"
+                        LedScale="{Binding #LedScaleSlider.Value}"
+                        LedColor="#2864EB"
+                        BackgroundColor="#121218"/>
+    </DockPanel>
+</Window>
