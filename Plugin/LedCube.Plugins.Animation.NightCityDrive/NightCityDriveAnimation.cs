@@ -25,7 +25,7 @@ public sealed class NightCityDriveAnimation(ILogger<NightCityDriveAnimation> log
         ConfigDescriptors:
         [
             new AnimationConfigDescriptor("VehicleSpeed", "Vehicle Speed (px/s)", AnimationConfigType.Float,
-                DefaultValue: 4.0f, MinValue: 0.0f, MaxValue: 12.0f,
+                DefaultValue: 10.0f, MinValue: 0.0f, MaxValue: 24.0f,
                 Description: "How fast the city streams past, in cube cells per second."),
             new AnimationConfigDescriptor("TurnChance", "Turn chance", AnimationConfigType.Float,
                 DefaultValue: 0.4f, MinValue: 0.0f, MaxValue: 1.0f,
@@ -35,13 +35,20 @@ public sealed class NightCityDriveAnimation(ILogger<NightCityDriveAnimation> log
 
     public TimeSpan? FrameTime { get; } = TimeSpan.FromMilliseconds(10);
 
-    // City grid, in cells. A block tile is S wide; its outer RoadHalf on every side is empty road, so
-    // the buildable core is BW = S - 2*RoadHalf, subdivided into Hs-sized house cells.
-    private const float S = 8f;
-    private const float RoadHalf = 2f;
-    private const float Hs = 2f;
-    private const float BW = S - 2f * RoadHalf;
-    private const float TurnRadius = 2f;
+    // City grid, in cells. Each block is a BlockSize-wide cluster of houses; neighbouring blocks are
+    // separated by a RoadWidth-wide empty road, so the pattern repeats every BlockSpacing. Inside a
+    // block, houses sit on a HouseSize lattice.
+    private const float BlockSize = 14f;
+    private const float RoadWidth = 6f;
+    private const float BlockSpacing = BlockSize + RoadWidth;
+    private const float HouseSize = 3f;
+    // House height tuning. EmptyChance leaves some cells as gaps; the rest stand MinHouseHeight..max
+    // tall, with HeightBias < 1 skewing most houses toward full height so low buildings are rare
+    // (1 = uniform, smaller = taller-skewed).
+    private const float EmptyChance = 0.10f;
+    private const float MinHouseHeight = 2f;
+    private const float HeightBias = 0.35f;
+    private const float TurnRadius = 3f;
     private const float Far = 1E6f;
     private const float HalfPi = MathF.PI / 2f;
 
@@ -82,10 +89,12 @@ public sealed class NightCityDriveAnimation(ILogger<NightCityDriveAnimation> log
     {
         animationContext.CubeData.Clear();
         _size = animationContext.CubeData.Size;
-        _maxHeight = _size.Z - 2f;
+        _maxHeight = _size.Z;
 
         _centerX = _size.X / 2f;
-        _carY = _size.Y / 2f - 3f; // a bit back, so most of the cube shows the road ahead
+        // A bit back so most of the cube shows the road ahead. The car is 3 long (odd), so its Y centre
+        // sits on a half-cell to land on whole cells instead of straddling into 4.
+        _carY = _size.Y / 2f - 2.5f;
 
         // Start centered on a vertical road (X = multiple of S), heading +Y.
         _pos = new Vector2(0f, 0f);
@@ -136,7 +145,7 @@ public sealed class NightCityDriveAnimation(ILogger<NightCityDriveAnimation> log
 
         // The next intersection center is the next multiple of S ahead; the turn starts TurnRadius
         // before it so the arc lands exactly on the perpendicular road centerline.
-        var nextCenter = dir > 0f ? (MathF.Floor(before / S) + 1f) * S : (MathF.Ceiling(before / S) - 1f) * S;
+        var nextCenter = dir > 0f ? (MathF.Floor(before / BlockSpacing) + 1f) * BlockSpacing : (MathF.Ceiling(before / BlockSpacing) - 1f) * BlockSpacing;
         var trigger = nextCenter - dir * TurnRadius;
 
         var crossed = dir > 0f ? before < trigger && after >= trigger
@@ -170,9 +179,9 @@ public sealed class NightCityDriveAnimation(ILogger<NightCityDriveAnimation> log
             // Lock back onto the grid: square the heading and snap the new cross-axis to a centerline.
             _phi = MathF.Round(_phi / HalfPi) * HalfPi;
             if (MathF.Abs(MathF.Cos(_phi)) > 0.5f) // now heading along X -> snap Y
-                _pos.Y = MathF.Round(_pos.Y / S) * S;
+                _pos.Y = MathF.Round(_pos.Y / BlockSpacing) * BlockSpacing;
             else
-                _pos.X = MathF.Round(_pos.X / S) * S;
+                _pos.X = MathF.Round(_pos.X / BlockSpacing) * BlockSpacing;
             _turning = false;
         }
     }
@@ -205,21 +214,22 @@ public sealed class NightCityDriveAnimation(ILogger<NightCityDriveAnimation> log
         if (c.Z < 0f)
             return Far;
 
-        var bx = MathF.Floor(c.X / S);
-        var by = MathF.Floor(c.Y / S);
-        var ux = c.X - bx * S - RoadHalf; // position within the buildable core, 0..BW
-        var uy = c.Y - by * S - RoadHalf;
-        if (ux < 0f || ux > BW || uy < 0f || uy > BW)
+        const float roadMargin = RoadWidth / 2f;
+        var bx = MathF.Floor(c.X / BlockSpacing);
+        var by = MathF.Floor(c.Y / BlockSpacing);
+        var ux = c.X - bx * BlockSpacing - roadMargin; // position within the block core, 0..BlockSize
+        var uy = c.Y - by * BlockSpacing - roadMargin;
+        if (ux < 0f || ux > BlockSize || uy < 0f || uy > BlockSize)
             return Far; // road gap between blocks
 
-        var sx = MathF.Floor(ux / Hs);
-        var sy = MathF.Floor(uy / Hs);
+        var sx = MathF.Floor(ux / HouseSize);
+        var sy = MathF.Floor(uy / HouseSize);
         var height = HouseHeight((int)bx, (int)by, (int)sx, (int)sy);
         if (height <= 0f)
             return Far; // an empty gap inside the block
 
-        var min = new Vector3(bx * S + RoadHalf + sx * Hs, by * S + RoadHalf + sy * Hs, 0f);
-        var max = new Vector3(min.X + Hs, min.Y + Hs, height);
+        var min = new Vector3(bx * BlockSpacing + roadMargin + sx * HouseSize, by * BlockSpacing + roadMargin + sy * HouseSize, 0f);
+        var max = new Vector3(min.X + HouseSize, min.Y + HouseSize, height);
         var center = (min + max) * 0.5f;
         return BoxDist(c - center, (max - min) * 0.5f);
     }
@@ -227,10 +237,11 @@ public sealed class NightCityDriveAnimation(ILogger<NightCityDriveAnimation> log
     private float HouseHeight(int bx, int by, int sx, int sy)
     {
         var h = Hash(bx, by, sx, sy);
-        if ((h & 0xFFFF) / 65535f < 0.18f)
-            return 0f; // ~18% of house cells are empty, giving spaces within the block
+        if ((h & 0xFFFF) / 65535f < EmptyChance)
+            return 0f; // a gap within the block
         var t = ((h >> 16) & 0xFFFF) / 65535f;
-        return 2f + MathF.Floor(t * (_maxHeight - 1f)); // 2 .. _maxHeight cells tall
+        t = MathF.Pow(t, HeightBias); // skew toward tall buildings; low ones become rare
+        return MinHouseHeight + MathF.Floor(t * (_maxHeight - MinHouseHeight)); // MinHouseHeight .. _maxHeight
     }
 
     // --- Helpers --------------------------------------------------------------------------------
